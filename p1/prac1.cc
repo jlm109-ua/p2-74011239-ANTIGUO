@@ -75,12 +75,30 @@ void showMainMenu(){
 }
 
 void editProject(Project &toDoList){
+  do{
+  cout<<"Enter project name:"; getline(cin,Project.name);
+  }while(checkEmpty(Project.name)==1);
+
+  cout<<"Enter project description:"; getline(cin,Project.description);
 }
 
 void addList(Project &toDoList){
+  int rep=0;
+  do{
+    cout<<"Enter list name:"; getline(cin,List.name);
+
+    for(int i=0;i<Task;i++){
+      if(strcmp(List.name,tasks[i])==0){
+        error(ERR_LIST_NAME);
+        i=Task;
+        rep=1;
+      }
+    }
+  }while(checkEmtpy(List.name)==1||rep=1);
 }
 
 void deleteList(Project &toDoList){
+  //què es fa exactament? //borrar element de todolist
 }
 
 void addTask(Project &toDoList){
@@ -93,6 +111,22 @@ void toggleTask(Project &toDoList){
 }
 
 void report(const Project &toDoList){
+}
+
+int checkEmpty(string s){ //Comprova si la string està buida
+int val=0;//validació
+  if(s.lenght==0){
+    error(ERR_EMPTY);
+    val=1;
+  }
+return(val);
+}
+
+int checkList(string s){ //Comprova si hi ha alguna llista amb el mateix nom
+  int val=0;
+  if(strcmp(s,List.name)==0){
+
+  }
 }
 
 int main(){
