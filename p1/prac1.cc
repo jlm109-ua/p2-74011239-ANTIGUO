@@ -1,4 +1,4 @@
-// DNI: 74011239E | Nom: Juan Llinares Mauri
+// DNI: 74011239E Nom: Juan Llinares Mauri
 
 #include <iostream>
 #include <vector>
@@ -76,19 +76,19 @@ void showMainMenu(){
 
 void editProject(Project &toDoList){
   do{
-  cout<<"Enter project name:"; getline(cin,Project.name);
-  }while(checkEmpty(Project.name)==1);
+  cout<<"Enter project name:"; getline(cin,toDoList.name);
+  }while(checkEmpty(toDoList.name)==1);
 
-  cout<<"Enter project description:"; getline(cin,Project.description);
+  cout<<"Enter project description:"; getline(cin,toDoList.description);
 }
 
 void addList(Project &toDoList){
   int rep=0;
   do{
-    cout<<"Enter list name:"; getline(cin,List.name);
+    cout<<"Enter list name:"; getline(cin,List.name); //dubte al vector list
 
     for(int i=0;i<Task;i++){
-      if(strcmp(List.name,tasks[i])==0){
+      if(strcmp(List.name,tasks[i])==0){    //esboç
         error(ERR_LIST_NAME);
         i=Task;
         rep=1;
@@ -98,7 +98,7 @@ void addList(Project &toDoList){
 }
 
 void deleteList(Project &toDoList){
-  //què es fa exactament? //borrar element de todolist
+  //borrar element de toDoList
 }
 
 void addTask(Project &toDoList){
