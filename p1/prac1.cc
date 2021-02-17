@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <cstdlib>
+#include <string.h>
 
 using namespace std;
 
@@ -74,6 +75,27 @@ void showMainMenu(){
        << "Option: ";
 }
 
+int checkEmpty(string s){ //Comprova si la string està buida
+int val=0;//validació
+  if(s.length()==0){
+    error(ERR_EMPTY);
+    val=1;
+  }
+return(val);
+}
+
+int checkList(string s,Project toDoList){ //Comprova si hi ha alguna llista amb el mateix nom
+  int val=0;
+  for(unsigned int i=0;i<toDoList.lists.size();i++){
+    if(strcmp(s,toDoList.lists[i])==0){    
+     error(ERR_LIST_NAME);
+     i=toDoList.lists.size();
+     val=1;
+    }
+  }
+return(val);
+}
+
 void editProject(Project &toDoList){
   do{
   cout<<"Enter project name:"; getline(cin,toDoList.name);
@@ -83,18 +105,13 @@ void editProject(Project &toDoList){
 }
 
 void addList(Project &toDoList){
-  int rep=0;
+  string temp_name;
   do{
-    cout<<"Enter list name:"; getline(cin,List.name); //dubte al vector list
-
-    for(int i=0;i<Task;i++){
-      if(strcmp(List.name,tasks[i])==0){    //esboç
-        error(ERR_LIST_NAME);
-        i=Task;
-        rep=1;
-      }
-    }
-  }while(checkEmtpy(List.name)==1||rep=1);
+    do{
+      cout<<"Enter list name:"; getline(cin,temp_name);
+    }while(checkEmtpy(temp_name)==1); //Els valors 1 signifiquen que es produeix un error en la inserció del nom
+  }while(checkList(temp_name,toDoList)==1);
+  //afegir el nom al final de lists augmentant el tamany de lists
 }
 
 void deleteList(Project &toDoList){
@@ -111,22 +128,6 @@ void toggleTask(Project &toDoList){
 }
 
 void report(const Project &toDoList){
-}
-
-int checkEmpty(string s){ //Comprova si la string està buida
-int val=0;//validació
-  if(s.lenght==0){
-    error(ERR_EMPTY);
-    val=1;
-  }
-return(val);
-}
-
-int checkList(string s){ //Comprova si hi ha alguna llista amb el mateix nom
-  int val=0;
-  if(strcmp(s,List.name)==0){
-
-  }
 }
 
 int main(){
