@@ -75,7 +75,7 @@ void showMainMenu(){
        << "Option: ";
 }
 
-int checkEmpty(string s){ //Comprova si la string està buida
+int checkEmpty(string s){ //Comprova si el .name dels tipus List està buit
 int val=0;//validació
   if(s.length()==0){
     error(ERR_EMPTY);
@@ -84,38 +84,97 @@ int val=0;//validació
 return(val);
 }
 
-int checkList(string s,Project toDoList){ //Comprova si hi ha alguna llista amb el mateix nom
-  int val=0;
+int checkList(string s,Project toDoList,int &pos){ //Comprova si hi ha alguna llista amb el mateix nom
+  int val=0; //canviar per booleà
+  pos=0;
   for(unsigned int i=0;i<toDoList.lists.size();i++){
-    if(strcmp(s,toDoList.lists[i])==0){    
-     error(ERR_LIST_NAME);
-     i=toDoList.lists.size();
-     val=1;
+    if(s==toDoList.lists[i].name){  
+      pos=i;  
+      i=toDoList.lists.size();
+      val=1;
     }
   }
 return(val);
 }
 
-void editProject(Project &toDoList){
+bool addName(List &temp){  //repetició per a afegir noms a les llistes, ja que n'haurem de fer unes quantes
+
+  int pos=0;
+  bool val=false;
+
   do{
-  cout<<"Enter project name:"; getline(cin,toDoList.name);
-  }while(checkEmpty(toDoList.name)==1);
+
+    cout<<"Enter list name:"; getline(cin,temp.name);
+
+    if(temp.name.length()==0){
+      error(ERR_EMPTY);
+      val=true;
+    }
+
+  }while(val);
+
+  val=false;
+
+  for(unsigned int i=0;i<toDoList.lists.size();i++){
+
+    if(temp.name==toDoList.lists[i].name){  
+    
+      pos=i;  
+    
+      i=toDoList.lists.size();
+    
+      val=true;
+    
+    }
+  
+  }
+
+return(val);
+
+}
+
+void editProject(Project &toDoList){
+  
+  bool val=false;
+
+  do{
+
+    cout<<"Enter project name:"; getline(cin,toDoList.name);
+
+    if(toDoList.name.length()==0){
+      error(ERR_EMPTY);
+      val=true;
+    }
+
+  }while(val);
 
   cout<<"Enter project description:"; getline(cin,toDoList.description);
 }
 
 void addList(Project &toDoList){
-  string temp_name;
-  do{
-    do{
-      cout<<"Enter list name:"; getline(cin,temp_name);
-    }while(checkEmtpy(temp_name)==1); //Els valors 1 signifiquen que es produeix un error en la inserció del nom
-  }while(checkList(temp_name,toDoList)==1);
-  //afegir el nom al final de lists augmentant el tamany de lists
+  
+  List temp;
+
+  if(addName(temp)){
+    error(ERR_LIST_NAME);
+  }else{
+    toDoList.lists.push_back(temp.name);
+  }
+  
 }
 
 void deleteList(Project &toDoList){
-  //borrar element de toDoList
+  List temp;
+  int pos;
+  do{
+      cout<<"Enter list name:"; getline(cin,temp.name);
+  }while(checkEmtpyL(temp)==1); //borrar element de toDoList.lists
+
+  if(checkList(temp,toDoList,pos)==1){
+    toDoList.lists.erase(pos);
+  }else{
+    error(ERR_LIST_NAME);
+  }
 }
 
 void addTask(Project &toDoList){
