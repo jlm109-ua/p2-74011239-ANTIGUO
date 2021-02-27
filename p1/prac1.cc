@@ -84,8 +84,8 @@ int val=0;//validació
 return(val);
 }
 
-bool checkList(List temp,Project toDoList,int &pos){ //Comprova si hi ha alguna llista amb el mateix nom
-  bool val=true; //canviar per booleà
+bool checkList(List temp,Project toDoList,int &pos){ //Comprova si hi ha alguna llista amb el mateix nom i la posició en la que es troba
+  bool val=true;
   pos=0;
   for(unsigned int i=0;i<toDoList.lists.size();i++){
     if(temp.name==toDoList.lists[i].name){  
@@ -170,22 +170,68 @@ void deleteList(Project &toDoList){
         error(ERR_EMPTY);
         val=true;
       }
-  }while(val); //borrar element de toDoList.lists
+  }while(val); //borrar element de toDoList.lists //NO RECONOCE LA LISTA
 
   if(checkList(temp,toDoList,pos)==1){
     toDoList.lists.erase(toDoList.lists.begin()+pos);
   }else{
     error(ERR_LIST_NAME);
   }
+
+  find List(temp);
 }
 
-void addTask(Project &toDoList){
+void addTask(Project &toDoList){ //per acabar
+  Task ttemp;
+  List temp;
+  int pos;
+
+  do{
+
+    cout<<"Enter list name:"; getline(cin,temp.name);
+
+    if(temp.name.length()==0){
+      error(ERR_EMPTY);
+      val=true;
+    }
+
+  }while(val);
+
+  if(checkList(temp,toDoList,pos)==0){
+    //ruta de task?
+  }
 }
 
-void deleteTask(Project &toDoList){
+void deleteTask(Project &toDoList){ //per acabar
+
+  do{ //Crear mòdul per a introduir nom
+
+    cout<<"Enter list name:"; getline(cin,temp.name);
+
+    if(temp.name.length()==0){
+      error(ERR_EMPTY);
+      val=true;
+    }
+
+  }while(val);
+
 }
 
-void toggleTask(Project &toDoList){
+void toggleTask(Project &toDoList){ //per acabar
+
+  do{
+
+    cout<<"Enter list name:"; getline(cin,temp.name);
+
+    if(temp.name.length()==0){
+      error(ERR_EMPTY);
+      val=true;
+    }
+
+  }while(val);
+
+  
+
 }
 
 void report(const Project &toDoList){
