@@ -75,31 +75,30 @@ void showMainMenu(){
        << "Option: ";
 }
 
-int checkEmpty(string s){ //Comprova si el .name dels tipus List està buit
+int checkEmpty(List temp){ //Comprova si el .name dels tipus List està buit
 int val=0;//validació
-  if(s.length()==0){
+  if(temp.name.length()==0){
     error(ERR_EMPTY);
     val=1;
   }
 return(val);
 }
 
-int checkList(string s,Project toDoList,int &pos){ //Comprova si hi ha alguna llista amb el mateix nom
-  int val=0; //canviar per booleà
+bool checkList(List temp,Project toDoList,int &pos){ //Comprova si hi ha alguna llista amb el mateix nom
+  bool val=true; //canviar per booleà
   pos=0;
   for(unsigned int i=0;i<toDoList.lists.size();i++){
-    if(s==toDoList.lists[i].name){  
+    if(temp.name==toDoList.lists[i].name){  
       pos=i;  
       i=toDoList.lists.size();
-      val=1;
+      val=false;
     }
   }
 return(val);
 }
 
-bool addName(List &temp){  //repetició per a afegir noms a les llistes, ja que n'haurem de fer unes quantes
+bool addName(Project toDoList, List &temp){  //repetició per a afegir noms a les llistes, ja que n'haurem de fer unes quantes
 
-  int pos=0;
   bool val=false;
 
   do{
@@ -118,8 +117,6 @@ bool addName(List &temp){  //repetició per a afegir noms a les llistes, ja que 
   for(unsigned int i=0;i<toDoList.lists.size();i++){
 
     if(temp.name==toDoList.lists[i].name){  
-    
-      pos=i;  
     
       i=toDoList.lists.size();
     
@@ -155,10 +152,10 @@ void addList(Project &toDoList){
   
   List temp;
 
-  if(addName(temp)){
+  if(addName(toDoList,temp)){
     error(ERR_LIST_NAME);
   }else{
-    toDoList.lists.push_back(temp.name);
+    toDoList.lists.push_back(temp);
   }
   
 }
@@ -166,12 +163,17 @@ void addList(Project &toDoList){
 void deleteList(Project &toDoList){
   List temp;
   int pos;
+  bool val=false;
   do{
       cout<<"Enter list name:"; getline(cin,temp.name);
-  }while(checkEmtpyL(temp)==1); //borrar element de toDoList.lists
+      if(temp.name.length()==0){
+        error(ERR_EMPTY);
+        val=true;
+      }
+  }while(val); //borrar element de toDoList.lists
 
   if(checkList(temp,toDoList,pos)==1){
-    toDoList.lists.erase(pos);
+    toDoList.lists.erase(toDoList.lists.begin()+pos);
   }else{
     error(ERR_LIST_NAME);
   }
