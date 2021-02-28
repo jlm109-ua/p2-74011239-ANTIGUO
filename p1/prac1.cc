@@ -75,59 +75,42 @@ void showMainMenu(){
        << "Option: ";
 }
 
-int checkEmpty(List temp){ //Comprova si el .name dels tipus List està buit
-int val=0;//validació
+bool checkEmpty(List temp){ //Comprova si el .name dels tipus List està buit
+bool val=false;//validació
   if(temp.name.length()==0){
     error(ERR_EMPTY);
-    val=1;
+    val=true;
   }
 return(val);
 }
 
 bool checkList(List temp,Project toDoList,int &pos){ //Comprova si hi ha alguna llista amb el mateix nom i la posició en la que es troba
-  bool val=true;
+  List temp;
+  bool val;
   pos=0;
   for(unsigned int i=0;i<toDoList.lists.size();i++){
+    val=false;
     if(temp.name==toDoList.lists[i].name){  
       pos=i;  
       i=toDoList.lists.size();
-      val=false;
+      val=true;
     }
   }
 return(val);
 }
 
-bool addName(Project toDoList, List &temp){  //repetició per a afegir noms a les llistes, ja que n'haurem de fer unes quantes
-
-  bool val=false;
+bool findList(List &temp,Project toDoList,int &pos){
 
   do{
+  cout<<"Enter list name:"; getline(cin,temp.name); 
+  }while(checkEmpty(temp));
 
-    cout<<"Enter list name:"; getline(cin,temp.name);
-
-    if(temp.name.length()==0){
-      error(ERR_EMPTY);
-      val=true;
-    }
-
-  }while(val);
-
-  val=false;
-
-  for(unsigned int i=0;i<toDoList.lists.size();i++){
-
-    if(temp.name==toDoList.lists[i].name){  
-    
-      i=toDoList.lists.size();
-    
-      val=true;
-    
-    }
-  
+  if(checkList(temp,toDoList,pos)){
+    break;
+  }else{
+    return(false);
   }
-
-return(val);
-
+return(true);
 }
 
 void editProject(Project &toDoList){
@@ -135,14 +118,11 @@ void editProject(Project &toDoList){
   bool val=false;
 
   do{
-
     cout<<"Enter project name:"; getline(cin,toDoList.name);
-
     if(toDoList.name.length()==0){
       error(ERR_EMPTY);
       val=true;
     }
-
   }while(val);
 
   cout<<"Enter project description:"; getline(cin,toDoList.description);
@@ -151,34 +131,37 @@ void editProject(Project &toDoList){
 void addList(Project &toDoList){
   
   List temp;
+  bool val;
 
-  if(addName(toDoList,temp)){
-    error(ERR_LIST_NAME);
-  }else{
-    toDoList.lists.push_back(temp);
-  }
+  do{
+    val=false;
+    cout<<"Enter list name:"; getline(cin,temp.name);
+    if(temp.name.length()==0){
+      error(ERR_EMPTY);
+      val=true;
+    }
+  }while(val);
   
+  for(unsigned int i=0;i<toDoList.lists.size();i++){
+    if(temp.name==toDoList.lists[i].name){ 
+      i=toDoList.lists.size();
+      error(ERR_LIST_NAME);
+    }else{
+      toDoList.lists.push_back(temp);
+    }
+  }
 }
 
 void deleteList(Project &toDoList){
+
   List temp;
   int pos;
-  bool val=false;
-  do{
-      cout<<"Enter list name:"; getline(cin,temp.name);
-      if(temp.name.length()==0){
-        error(ERR_EMPTY);
-        val=true;
-      }
-  }while(val); //borrar element de toDoList.lists //NO RECONOCE LA LISTA
-
-  if(checkList(temp,toDoList,pos)==1){
+  
+  if(findList(temp,toDoList,pos)){
     toDoList.lists.erase(toDoList.lists.begin()+pos);
   }else{
     error(ERR_LIST_NAME);
-  }
-
-  find List(temp);
+  } //borrar element de toDoList.lists //NO RECONOCE LA LISTA
 }
 
 void addTask(Project &toDoList){ //per acabar
@@ -186,51 +169,40 @@ void addTask(Project &toDoList){ //per acabar
   List temp;
   int pos;
 
-  do{
-
-    cout<<"Enter list name:"; getline(cin,temp.name);
-
-    if(temp.name.length()==0){
-      error(ERR_EMPTY);
-      val=true;
-    }
-
-  }while(val);
-
-  if(checkList(temp,toDoList,pos)==0){
-    //ruta de task?
+  if(findList(temp,toDoList,pos)){
+    ttemp.isDone=false;
+    cout<<"Enter task name: "; getline(cin,ttemp.name);
+    cout<<"Enter deadline: "; cin>>;//acabar
+  }else{
+    error(ERR_LIST_NAME);
   }
 }
 
 void deleteTask(Project &toDoList){ //per acabar
+  Task ttemp;
+  List temp;
+  int pos;
 
-  do{ //Crear mòdul per a introduir nom
 
-    cout<<"Enter list name:"; getline(cin,temp.name);
 
-    if(temp.name.length()==0){
-      error(ERR_EMPTY);
-      val=true;
+  if(findList(temp,toDoList,pos)){
+    if(findTask()){
+// ACABAR I CREAR findTask
+    }else{
+      error(ERR_TASK_NAME);
     }
-
-  }while(val);
+  }else{
+    error(ERR_LIST_NAME);
+  }
 
 }
 
 void toggleTask(Project &toDoList){ //per acabar
+List temp;
+int pos;
 
-  do{
+  if(findList(temp,toDoList,pos))
 
-    cout<<"Enter list name:"; getline(cin,temp.name);
-
-    if(temp.name.length()==0){
-      error(ERR_EMPTY);
-      val=true;
-    }
-
-  }while(val);
-
-  
 
 }
 
