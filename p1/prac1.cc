@@ -165,6 +165,7 @@ void deleteList(Project &toDoList){
 }
 
 void addTask(Project &toDoList){ //per acabar
+  Date dtemp;
   Task ttemp;
   List temp;
   int pos;
@@ -172,7 +173,11 @@ void addTask(Project &toDoList){ //per acabar
   if(findList(temp,toDoList,pos)){
     ttemp.isDone=false;
     cout<<"Enter task name: "; getline(cin,ttemp.name);
-    cout<<"Enter deadline: "; cin>>;//acabar
+    //crear .size mòdul
+    cout<<"Enter deadline: "; 
+      cin.getline(dtemp.day[/*mòdul .size*/],2,'/'); 
+      cin.getline(dtemp.month[/*mòdul .size*/],2,'/'); 
+      cin.getline(dtemp.year[/*mòdul .size*/],4,'\n')//acabar
   }else{
     error(ERR_LIST_NAME);
   }
