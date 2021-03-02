@@ -113,6 +113,88 @@ bool findList(List &temp,Project toDoList,int &pos){
 return(true);
 }
 
+bool findTask(List temp,Task ttemp,int &pos){
+
+  for(int i=0;i<ttemp.size();i++){
+    if(temp.name==ttemp.name[i]){
+      pos=i;
+      i=ttemp.size();
+      return(true);
+    }
+  }
+return(false)
+}
+
+bool checkDate(Date dtemp){
+
+bool c1=false,c2=false,c3=false; //Validadors a l'apartat de comprovar les combinacions errònies
+
+//Comprovar l'any
+
+  if(dtemp.year<2000 || dtemp.year>2100){
+    return(true);
+  }
+
+//Comprovar el mes
+
+  if(dtemp.month<1 || dtemp.month>12){
+    return(true);
+  }
+
+// Comprovar el dia
+
+  if(dtemp.day<1 || dtemp.day>31){
+    return(true);
+  }
+
+// Comprovem combinacions errònies
+
+  switch(dtemp.month){
+    case 2: 
+      if(dtemp.day>29){
+        return(false);
+      }
+      if(dtemp.day==29){
+        if(dtemp.year%100==0){
+          if(dtemp.year%400==0){
+            break;
+          }else{
+            return(false);
+          }  
+        }else{
+          return(false);
+        }
+        if(dtemp.year%4!=0){
+          return(false);
+        }
+      }
+      break;
+    case 4: 
+      if(dtemp.day>30){
+        return(false);
+      }
+      break;
+    case 6: 
+      if(dtemp.day>30){
+        return(false);
+      }
+      break;
+    case 9: 
+      if(dtemp.day>30){
+        return(false);
+      }
+      break;
+    case 11:
+      if(dtemp.day>30){
+        return(false);
+      }
+      break;
+  }
+
+
+return(false)
+}
+
 void editProject(Project &toDoList){
   
   bool val=false;
@@ -168,16 +250,22 @@ void addTask(Project &toDoList){ //per acabar
   Date dtemp;
   Task ttemp;
   List temp;
-  int pos;
+  int pos,i;
 
   if(findList(temp,toDoList,pos)){
-    ttemp.isDone=false;
     cout<<"Enter task name: "; getline(cin,ttemp.name);
-    //crear .size mòdul
-    cout<<"Enter deadline: "; 
-      cin.getline(dtemp.day[/*mòdul .size*/],2,'/'); 
-      cin.getline(dtemp.month[/*mòdul .size*/],2,'/'); 
-      cin.getline(dtemp.year[/*mòdul .size*/],4,'\n')//acabar
+    cout<<"Enter deadline: ";
+      cin.getline(dtemp.day,2,'/'); 
+      cin.getline(dtemp.month,2,'/'); 
+      cin.getline(dtemp.year,4,'\n') //guarda la data de l'última tasca que s'ha creat
+    if(checkDate(dtemp)){
+      error(ERR_DATE);
+    }else{
+      temp.tasks.push_back(ttemp.name);
+      ttemp.isDone=false;
+      i=temp.tasks.size();
+      ttemp.deadline.push_back(dtemp); //com guarde la deadline?? //és correcte??????
+    }
   }else{
     error(ERR_LIST_NAME);
   }
@@ -188,18 +276,15 @@ void deleteTask(Project &toDoList){ //per acabar
   List temp;
   int pos;
 
-
-
   if(findList(temp,toDoList,pos)){
-    if(findTask()){
-// ACABAR I CREAR findTask
+    if(findTask(temp,ttemp,pos)){
+      temp.tasks.erase(temp.tasks.begin()+pos);
     }else{
       error(ERR_TASK_NAME);
     }
   }else{
     error(ERR_LIST_NAME);
   }
-
 }
 
 void toggleTask(Project &toDoList){ //per acabar
