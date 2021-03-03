@@ -99,7 +99,7 @@ void showMainMenu(){
 }
 
 bool checkEmpty(List temp){ //Comprova si el .name dels tipus List està buit
-bool val=false;//validació
+bool val=false;
   if(temp.name.length()==0){
     error(ERR_EMPTY);
     val=true;
@@ -152,28 +152,34 @@ string s;
 return(false);
 }
 
-bool checkDate(Date dtemp){ //FALLA
+bool checkDate(string sd,string sm,string sy){ //FALLA
 
-  if(dtemp.year<n2000 || dtemp.year>n2100){
+  int day,month,year;
+
+  day=stoi(sd);
+  month=stoi(sm);
+  year=stoi(sy);
+
+  if(year<n2000 || year>n2100){
     return(true);
   }
 
-  if(dtemp.month<n1 || dtemp.month>n12){
+  if(month<n1 || month>n12){
     return(true);
   }
 
-  if(dtemp.day<n1 || dtemp.day>n31){
+  if(day<n1 || day>n31){
     return(true);
   }
 
-  switch(dtemp.month){
+  switch(month){
     case 2: 
-      if(dtemp.day>n29){
+      if(day>n29){
         return(false);
       }
-      if(dtemp.day==n29){
-        if(dtemp.year%n100==0){
-          if(dtemp.year%n400==0){
+      if(day==n29){
+        if(year%n100==0){
+          if(year%n400==0){
             break;
           }else{
             return(false);
@@ -181,28 +187,28 @@ bool checkDate(Date dtemp){ //FALLA
         }else{
           return(false);
         }
-        if(dtemp.year%n4!=0){
+        if(year%n4!=0){
           return(false);
         }
       }
       break;
     case 4: 
-      if(dtemp.day>n30){
+      if(day>n30){
         return(false);
       }
       break;
     case 6: 
-      if(dtemp.day>n30){
+      if(day>n30){
         return(false);
       }
       break;
     case 9: 
-      if(dtemp.day>n30){
+      if(day>n30){
         return(false);
       }
       break;
     case 11:
-      if(dtemp.day>n30){
+      if(day>n30){
         return(false);
       }
       break;
@@ -266,29 +272,30 @@ void deleteList(Project &toDoList){
   }
 }
 
-void addTask(Project &toDoList){ //per acabar
+void addTask(Project &toDoList){ //NO FUNCIONA
   Date dtemp;
   Task ttemp;
   List temp;
   int pos,i,time=0;
   string sd,sm,sy; //sd=string day, sm=string month i sy=string year
 
+  i=toDoList.lists[pos].tasks.size()-1;
+
   if(findList(temp,toDoList,pos)){
-    cout<<E_TN; getline(cin,ttemp.name,'\n');
+    cout<<E_TN; getline(cin,toDoList.lists[pos].tasks[i].name,'\n');
     cout<<E_D;
       getline(cin,sd,'/');
       getline(cin,sm,'/');
       getline(cin,sy,'\n');
-    if(checkDate(dtemp)){
+    if(checkDate(sd,sm,sy)){
       error(ERR_DATE);
     }else{
       cout<<E_ET; cin>>time;
       if(time<1 || time>180){
         error(ERR_TIME);
-      }else{ //guardem totes les dades recopilades anteriors en la nova llista
+      }else{ //GUARDA
         ttemp.isDone=false;
         toDoList.lists[pos].tasks.push_back(ttemp);
-        i=toDoList.lists[pos].tasks.size()-1;
         toDoList.lists[pos].tasks[i].deadline.day=stoi(sd);
         toDoList.lists[pos].tasks[i].deadline.month=stoi(sm);
         toDoList.lists[pos].tasks[i].deadline.year=stoi(sy);
@@ -341,9 +348,9 @@ void report(const Project &toDoList){ //PER ACABAR
 
   cout<<N<<toDoList.name<<endl;
   cout<<D<<toDoList.description<<endl;
-  for(unsigned int i=0;toDoList.lists.size();i++){
+  for(unsigned int i=0;i<toDoList.lists.size();i++){
     cout<<toDoList.lists[i].name<<endl;
-    for(unsigned int j=0;temp.tasks.size();i++){
+    for(unsigned int j=0;j<temp.tasks.size();i++){
       cout<<"[";
       if(toDoList.lists[i].tasks[j].isDone==true){
         cout<<"X";
