@@ -85,7 +85,6 @@ return(val);
 }
 
 bool checkList(List temp,Project toDoList,int &pos){ //Comprova si hi ha alguna llista amb el mateix nom i la posició en la que es troba
-  List temp;
   bool val;
   pos=0;
   for(unsigned int i=0;i<toDoList.lists.size();i++){
@@ -106,48 +105,38 @@ bool findList(List &temp,Project toDoList,int &pos){
   }while(checkEmpty(temp));
 
   if(checkList(temp,toDoList,pos)){
-    break;
   }else{
     return(false);
   }
 return(true);
 }
 
+
 bool findTask(List temp,Task ttemp,int &pos){
 
-  for(int i=0;i<ttemp.size();i++){
+  for(unsigned int i=0;i<temp.tasks.size();i++){
     if(temp.name==ttemp.name[i]){
       pos=i;
-      i=ttemp.size();
+      i=temp.tasks.size();
       return(true);
     }
   }
-return(false)
+return(false);
 }
 
 bool checkDate(Date dtemp){
-
-bool c1=false,c2=false,c3=false; //Validadors a l'apartat de comprovar les combinacions errònies
-
-//Comprovar l'any
 
   if(dtemp.year<2000 || dtemp.year>2100){
     return(true);
   }
 
-//Comprovar el mes
-
   if(dtemp.month<1 || dtemp.month>12){
     return(true);
   }
 
-// Comprovar el dia
-
   if(dtemp.day<1 || dtemp.day>31){
     return(true);
   }
-
-// Comprovem combinacions errònies
 
   switch(dtemp.month){
     case 2: 
@@ -192,7 +181,7 @@ bool c1=false,c2=false,c3=false; //Validadors a l'apartat de comprovar les combi
   }
 
 
-return(false)
+return(false);
 }
 
 void editProject(Project &toDoList){
@@ -251,13 +240,14 @@ void addTask(Project &toDoList){ //per acabar
   Task ttemp;
   List temp;
   int pos,i;
+  string sd,sm,sy //string day, string month i string year
 
   if(findList(temp,toDoList,pos)){
     cout<<"Enter task name: "; getline(cin,ttemp.name);
     cout<<"Enter deadline: ";
-      cin.getline(dtemp.day,2,'/'); 
-      cin.getline(dtemp.month,2,'/'); 
-      cin.getline(dtemp.year,4,'\n') //guarda la data de l'última tasca que s'ha creat
+      getline(cin,sd,'/');  dtemp.day=stoi(sd);
+      getline(cin,sm,'/');  dtemp.month=stoi(sm);
+      getline(cin,sy,'\n'); dtemp.year=stoi(sy);
     if(checkDate(dtemp)){
       error(ERR_DATE);
     }else{
@@ -287,16 +277,31 @@ void deleteTask(Project &toDoList){ //per acabar
   }
 }
 
-void toggleTask(Project &toDoList){ //per acabar
+void toggleTask(Project &toDoList){ //NO SÉ SI ESTÀ BÉ, PREGUNTAR
 List temp;
+Task ttemp;
 int pos;
 
-  if(findList(temp,toDoList,pos))
-
+  if(findList(temp,toDoList,pos)){
+    if(findTask(temp,ttemp,pos){
+      if(ttemp.isDone[pos]==false){
+        ttemp.isDone[pos]==true;
+      }else{
+        ttemp.isDone[pos]==false
+      }
+    }else{
+      error(ERR_TASK_NAME);
+    }
+  }
 
 }
 
-void report(const Project &toDoList){
+void report(const Project &toDoList){ //PER ACABAR
+  List temp;
+  Task ttemp;
+
+  cout<<"Name: "<<toDoList.name;
+  cout<<"Description: "<<toDoList.description;
 }
 
 int main(){
