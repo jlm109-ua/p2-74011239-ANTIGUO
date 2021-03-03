@@ -1,0 +1,39 @@
+==6138== Invalid read of size 8
+==6138==    at 0x4EEA830: std::basic_ostream<char, std::char_traits<char> >& std::operator<< <char, std::char_traits<char>, std::allocator<char> >(std::basic_ostream<char, std::char_traits<char> >&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.21)
+==6138==    by 0x402B53: report(Project const&) (prac1.cc:344)
+==6138==    by 0x403054: main (prac1.cc:388)
+==6138==  Address 0x5ab6780 is 8 bytes after a block of size 56 alloc'd
+==6138==    at 0x4C2E0EF: operator new(unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==6138==    by 0x4060E7: __gnu_cxx::new_allocator<List>::allocate(unsigned long, void const*) (new_allocator.h:104)
+==6138==    by 0x405B22: std::allocator_traits<std::allocator<List> >::allocate(std::allocator<List>&, unsigned long) (alloc_traits.h:491)
+==6138==    by 0x4053B9: std::_Vector_base<List, std::allocator<List> >::_M_allocate(unsigned long) (stl_vector.h:170)
+==6138==    by 0x4046DF: void std::vector<List, std::allocator<List> >::_M_emplace_back_aux<List const&>(List const&) (vector.tcc:412)
+==6138==    by 0x403DA8: std::vector<List, std::allocator<List> >::push_back(List const&) (stl_vector.h:923)
+==6138==    by 0x401EDC: addList(Project&) (prac1.cc:244)
+==6138==    by 0x40300E: main (prac1.cc:378)
+==6138== 
+==6138== Invalid read of size 8
+==6138==    at 0x4EEA834: std::basic_ostream<char, std::char_traits<char> >& std::operator<< <char, std::char_traits<char>, std::allocator<char> >(std::basic_ostream<char, std::char_traits<char> >&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.21)
+==6138==    by 0x402B53: report(Project const&) (prac1.cc:344)
+==6138==    by 0x403054: main (prac1.cc:388)
+==6138==  Address 0x5ab6778 is 0 bytes after a block of size 56 alloc'd
+==6138==    at 0x4C2E0EF: operator new(unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==6138==    by 0x4060E7: __gnu_cxx::new_allocator<List>::allocate(unsigned long, void const*) (new_allocator.h:104)
+==6138==    by 0x405B22: std::allocator_traits<std::allocator<List> >::allocate(std::allocator<List>&, unsigned long) (alloc_traits.h:491)
+==6138==    by 0x4053B9: std::_Vector_base<List, std::allocator<List> >::_M_allocate(unsigned long) (stl_vector.h:170)
+==6138==    by 0x4046DF: void std::vector<List, std::allocator<List> >::_M_emplace_back_aux<List const&>(List const&) (vector.tcc:412)
+==6138==    by 0x403DA8: std::vector<List, std::allocator<List> >::push_back(List const&) (stl_vector.h:923)
+==6138==    by 0x401EDC: addList(Project&) (prac1.cc:244)
+==6138==    by 0x40300E: main (prac1.cc:378)
+==6138== 
+==6138== 
+==6138== Process terminating with default action of signal 11 (SIGSEGV)
+==6138==  Access not within mapped region at address 0x5EA4020
+==6138==    at 0x4EEA830: std::basic_ostream<char, std::char_traits<char> >& std::operator<< <char, std::char_traits<char>, std::allocator<char> >(std::basic_ostream<char, std::char_traits<char> >&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.21)
+==6138==    by 0x402B53: report(Project const&) (prac1.cc:344)
+==6138==    by 0x403054: main (prac1.cc:388)
+==6138==  If you believe this happened as a result of a stack
+==6138==  overflow in your program's main thread (unlikely but
+==6138==  possible), you can try to increase the size of the
+==6138==  main thread stack using the --main-stacksize= flag.
+==6138==  The main thread stack size used in this run was 8388608.

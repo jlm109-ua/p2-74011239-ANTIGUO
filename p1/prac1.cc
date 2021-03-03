@@ -110,6 +110,7 @@ return(val);
 bool checkList(List temp,Project toDoList,int &pos){ //Comprova si hi ha alguna llista amb el mateix nom i la posició en la que es troba
   bool val;
   pos=0;
+
   for(unsigned int i=0;i<toDoList.lists.size();i++){
     val=false;
     if(temp.name==toDoList.lists[i].name){  
@@ -121,7 +122,7 @@ bool checkList(List temp,Project toDoList,int &pos){ //Comprova si hi ha alguna 
 return(val);
 }
 
-bool findList(List &temp,Project toDoList,int &pos){
+bool findList(List &temp,Project toDoList,int &pos){ //FALLA, NO RECONEIX LES LLISTES IGUALS
 
   do{
   cout<<E_LN; getline(cin,temp.name); 
@@ -151,7 +152,7 @@ string s;
 return(false);
 }
 
-bool checkDate(Date dtemp){
+bool checkDate(Date dtemp){ //FALLA
 
   if(dtemp.year<n2000 || dtemp.year>n2100){
     return(true);
@@ -213,9 +214,10 @@ return(false);
 
 void editProject(Project &toDoList){
   
-  bool val=false;
+  bool val;
 
   do{
+    val=false;
     cout<<E_PN; getline(cin,toDoList.name);
     if(toDoList.name.length()==0){
       error(ERR_EMPTY);
@@ -226,7 +228,7 @@ void editProject(Project &toDoList){
   cout<<E_PD; getline(cin,toDoList.description);
 }
 
-void addList(Project &toDoList){
+void addList(Project &toDoList){ 
   List temp;
   bool val;
 
@@ -239,12 +241,16 @@ void addList(Project &toDoList){
     }
   }while(val);
   
-  for(unsigned int i=0;i<toDoList.lists.size();i++){
-    if(temp.name==toDoList.lists[i].name){ 
-      i=toDoList.lists.size();
-      error(ERR_LIST_NAME);
-    }else{
-      toDoList.lists.push_back(temp);
+  if(toDoList.lists.size()==0){
+    toDoList.lists.push_back(temp);
+  }else{
+    for(unsigned int i=0;i<toDoList.lists.size();i++){
+      if(temp.name==toDoList.lists[i].name){ 
+        i=toDoList.lists.size();
+        error(ERR_LIST_NAME);
+      }else{
+        toDoList.lists.push_back(temp);
+      }
     }
   }
 }
@@ -337,7 +343,7 @@ void report(const Project &toDoList){ //PER ACABAR
   cout<<D<<toDoList.description<<endl;
   for(unsigned int i=0;toDoList.lists.size();i++){
     cout<<toDoList.lists[i].name<<endl;
-    for(unsigned j=0;temp.tasks.size();i++){
+    for(unsigned int j=0;temp.tasks.size();i++){
       cout<<"[";
       if(toDoList.lists[i].tasks[j].isDone==true){
         cout<<"X";
