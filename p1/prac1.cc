@@ -7,7 +7,28 @@
 
 using namespace std;
 
-// POSSAR CONSTANTS (NOMBRES I CADENES)
+const int n1=1;
+const int n4=4;
+const int n12=12;
+const int n29=29;
+const int n30=30;
+const int n31=31;
+const int n100=100;
+const int n400=400;
+const int n2000=2000;
+const int n2100=2100;
+
+const string E_PN="Enter project name: ";
+const string E_PD="Enter project description: ";
+const string E_LN="Enter list name: ";
+const string E_TN="Enter task name: ";
+const string E_D="Enter deadline: ";
+const string E_ET="Enter expected time: ";
+const string N="Name: ";
+const string D="Description: ";
+const string TL="Total left: ";
+const string TD="Total done: ";
+const string MIN="minutes ";
 
 struct Date{
   int day;
@@ -103,7 +124,7 @@ return(val);
 bool findList(List &temp,Project toDoList,int &pos){
 
   do{
-  cout<<"Enter list name:"; getline(cin,temp.name); 
+  cout<<E_LN; getline(cin,temp.name); 
   }while(checkEmpty(temp));
 
   if(checkList(temp,toDoList,pos)){
@@ -118,7 +139,7 @@ bool findTask(List temp,Task ttemp,int &pos,int &i,Project &toDoList){
 
 string s;
 
-  cout<<"Enter task name: "; getline(cin,s,'\n');
+  cout<<E_TN; getline(cin,s,'\n');
 
   for(unsigned int i=0;i<toDoList.lists[pos].tasks.size();i++){
     if(s==toDoList.lists[pos].tasks[i].name){ 
@@ -132,26 +153,26 @@ return(false);
 
 bool checkDate(Date dtemp){
 
-  if(dtemp.year<2000 || dtemp.year>2100){
+  if(dtemp.year<n2000 || dtemp.year>n2100){
     return(true);
   }
 
-  if(dtemp.month<1 || dtemp.month>12){
+  if(dtemp.month<n1 || dtemp.month>n12){
     return(true);
   }
 
-  if(dtemp.day<1 || dtemp.day>31){
+  if(dtemp.day<n1 || dtemp.day>n31){
     return(true);
   }
 
   switch(dtemp.month){
     case 2: 
-      if(dtemp.day>29){
+      if(dtemp.day>n29){
         return(false);
       }
-      if(dtemp.day==29){
-        if(dtemp.year%100==0){
-          if(dtemp.year%400==0){
+      if(dtemp.day==n29){
+        if(dtemp.year%n100==0){
+          if(dtemp.year%n400==0){
             break;
           }else{
             return(false);
@@ -159,28 +180,28 @@ bool checkDate(Date dtemp){
         }else{
           return(false);
         }
-        if(dtemp.year%4!=0){
+        if(dtemp.year%n4!=0){
           return(false);
         }
       }
       break;
     case 4: 
-      if(dtemp.day>30){
+      if(dtemp.day>n30){
         return(false);
       }
       break;
     case 6: 
-      if(dtemp.day>30){
+      if(dtemp.day>n30){
         return(false);
       }
       break;
     case 9: 
-      if(dtemp.day>30){
+      if(dtemp.day>n30){
         return(false);
       }
       break;
     case 11:
-      if(dtemp.day>30){
+      if(dtemp.day>n30){
         return(false);
       }
       break;
@@ -195,14 +216,14 @@ void editProject(Project &toDoList){
   bool val=false;
 
   do{
-    cout<<"Enter project name:"; getline(cin,toDoList.name);
+    cout<<E_PN; getline(cin,toDoList.name);
     if(toDoList.name.length()==0){
       error(ERR_EMPTY);
       val=true;
     }
   }while(val);
 
-  cout<<"Enter project description:"; getline(cin,toDoList.description);
+  cout<<E_PD; getline(cin,toDoList.description);
 }
 
 void addList(Project &toDoList){
@@ -211,7 +232,7 @@ void addList(Project &toDoList){
 
   do{
     val=false;
-    cout<<"Enter list name:"; getline(cin,temp.name);
+    cout<<E_LN; getline(cin,temp.name);
     if(temp.name.length()==0){
       error(ERR_EMPTY);
       val=true;
@@ -247,15 +268,15 @@ void addTask(Project &toDoList){ //per acabar
   string sd,sm,sy; //sd=string day, sm=string month i sy=string year
 
   if(findList(temp,toDoList,pos)){
-    cout<<"Enter task name: "; getline(cin,ttemp.name,'\n');
-    cout<<"Enter deadline: ";
+    cout<<E_TN; getline(cin,ttemp.name,'\n');
+    cout<<E_D;
       getline(cin,sd,'/');
       getline(cin,sm,'/');
       getline(cin,sy,'\n');
     if(checkDate(dtemp)){
       error(ERR_DATE);
     }else{
-      cout<<"Enter expected time: "; cin>>time;
+      cout<<E_ET; cin>>time;
       if(time<1 || time>180){
         error(ERR_TIME);
       }else{ //guardem totes les dades recopilades anteriors en la nova llista
@@ -312,8 +333,8 @@ void report(const Project &toDoList){ //PER ACABAR
   Task ttemp;
   int tottimed=0,tottimel=0,countd=0,countl=0; //tottimed=temps total de tasques fetes, tottimel=temps total de tasques per acabar, countd=comptador de tasques fetes, countl=comptador de tasques per fer
 
-  cout<<"Name: "<<toDoList.name;
-  cout<<"Description: "<<toDoList.description<<endl;
+  cout<<N<<toDoList.name<<endl;
+  cout<<D<<toDoList.description<<endl;
   for(unsigned int i=0;toDoList.lists.size();i++){
     cout<<toDoList.lists[i].name<<endl;
     for(unsigned j=0;temp.tasks.size();i++){
@@ -331,8 +352,8 @@ void report(const Project &toDoList){ //PER ACABAR
       cout<<"("<<toDoList.lists[i].tasks[j].time<<") "<<toDoList.lists[i].tasks[j].deadline.year<<"-"<<toDoList.lists[i].tasks[j].deadline.month<<"-"<<toDoList.lists[i].tasks[j].deadline.day<<" : "<<toDoList.lists[i].tasks[j].name<<endl;
     }
   }
-  cout<<"Total left: "<<countl<<"("<<tottimel<<" minutes )";
-  cout<<"Total done: "<<countd<<"("<<tottimed<<" minutes )";
+  cout<<TL<<countl<<" ("<<tottimel<<" "<<MIN<<")"<<endl;
+  cout<<TD<<countd<<" ("<<tottimed<<" "<<MIN<<")"<<endl;
   //FALTA EL HIGHEST PRIORITY
 }
 
