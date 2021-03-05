@@ -378,7 +378,7 @@ void report(const Project &toDoList){ //CANVIAR HIGHEST PRIORITY!
           cout<<" ";
           tottimel+=toDoList.lists[i].tasks[j].time; 
           countl++;
-          if((i==0) && (j==0)){
+          if(sy==0 || ((i==0) && (j==0))){
             sy=toDoList.lists[i].tasks[j].deadline.year;
             sm=toDoList.lists[i].tasks[j].deadline.month;
             sd=toDoList.lists[i].tasks[j].deadline.day;
