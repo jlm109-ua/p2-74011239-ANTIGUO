@@ -28,7 +28,7 @@ const string N="Name: ";
 const string D="Description: ";
 const string TL="Total left: ";
 const string TD="Total done: ";
-const string MIN="minutes ";
+const string MIN="minutes";
 const string HP="Highest priority: ";
 
 struct Date{
@@ -361,7 +361,7 @@ void report(const Project &toDoList){ //CANVIAR HIGHEST PRIORITY!
   if(s2.length()==0 || s2==toDoList.name){ 
   }else{
     cout<<D<<toDoList.description<<endl;
-  } //mirar si el nom està buit que no imprimisca description
+  }
 
   for(unsigned int i=0;i<toDoList.lists.size();i++){
     cout<<toDoList.lists[i].name<<endl;
@@ -379,19 +379,19 @@ void report(const Project &toDoList){ //CANVIAR HIGHEST PRIORITY!
           tottimel+=toDoList.lists[i].tasks[j].time; 
           countl++;
           if((i==0) && (j==0)){
-          sy=toDoList.lists[i].tasks[j].deadline.year;
-          sm=toDoList.lists[i].tasks[j].deadline.month;
-          sd=toDoList.lists[i].tasks[j].deadline.day;
-          s=toDoList.lists[i].tasks[j].name;
+            sy=toDoList.lists[i].tasks[j].deadline.year;
+            sm=toDoList.lists[i].tasks[j].deadline.month;
+            sd=toDoList.lists[i].tasks[j].deadline.day;
+            s=toDoList.lists[i].tasks[j].name;
           }else{
-            if(toDoList.lists[i].tasks[j].deadline.year>=sy){
-              if(toDoList.lists[i].tasks[j].deadline.month>sm){
+            if(toDoList.lists[i].tasks[j].deadline.year<=sy){
+              if(toDoList.lists[i].tasks[j].deadline.month<sm){
                 sy=toDoList.lists[i].tasks[j].deadline.year;
                 sm=toDoList.lists[i].tasks[j].deadline.month;
                 sd=toDoList.lists[i].tasks[j].deadline.day;
                 s=toDoList.lists[i].tasks[j].name;
               }else if(sm==toDoList.lists[i].tasks[j].deadline.month){
-                if(toDoList.lists[i].tasks[j].deadline.day>sd){
+                if(toDoList.lists[i].tasks[j].deadline.day<sd){
                   sy=toDoList.lists[i].tasks[j].deadline.year;
                   sm=toDoList.lists[i].tasks[j].deadline.month;
                   sd=toDoList.lists[i].tasks[j].deadline.day;
