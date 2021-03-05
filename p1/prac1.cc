@@ -99,7 +99,7 @@ void showMainMenu(){
        << "Option: ";
 }
 
-bool checkEmpty(string s){ //Comprova si el .name dels tipus List està buit
+bool checkEmpty(string s){ //Comprova si la string està buida
 bool val=false;
   if(s.length()==0){
     error(ERR_EMPTY);
@@ -109,11 +109,10 @@ return(val);
 }
 
 bool checkList(string s,Project toDoList,int &pos){ //Comprova si hi ha alguna llista amb el mateix nom i la posició en la que es troba
-  bool val;
+  bool val=false;
   pos=0;
 
   for(unsigned int i=0;i<toDoList.lists.size();i++){
-    val=false;
     if(s==toDoList.lists[i].name){  
       pos=i;  
       i=toDoList.lists.size();
@@ -123,7 +122,7 @@ bool checkList(string s,Project toDoList,int &pos){ //Comprova si hi ha alguna l
 return(val);
 }
 
-bool findList(string s,Project toDoList,int &pos){ //FALLA, NO RECONEIX LES LLISTES IGUALS
+bool findList(string &s,Project toDoList,int &pos){
 bool val=true;
 
   do{
@@ -138,22 +137,22 @@ return(val);
 }
 
 
-bool findTask(List temp,Task ttemp,int &pos,int &i,Project &toDoList){
+bool findTask(List temp,Task ttemp,int &pos1,int &pos2,Project &toDoList){
 string s;
 
   cout<<E_TN; getline(cin,s,'\n');
 
-  for(unsigned int i=0;i<toDoList.lists[pos].tasks.size();i++){
-    if(s==toDoList.lists[pos].tasks[i].name){ 
-      pos=i;
-      i=toDoList.lists[pos].tasks.size();
+  for(unsigned int i=0;i<toDoList.lists[pos1].tasks.size();i++){
+    if(s==toDoList.lists[pos1].tasks[i].name){ 
+      pos2=i;
+      i=toDoList.lists[pos1].tasks.size();
       return(true);
     }
   }
 return(false);
 }
 
-bool checkDate(string sd,string sm,string sy){ //FALLA
+bool checkDate(string sd,string sm,string sy){
 
   int day,month,year;
 
@@ -238,20 +237,22 @@ void editProject(Project &toDoList){
 void addList(Project &toDoList){ 
   List temp;
   string s;
-  int pos;
+  int pos,i;
+
+  i=toDoList.lists.size();
 
   if(toDoList.lists.size()==0){
     do{
       cout<<E_LN; getline(cin,s);
     }while(checkEmpty(s));
-    temp.name=s;
     toDoList.lists.push_back(temp);
+    toDoList.lists[0].name=s;
   }else{
     if(findList(s,toDoList,pos)){
       error(ERR_LIST_NAME);
     }else{
-      temp.name=s;
       toDoList.lists.push_back(temp);
+      toDoList.lists[i].name=s;
     }
   }
 }
@@ -268,7 +269,7 @@ void deleteList(Project &toDoList){
   }
 }
 
-void addTask(Project &toDoList){ //NO FUNCIONA
+void addTask(Project &toDoList){
   Task ttemp;
   List temp;
   int pos,i,time=0;
@@ -322,15 +323,15 @@ void deleteTask(Project &toDoList){
 void toggleTask(Project &toDoList){
 List temp;
 Task ttemp;
-int pos,i;
+int pos1,pos2;
 string s;
 
-  if(findList(s,toDoList,pos)){
-    if(findTask(temp,ttemp,pos,i,toDoList)){
-      if(toDoList.lists[pos].tasks[i].isDone){
-        toDoList.lists[pos].tasks[i].isDone=false;
+  if(findList(s,toDoList,pos1)){
+    if(findTask(temp,ttemp,pos1,pos2,toDoList)){
+      if(toDoList.lists[pos1].tasks[pos2].isDone){
+        toDoList.lists[pos1].tasks[pos2].isDone=false;
       }else{
-        toDoList.lists[pos].tasks[i].isDone=true; 
+        toDoList.lists[pos1].tasks[pos2].isDone=true; 
       }
     }else{
       error(ERR_TASK_NAME);
@@ -338,53 +339,56 @@ string s;
   }
 }
 
-void report(const Project &toDoList){ //PER ACABAR
+void report(const Project &toDoList){ //CANVIAR HIGHEST PRIORITY!
   List temp;
   Task ttemp;
-  int tottimed=0,tottimel=0,countd=0,countl=0,sd=0,sm=0,sy=0,aux=0; //tottimed=temps total de tasques fetes, tottimel=temps total de tasques per acabar, countd=comptador de tasques fetes, countl=comptador de tasques per fer, aux=j per a confirmar el nombre de tasques que hi ha
+  int tottimed=0,tottimel=0,countd=0,countl=0,sd=0,sm=0,sy=0; //tottimed=temps total de tasques fetes, tottimel=temps total de tasques per acabar, countd=comptador de tasques fetes, countl=comptador de tasques per fer
   string s;
+  bool aux=false; //auxiliar per a imprimir el Highest priority
 
   cout<<N<<toDoList.name<<endl;
   cout<<D<<toDoList.description<<endl;
   
   for(unsigned int i=0;i<toDoList.lists.size();i++){
     cout<<toDoList.lists[i].name<<endl;
-    for(unsigned int j=0;j<toDoList.lists[i].tasks.size();i++){
-      aux=j;
-      cout<<"[";
-      if(toDoList.lists[i].tasks[j].isDone==true){
-        cout<<"X";
-        countd++;
-        tottimed+=toDoList.lists[i].tasks[j].time;
-      }else{
-        cout<<" ";
-        tottimel+=toDoList.lists[i].tasks[j].time; 
-        countl++;
-      }
-      if((i==0) && (j==0)){
-        sy=toDoList.lists[i].tasks[j].deadline.year;
-        sm=toDoList.lists[i].tasks[j].deadline.month;
-        sd=toDoList.lists[i].tasks[j].deadline.day;
-        s=toDoList.lists[i].tasks[j].name;
-      }else{
-        if(sy<=toDoList.lists[i].tasks[j].deadline.year && sm<=toDoList.lists[i].tasks[j].deadline.month && sd<toDoList.lists[i].tasks[j].deadline.day){
+    if(toDoList.lists[i].tasks.size()==0){
+    }else{
+      for(unsigned int j=0;j<toDoList.lists[i].tasks.size();j++){
+        aux=true;
+        cout<<"[";
+        if(toDoList.lists[i].tasks[j].isDone==true){
+          cout<<"X";
+          countd++;
+          tottimed+=toDoList.lists[i].tasks[j].time;
+        }else{
+          cout<<" ";
+          tottimel+=toDoList.lists[i].tasks[j].time; 
+          countl++;
+        }
+        if((i==0) && (j==0)){
           sy=toDoList.lists[i].tasks[j].deadline.year;
           sm=toDoList.lists[i].tasks[j].deadline.month;
           sd=toDoList.lists[i].tasks[j].deadline.day;
           s=toDoList.lists[i].tasks[j].name;
+        }else{
+          if(sy<=toDoList.lists[i].tasks[j].deadline.year && sm<=toDoList.lists[i].tasks[j].deadline.month && sd<toDoList.lists[i].tasks[j].deadline.day){
+            sy=toDoList.lists[i].tasks[j].deadline.year;
+            sm=toDoList.lists[i].tasks[j].deadline.month;
+            sd=toDoList.lists[i].tasks[j].deadline.day;
+            s=toDoList.lists[i].tasks[j].name;
+          }
         }
+        cout<<"] ";
+        cout<<"("<<toDoList.lists[i].tasks[j].time<<") "<<toDoList.lists[i].tasks[j].deadline.year<<"-"<<toDoList.lists[i].tasks[j].deadline.month<<"-"<<toDoList.lists[i].tasks[j].deadline.day<<" : "<<toDoList.lists[i].tasks[j].name<<endl;
       }
-      cout<<"] ";
-      cout<<"("<<toDoList.lists[i].tasks[j].time<<") "<<toDoList.lists[i].tasks[j].deadline.year<<"-"<<toDoList.lists[i].tasks[j].deadline.month<<"-"<<toDoList.lists[i].tasks[j].deadline.day<<" : "<<toDoList.lists[i].tasks[j].name<<endl;
     }
   }
   cout<<TL<<countl<<" ("<<tottimel<<" "<<MIN<<")"<<endl;
   cout<<TD<<countd<<" ("<<tottimed<<" "<<MIN<<")"<<endl;
-  if(aux!=0){
+  if(aux){
     cout<<HP<<s<<" "<<"("<<sy<<"-"<<sm<<"-"<<sd<<")"<<endl;
   }else{
   }
-  
 }
 
 int main(){
