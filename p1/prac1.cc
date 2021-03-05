@@ -161,68 +161,73 @@ return(false);
 
 bool checkDate(string sd,string sm,string sy){
 
-  int day,month,year;
+  int day,month,year,x,y,z; //x,y,z son auxiliars per a comprovar dades
+  bool val=false;
 
   day=stoi(sd);
   month=stoi(sm);
   year=stoi(sy);
 
+  x=year%n100;
+  y=year%n400;
+  z=year%n4;
+
   if(year<n2000 || year>n2100){
-    return(true);
+    val=true;
   }
 
   if(month<n1 || month>n12){
-    return(true);
+    val=true;
   }
 
   if(day<n1 || day>n31){
-    return(true);
+    val=true;
   }
 
   switch(month){
     case 2: 
       if(day>n29){
-        return(false);
+        val=true;
       }
       if(day==n29){
-        if(year%n100==0){
-          if(year%n400==0){
-            break;
+        if(z!=0){
+          val=true;
+          break;
+        }
+        if(x==0){
+          if(y==0){
           }else{
-            return(false);
+            val=true;
           }  
         }else{
-          return(false);
-        }
-        if(year%n4!=0){
-          return(false);
+          val=true;
         }
       }
       break;
     case 4: 
       if(day>n30){
-        return(false);
+        val=true;
       }
       break;
     case 6: 
       if(day>n30){
-        return(false);
+        val=true;
       }
       break;
     case 9: 
       if(day>n30){
-        return(false);
+        val=true;
       }
       break;
     case 11:
       if(day>n30){
-        return(false);
+        val=true;
       }
       break;
   }
 
 
-return(false);
+return(val);
 }
 
 void editProject(Project &toDoList){
@@ -308,12 +313,12 @@ void addTask(Project &toDoList){
 void deleteTask(Project &toDoList){ 
   Task ttemp;
   List temp;
-  int pos,i;
+  int pos1,pos2;
   string s;
 
-  if(findList(s,toDoList,pos)){
-    if(findTask(temp,ttemp,pos,i,toDoList)){
-      toDoList.lists[pos].tasks.erase(toDoList.lists[pos].tasks.begin()+pos);
+  if(findList(s,toDoList,pos1)){
+    if(findTask(temp,ttemp,pos1,pos2,toDoList)){
+      toDoList.lists[pos1].tasks.erase(toDoList.lists[pos1].tasks.begin()+pos2);
     }else{
       error(ERR_TASK_NAME);
     }
@@ -345,12 +350,19 @@ void report(const Project &toDoList){ //CANVIAR HIGHEST PRIORITY!
   List temp;
   Task ttemp;
   int tottimed=0,tottimel=0,countd=0,countl=0,sd=0,sm=0,sy=0; //tottimed=temps total de tasques fetes, tottimel=temps total de tasques per acabar, countd=comptador de tasques fetes, countl=comptador de tasques per fer
-  string s;
+  string s,s2;
   bool aux=false; //auxiliar per a imprimir el Highest priority
 
   cout<<N<<toDoList.name<<endl;
-  cout<<D<<toDoList.description<<endl;
-  
+  s2=toDoList.name;
+  for(unsigned int i=0;i<toDoList.name.length();i++){
+    s2[i]=' ';
+  }
+  if(s2.length()==0 || s2==toDoList.name){ 
+  }else{
+    cout<<D<<toDoList.description<<endl;
+  } //mirar si el nom està buit que no imprimisca description
+
   for(unsigned int i=0;i<toDoList.lists.size();i++){
     cout<<toDoList.lists[i].name<<endl;
     if(toDoList.lists[i].tasks.size()==0){
@@ -372,9 +384,14 @@ void report(const Project &toDoList){ //CANVIAR HIGHEST PRIORITY!
           sd=toDoList.lists[i].tasks[j].deadline.day;
           s=toDoList.lists[i].tasks[j].name;
           }else{
-            if(sy<=toDoList.lists[i].tasks[j].deadline.year){
-              if(sm<=toDoList.lists[i].tasks[j].deadline.month){
-                if(sd<toDoList.lists[i].tasks[j].deadline.day){
+            if(toDoList.lists[i].tasks[j].deadline.year>=sy){
+              if(toDoList.lists[i].tasks[j].deadline.month>sm){
+                sy=toDoList.lists[i].tasks[j].deadline.year;
+                sm=toDoList.lists[i].tasks[j].deadline.month;
+                sd=toDoList.lists[i].tasks[j].deadline.day;
+                s=toDoList.lists[i].tasks[j].name;
+              }else if(sm==toDoList.lists[i].tasks[j].deadline.month){
+                if(toDoList.lists[i].tasks[j].deadline.day>sd){
                   sy=toDoList.lists[i].tasks[j].deadline.year;
                   sm=toDoList.lists[i].tasks[j].deadline.month;
                   sd=toDoList.lists[i].tasks[j].deadline.day;
@@ -384,11 +401,12 @@ void report(const Project &toDoList){ //CANVIAR HIGHEST PRIORITY!
             }
           }
         }
-        cout<<"] ";
-        cout<<"("<<toDoList.lists[i].tasks[j].time<<") "<<toDoList.lists[i].tasks[j].deadline.year<<"-"<<toDoList.lists[i].tasks[j].deadline.month<<"-"<<toDoList.lists[i].tasks[j].deadline.day<<" : "<<toDoList.lists[i].tasks[j].name<<endl;
+      cout<<"] ";
+      cout<<"("<<toDoList.lists[i].tasks[j].time<<") "<<toDoList.lists[i].tasks[j].deadline.year<<"-"<<toDoList.lists[i].tasks[j].deadline.month<<"-"<<toDoList.lists[i].tasks[j].deadline.day<<" : "<<toDoList.lists[i].tasks[j].name<<endl;
       }
     }
   }
+
   
   cout<<TL<<countl<<" ("<<tottimel<<" "<<MIN<<")"<<endl;
   cout<<TD<<countd<<" ("<<tottimed<<" "<<MIN<<")"<<endl;
