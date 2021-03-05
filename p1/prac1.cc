@@ -99,11 +99,18 @@ void showMainMenu(){
        << "Option: ";
 }
 
-bool checkEmpty(string s){ //Comprova si la string està buida
-bool val=false;
+bool checkEmpty(string s){ //Comprova si la string està buida o plena d'espais
+bool val=false; 
+string v=s; //string del mateix tamany que s per a comprovar que no s'introduisquen solament espais al nom
   if(s.length()==0){
     error(ERR_EMPTY);
     val=true;
+  }
+  for(unsigned int i=0;i<s.length();i++){
+    v[i]=' ';
+  }
+  if(v==s){
+      val=true;
   }
 return(val);
 }
@@ -219,18 +226,13 @@ return(false);
 }
 
 void editProject(Project &toDoList){
-  
-  bool val;
+  string s;
 
   do{
-    val=false;
-    cout<<E_PN; getline(cin,toDoList.name);
-    if(toDoList.name.length()==0){
-      error(ERR_EMPTY);
-      val=true;
-    }
-  }while(val);
+    cout<<E_PN; getline(cin,s);
+  }while(checkEmpty(s));
 
+  toDoList.name=s;
   cout<<E_PD; getline(cin,toDoList.description);
 }
 
