@@ -143,17 +143,29 @@ bool val=true;
 return(val);
 }
 
-
-bool findTask(List temp,Task ttemp,int &pos1,int &pos2,Project &toDoList){
+bool findTask(string &s2,int &pos1,int &pos2,Project &toDoList){
 string s;
 
   cout<<E_TN; getline(cin,s,'\n');
+
+  s2=s;
 
   for(unsigned int i=0;i<toDoList.lists[pos1].tasks.size();i++){
     if(s==toDoList.lists[pos1].tasks[i].name){ 
       pos2=i;
       i=toDoList.lists[pos1].tasks.size();
       return(true);
+    }
+  }
+return(false);
+}
+
+bool delDupes(string s2,int &pos1,Project &toDoList){
+
+  for(unsigned int i=0;i<toDoList.lists[pos1].tasks.size();i++){
+    if(s2==toDoList.lists[pos1].tasks[i].name){ 
+      toDoList.lists[pos1].tasks.erase(toDoList.lists[pos1].tasks.begin()+i);
+      i-=i; //perquè al borrar la tasca el vector es redueix en tamany i ens saltaríem una posició d'aquest si s'esborra algún duplicat on pot haver-hi un altre duplicat
     }
   }
 return(false);
@@ -314,11 +326,12 @@ void deleteTask(Project &toDoList){
   Task ttemp;
   List temp;
   int pos1,pos2;
-  string s;
+  string s,s2;
 
   if(findList(s,toDoList,pos1)){
-    if(findTask(temp,ttemp,pos1,pos2,toDoList)){
+    if(findTask(s2,pos1,pos2,toDoList)){
       toDoList.lists[pos1].tasks.erase(toDoList.lists[pos1].tasks.begin()+pos2);
+      delDupes(s2,pos1,toDoList);
     }else{
       error(ERR_TASK_NAME);
     }
@@ -331,10 +344,10 @@ void toggleTask(Project &toDoList){
 List temp;
 Task ttemp;
 int pos1,pos2;
-string s;
+string s,s2;
 
   if(findList(s,toDoList,pos1)){
-    if(findTask(temp,ttemp,pos1,pos2,toDoList)){
+    if(findTask(s2,pos1,pos2,toDoList)){
       if(toDoList.lists[pos1].tasks[pos2].isDone){
         toDoList.lists[pos1].tasks[pos2].isDone=false;
       }else{
@@ -350,7 +363,7 @@ void report(const Project &toDoList){ //CANVIAR HIGHEST PRIORITY!
   List temp;
   Task ttemp;
   int tottimed=0,tottimel=0,countd=0,countl=0,sd=0,sm=0,sy=0; //tottimed=temps total de tasques fetes, tottimel=temps total de tasques per acabar, countd=comptador de tasques fetes, countl=comptador de tasques per fer
-  string s,s2;
+  string s,s2,s3;
   bool aux=false; //auxiliar per a imprimir el Highest priority
 
   cout<<N<<toDoList.name<<endl;
@@ -358,7 +371,11 @@ void report(const Project &toDoList){ //CANVIAR HIGHEST PRIORITY!
   for(unsigned int i=0;i<toDoList.name.length();i++){
     s2[i]=' ';
   }
-  if(s2.length()==0 || s2==toDoList.name){ 
+  s3=toDoList.description;
+  for(unsigned int i=0;i<toDoList.description.length();i++){
+    s3[i]=' ';
+  }
+  if(s2.length()==0 || s2==toDoList.name || s3==toDoList.description || s3.length()==0){ 
   }else{
     cout<<D<<toDoList.description<<endl;
   }
@@ -384,7 +401,12 @@ void report(const Project &toDoList){ //CANVIAR HIGHEST PRIORITY!
             sd=toDoList.lists[i].tasks[j].deadline.day;
             s=toDoList.lists[i].tasks[j].name;
           }else{
-            if(toDoList.lists[i].tasks[j].deadline.year<=sy){
+            if(toDoList.lists[i].tasks[j].deadline.year<sy){
+              sy=toDoList.lists[i].tasks[j].deadline.year;
+              sm=toDoList.lists[i].tasks[j].deadline.month;
+              sd=toDoList.lists[i].tasks[j].deadline.day;
+              s=toDoList.lists[i].tasks[j].name;
+            }else if(toDoList.lists[i].tasks[j].deadline.year==sy){
               if(toDoList.lists[i].tasks[j].deadline.month<sm){
                 sy=toDoList.lists[i].tasks[j].deadline.year;
                 sm=toDoList.lists[i].tasks[j].deadline.month;
