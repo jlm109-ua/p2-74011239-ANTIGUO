@@ -356,6 +356,8 @@ string s,s2;
     }else{
       error(ERR_TASK_NAME);
     }
+  }else{
+    error(ERR_LIST_NAME);
   }
 }
 
