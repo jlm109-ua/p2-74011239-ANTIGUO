@@ -345,13 +345,15 @@ List temp;
 Task ttemp;
 int pos1,pos2;
 string s,s2;
-
+  
   if(findList(s,toDoList,pos1)){
     if(findTask(s2,pos1,pos2,toDoList)){
-      if(toDoList.lists[pos1].tasks[pos2].isDone){
-        toDoList.lists[pos1].tasks[pos2].isDone=false;
-      }else{
-        toDoList.lists[pos1].tasks[pos2].isDone=true; 
+      for(unsigned int i=pos2;i<toDoList.lists[pos1].tasks.size();i++){
+        if(s2==toDoList.lists[pos1].tasks[i].name && toDoList.lists[pos1].tasks[i].isDone){ 
+          toDoList.lists[pos1].tasks[i].isDone=false;
+        }else if(s2==toDoList.lists[pos1].tasks[i].name && toDoList.lists[pos1].tasks[i].isDone==false){
+          toDoList.lists[pos1].tasks[i].isDone=true;
+        }
       }
     }else{
       error(ERR_TASK_NAME);
@@ -361,7 +363,7 @@ string s,s2;
   }
 }
 
-void report(const Project &toDoList){ //CANVIAR HIGHEST PRIORITY!
+void report(const Project &toDoList){
   List temp;
   Task ttemp;
   int tottimed=0,tottimel=0,countd=0,countl=0,sd=0,sm=0,sy=0; //tottimed=temps total de tasques fetes, tottimel=temps total de tasques per acabar, countd=comptador de tasques fetes, countl=comptador de tasques per fer
