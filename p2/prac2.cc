@@ -112,15 +112,15 @@ bool findList(string &s,Project toDoList,int &pos);
 bool findTask(string &s2,int &pos1,int &pos2,Project &toDoList);
 bool delDupes(string s2,int &pos1,Project &toDoList);
 bool checkDate(string sd,string sm,string sy);
+bool checkProject(string s,ToDo &toDoProjects,Project &toDoList);
+void editProject(ToDo &toDoProjects,int id);
+void addList(Project &toDoList,int id);
+void deleteList(Project &toDoList,int id);
+void addTask(Project &toDoList,int id);
+void deleteTask(Project &toDoList,int id);
+void toggleTask(Project &toDoList,int id);
+void report(const Project &toDoList,const int id);
 void projectMenu(ToDo &toDoProjects);
-bool checkProject(string s,ToDo &toDoProjects);
-void editProject(Project &toDoList);
-void addList(Project &toDoList);
-void deleteList(Project &toDoList);
-void addTask(Project &toDoList);
-void deleteTask(Project &toDoList);
-void toggleTask(Project &toDoList);
-void report(const Project &toDoList);
 void addProject(ToDo &toDoProjects);
 
 void error(Error e){
@@ -325,70 +325,33 @@ bool checkDate(string sd,string sm,string sy){
 return(val);
 }
 
-void projectMenu(ToDo &toDoProjects){
-  int id;
+bool checkProject(string s,ToDo &toDoProjects,Project &toDoList){
 
-  cout<<E_ID; cin>>id;
-
-  if(toDoProjects.nextId>=id){
-    showProjectMenu();
-    Project toDoList;
-    toDoList.id=1;
-    char option;
-  
-    do{
-      showMainMenu();
-      cin >> option;
-      cin.get();
-      
-      switch(option){
-        case '1': editProject(toDoList);
-                  break;
-        case '2': addList(toDoList);
-                  break;
-        case '3': deleteList(toDoList);
-                  break;
-        case '4': addTask(toDoList);
-                  break;
-        case '5': deleteTask(toDoList);
-                  break;
-        case '6': toggleTask(toDoList);
-                  break;
-        case '7': report(toDoList);
-                  break;
-        case 'q': break;
-        default: error(ERR_OPTION);
-      }
-    }while(option!='q');
+  if(toDoList.id==0){
   }else{
-    error(ERR_ID);
-  }
-}
-
-bool checkProject(string s,ToDo &toDoProjects){
-
-  for(int i=0;i<toDoProjects.projects[i].id;i++){
-    if(s==toDoProjects.projects[i].name){
-      error(ERR_PROJECT_NAME);
-      return(false);
+    for(int i=1;i<=toDoList.id;i++){
+      if(s==toDoProjects.projects[i].name){
+        error(ERR_PROJECT_NAME);
+        return(false);
+      }
     }
   }
 
   return(true);
 }
 
-void editProject(Project &toDoList){
+void editProject(ToDo &toDoProjects,int id){ //actualització pendent
   string s;
 
   do{
     cout<<E_PN; getline(cin,s);
   }while(checkEmpty(s));
 
-  toDoList.name=s;
-  cout<<E_PD; getline(cin,toDoList.description);
+  toDoProjects.projects[id].name=s;
+  cout<<E_PD; getline(cin,toDoProjects.projects[id].description);
 }
 
-void addList(Project &toDoList){ 
+void addList(Project &toDoList,int id){ //actualització pendent
   List temp;
   string s;
   int pos,i;
@@ -411,7 +374,7 @@ void addList(Project &toDoList){
   }
 }
 
-void deleteList(Project &toDoList){
+void deleteList(Project &toDoList,int id){ //actualització pendent
   List temp;
   string s;
   int pos;
@@ -423,7 +386,7 @@ void deleteList(Project &toDoList){
   }
 }
 
-void addTask(Project &toDoList){
+void addTask(Project &toDoList,int id){ //actualització pendent
   Task ttemp;
   List temp;
   int pos,i,time=0;
@@ -457,7 +420,7 @@ void addTask(Project &toDoList){
   }
 }
 
-void deleteTask(Project &toDoList){ 
+void deleteTask(Project &toDoList,int id){ //actualització pendent
   Task ttemp;
   List temp;
   int pos1,pos2;
@@ -475,7 +438,7 @@ void deleteTask(Project &toDoList){
   }
 }
 
-void toggleTask(Project &toDoList){
+void toggleTask(Project &toDoList,int id){ //actualització pendent
 List temp;
 Task ttemp;
 int pos1,pos2;
@@ -498,7 +461,7 @@ string s,s2;
   }
 }
 
-void report(const Project &toDoList){
+void report(const Project &toDoList,const int id){ //actualització pendent
   List temp;
   Task ttemp;
   int tottimed=0,tottimel=0,countd=0,countl=0,sd=0,sm=0,sy=0; //tottimed=temps total de tasques fetes, tottimel=temps total de tasques per acabar, countd=comptador de tasques fetes, countl=comptador de tasques per fer
@@ -577,27 +540,72 @@ void report(const Project &toDoList){
   }
 }
 
-void addProject(ToDo &toDoProjects){
+void projectMenu(ToDo &toDoProjects,Project &toDoList){
+  int id;
+
+  cout<<E_ID; cin>>id;
+
+  if(id<=toDoProjects.nextId){
+
+    char option2;
+    if(option2!=0){
+      do{
+        showProjectMenu();
+        cin >> option2;
+        cin.get();
+        
+        switch(option2){
+          case '1': editProject(toDoProjects,id);
+                    break;
+          case '2': addList(toDoList,id);
+                    break;
+          case '3': deleteList(toDoList,id);
+                    break;
+          case '4': addTask(toDoList,id);
+                    break;
+          case '5': deleteTask(toDoList,id);
+                    break;
+          case '6': toggleTask(toDoList,id);
+                    break;
+          case '7': report(toDoList,id);
+                    break;
+          case 'b': break;
+          default: error(ERR_OPTION);
+        }
+      }while(option2!='b');
+    }else{
+      error(ERR_ID);
+    }
+  }else{
+    error(ERR_ID);
+  }
+}
+
+void addProject(ToDo &toDoProjects){ //error violación de segmento
   Project toDoList;
   string s;
 
   do{
     cout<<E_PN; getline(cin,s);
-  }while(checkEmpty(s) && checkProject(s,toDoProjects));
+  }while(checkEmpty(s) && checkProject(s,toDoProjects,toDoList));
 
   toDoProjects.nextId+=1;
-  cout<<toDoProjects.nextId<<endl;
-  toDoProjects.projects.push_back(toDoList); //falla "Violación de segmento"
+  toDoList.id=toDoProjects.nextId;
+  cout<<toDoProjects.projects.size();
+  toDoProjects.projects.push_back(toDoList);
+  cout<<toDoProjects.projects.size();
   toDoProjects.projects[toDoProjects.nextId].name=s;
-
-  cout<<E_PD; getline(cin,toDoProjects.projects[toDoProjects.nextId].description);
+  
+  cout<<E_PD; getline(cin,toDoProjects.projects[toDoList.id].description);
+  
 }
 
 int main(){
-  Project toDoList;
   ToDo toDoProjects; //variable ToDo per a controlar els projectes
   toDoProjects.nextId=0;
   char option;
+  Project toDoList;
+  toDoList.id=0;
 
   do{
     showMainMenu();
@@ -605,25 +613,7 @@ int main(){
     cin.get();
     
     switch(option){
-      case '1': projectMenu(toDoProjects);
-                switch(option){
-                  case '1': editProject(toDoList);
-                            break;
-                  case '2': addList(toDoList);
-                            break;
-                  case '3': deleteList(toDoList);
-                            break;
-                  case '4': addTask(toDoList);
-                            break;
-                  case '5': deleteTask(toDoList);
-                            break;
-                  case '6': toggleTask(toDoList);
-                            break;
-                  case '7': report(toDoList);
-                            break;
-                  case 'b': break;
-                  default: error(ERR_OPTION);
-                }
+      case '1': projectMenu(toDoProjects,toDoList);
                 break;
       case '2': addProject(toDoProjects);
                 break;
