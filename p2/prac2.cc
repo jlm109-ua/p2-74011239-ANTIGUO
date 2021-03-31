@@ -107,19 +107,19 @@ void error(Error e);
 void showMainMenu();
 void showProjectMenu();
 bool checkEmpty(string s);
-bool checkList(string s,Project toDoList,int &pos);
-bool findList(string &s,Project toDoList,int &pos);
+bool checkList(string s,ToDo &toDoProjects,int &pos,const int id);
+bool findList(string &s,ToDo &toDoProjects,int &pos,const int id);
 bool findTask(string &s2,int &pos1,int &pos2,Project &toDoList);
 bool delDupes(string s2,int &pos1,Project &toDoList);
 bool checkDate(string sd,string sm,string sy);
 bool checkProject(string s,ToDo &toDoProjects,Project &toDoList);
 void editProject(ToDo &toDoProjects,int id);
-void addList(Project &toDoList,int id);
+void addList(Project &toDoProjects,int id);
 void deleteList(Project &toDoList,int id);
 void addTask(Project &toDoList,int id);
 void deleteTask(Project &toDoList,int id);
 void toggleTask(Project &toDoList,int id);
-void report(const Project &toDoList,const int id);
+void report(const ToDo &toDoProjects,const int id);
 void projectMenu(ToDo &toDoProjects);
 void addProject(ToDo &toDoProjects);
 
@@ -198,28 +198,28 @@ bool checkEmpty(string s){ //Comprova si la string està buida o plena d'espais
   return(val);
 }
 
-bool checkList(string s,Project toDoList,int &pos){ //Comprova si hi ha alguna llista amb el mateix nom i la posició en la que es troba
+bool checkList(string s,ToDo &toDoProjects,int &pos,const int id){ //Comprova si hi ha alguna llista amb el mateix nom i la posició en la que es troba
   bool val=false;
   pos=0;
 
-  for(unsigned int i=0;i<toDoList.lists.size();i++){
-    if(s==toDoList.lists[i].name){  
+  for(unsigned int i=0;i<toDoProjects.projects[id].lists.size();i++){
+    if(s==toDoProjects.projects[id].lists[i].name){  
       pos=i;  
-      i=toDoList.lists.size();
+      i=toDoProjects.projects[id].lists.size();
       val=true;
     }
   }
 return(val);
 }
 
-bool findList(string &s,Project toDoList,int &pos){
+bool findList(string &s,ToDo &toDoProjects,int &pos,const int id){
   bool val=true;
 
     do{
     cout<<E_LN; getline(cin,s); 
     }while(checkEmpty(s));
 
-    if(checkList(s,toDoList,pos)){
+    if(checkList(s,toDoProjects,pos,id)){
     }else{
       val=false;
     }
@@ -340,6 +340,8 @@ bool checkProject(string s,ToDo &toDoProjects,Project &toDoList){
   return(true);
 }
 
+/* OPCIONS DEL MENU VISIBLES */
+
 void editProject(ToDo &toDoProjects,int id){ //actualització pendent
   string s;
 
@@ -351,36 +353,36 @@ void editProject(ToDo &toDoProjects,int id){ //actualització pendent
   cout<<E_PD; getline(cin,toDoProjects.projects[id].description);
 }
 
-void addList(Project &toDoList,int id){ //actualització pendent
+void addList(ToDo &toDoProjects,int id){ //actualització pendent
   List temp;
   string s;
   int pos,i;
 
-  i=toDoList.lists.size();
+  i=toDoProjects.projects[id].lists.size();
 
-  if(toDoList.lists.size()==0){
+  if(toDoProjects.projects[id].lists.size()==0){
     do{
       cout<<E_LN; getline(cin,s);
     }while(checkEmpty(s));
-    toDoList.lists.push_back(temp);
-    toDoList.lists[0].name=s;
+    toDoProjects.projects[id].lists.push_back(temp);
+    toDoProjects.projects[id].lists[0].name=s;
   }else{
-    if(findList(s,toDoList,pos)){
+    if(findList(s,toDoProjects,pos,id)){
       error(ERR_LIST_NAME);
     }else{
-      toDoList.lists.push_back(temp);
-      toDoList.lists[i].name=s;
+      toDoProjects.projects[id].lists.push_back(temp);
+      toDoProjects.projects[id].lists[i].name=s;
     }
   }
 }
 
-void deleteList(Project &toDoList,int id){ //actualització pendent
+void deleteList(ToDo &toDoProjects,int id){ //actualització pendent
   List temp;
   string s;
   int pos;
   
-  if(findList(s,toDoList,pos)){
-    toDoList.lists.erase(toDoList.lists.begin()+pos);
+  if(findList(s,toDoProjects,pos,id)){
+    toDoList.lists.erase(toDoProjects.projects[id].lists.begin()+pos);
   }else{
     error(ERR_LIST_NAME);
   }
@@ -461,72 +463,72 @@ string s,s2;
   }
 }
 
-void report(const Project &toDoList,const int id){ //actualització pendent
+void report(const ToDo &toDoProjects,const int id){ //actualització pendent
   List temp;
   Task ttemp;
   int tottimed=0,tottimel=0,countd=0,countl=0,sd=0,sm=0,sy=0; //tottimed=temps total de tasques fetes, tottimel=temps total de tasques per acabar, countd=comptador de tasques fetes, countl=comptador de tasques per fer
   string s,s2,s3;
   bool aux=false; //auxiliar per a imprimir el Highest priority
 
-  cout<<N<<toDoList.name<<endl;
-  s2=toDoList.name;
-  for(unsigned int i=0;i<toDoList.name.length();i++){
+  cout<<N<<toDoProjects.projects[id].name<<endl;
+  s2=toDoProjects.projects[id].name;
+  for(unsigned int i=0;i<toDoProjects.projects[id].name.length();i++){
     s2[i]=' ';
   }
-  s3=toDoList.description;
-  for(unsigned int i=0;i<toDoList.description.length();i++){
+  s3=toDoProjects.projects[id].description;
+  for(unsigned int i=0;i<toDoProjects.projects[id].description.length();i++){
     s3[i]=' ';
   }
-  if(s2.length()==0 || s2==toDoList.name || s3==toDoList.description || s3.length()==0){ 
+  if(s2.length()==0 || s2==toDoProjects.projects[id].name || s3==toDoProjects.projects[id].description || s3.length()==0){ 
   }else{
-    cout<<D<<toDoList.description<<endl;
+    cout<<D<<toDoProjects.projects[id].description<<endl;
   }
 
-  for(unsigned int i=0;i<toDoList.lists.size();i++){
-    cout<<toDoList.lists[i].name<<endl;
-    if(toDoList.lists[i].tasks.size()==0){
+  for(unsigned int i=0;i<toDoProjects.projects[id].lists.size();i++){
+    cout<<toDoProjects.projects[id].lists[i].name<<endl;
+    if(toDoProjects.projects[id].lists[i].tasks.size()==0){
     }else{
-      for(unsigned int j=0;j<toDoList.lists[i].tasks.size();j++){
+      for(unsigned int j=0;j<toDoProjects.projects[id].lists[i].tasks.size();j++){
         aux=true;
         cout<<"[";
-        if(toDoList.lists[i].tasks[j].isDone==true){
+        if(toDoProjects.projects[id].lists[i].tasks[j].isDone==true){
           cout<<"X";
           countd++;
-          tottimed+=toDoList.lists[i].tasks[j].time;
+          tottimed+=toDoProjects.projects[id].lists[i].tasks[j].time;
         }else{
           cout<<" ";
-          tottimel+=toDoList.lists[i].tasks[j].time; 
+          tottimel+=toDoProjects.projects[id].lists[i].tasks[j].time; 
           countl++;
           if(sm==0 || ((i==0) && (j==0))){
-            sy=toDoList.lists[i].tasks[j].deadline.year;
-            sm=toDoList.lists[i].tasks[j].deadline.month;
-            sd=toDoList.lists[i].tasks[j].deadline.day;
-            s=toDoList.lists[i].tasks[j].name;
+            sy=toDoProjects.projects[id].lists[i].tasks[j].deadline.year;
+            sm=toDoProjects.projects[id].lists[i].tasks[j].deadline.month;
+            sd=toDoProjects.projects[id].lists[i].tasks[j].deadline.day;
+            s=toDoProjects.projects[id].lists[i].tasks[j].name;
           }else{
-            if(toDoList.lists[i].tasks[j].deadline.year<sy){
-              sy=toDoList.lists[i].tasks[j].deadline.year;
-              sm=toDoList.lists[i].tasks[j].deadline.month;
-              sd=toDoList.lists[i].tasks[j].deadline.day;
-              s=toDoList.lists[i].tasks[j].name;
-            }else if(toDoList.lists[i].tasks[j].deadline.year==sy){
-              if(toDoList.lists[i].tasks[j].deadline.month<sm){
-                sy=toDoList.lists[i].tasks[j].deadline.year;
-                sm=toDoList.lists[i].tasks[j].deadline.month;
-                sd=toDoList.lists[i].tasks[j].deadline.day;
-                s=toDoList.lists[i].tasks[j].name;
-              }else if(sm==toDoList.lists[i].tasks[j].deadline.month){
-                if(toDoList.lists[i].tasks[j].deadline.day<sd){
-                  sy=toDoList.lists[i].tasks[j].deadline.year;
-                  sm=toDoList.lists[i].tasks[j].deadline.month;
-                  sd=toDoList.lists[i].tasks[j].deadline.day;
-                  s=toDoList.lists[i].tasks[j].name;
+            if(toDoProjects.projects[id].lists[i].tasks[j].deadline.year<sy){
+              sy=toDoProjects.projects[id].lists[i].tasks[j].deadline.year;
+              sm=toDoProjects.projects[id].lists[i].tasks[j].deadline.month;
+              sd=toDoProjects.projects[id].lists[i].tasks[j].deadline.day;
+              s=toDoProjects.projects[id].lists[i].tasks[j].name;
+            }else if(toDoProjects.projects[id].lists[i].tasks[j].deadline.year==sy){
+              if(toDoProjects.projects[id].lists[i].tasks[j].deadline.month<sm){
+                sy=toDoProjects.projects[id].lists[i].tasks[j].deadline.year;
+                sm=toDoProjects.projects[id].lists[i].tasks[j].deadline.month;
+                sd=toDoProjects.projects[id].lists[i].tasks[j].deadline.day;
+                s=toDoProjects.projects[id].lists[i].tasks[j].name;
+              }else if(sm==toDoProjects.projects[id].lists[i].tasks[j].deadline.month){
+                if(toDoProjects.projects[id].lists[i].tasks[j].deadline.day<sd){
+                  sy=toDoProjects.projects[id].lists[i].tasks[j].deadline.year;
+                  sm=toDoProjects.projects[id].lists[i].tasks[j].deadline.month;
+                  sd=toDoProjects.projects[id].lists[i].tasks[j].deadline.day;
+                  s=toDoProjects.projects[id].lists[i].tasks[j].name;
                 }
               }
             }
           }
         }
       cout<<"] ";
-      cout<<"("<<toDoList.lists[i].tasks[j].time<<") "<<toDoList.lists[i].tasks[j].deadline.year<<"-"<<toDoList.lists[i].tasks[j].deadline.month<<"-"<<toDoList.lists[i].tasks[j].deadline.day<<" : "<<toDoList.lists[i].tasks[j].name<<endl;
+      cout<<"("<<toDoProjects.projects[id].lists[i].tasks[j].time<<") "<<toDoProjects.projects[id].lists[i].tasks[j].deadline.year<<"-"<<toDoProjects.projects[id].lists[i].tasks[j].deadline.month<<"-"<<toDoProjects.projects[id].lists[i].tasks[j].deadline.day<<" : "<<toDoProjects.projects[id].lists[i].tasks[j].name<<endl;
       }
     }
   }
@@ -545,6 +547,8 @@ void projectMenu(ToDo &toDoProjects,Project &toDoList){
 
   cout<<E_ID; cin>>id;
 
+  id-=1;
+
   if(id<=toDoProjects.nextId){
 
     char option2;
@@ -557,7 +561,7 @@ void projectMenu(ToDo &toDoProjects,Project &toDoList){
         switch(option2){
           case '1': editProject(toDoProjects,id);
                     break;
-          case '2': addList(toDoList,id);
+          case '2': addList(toDoProjects,id);
                     break;
           case '3': deleteList(toDoList,id);
                     break;
@@ -567,7 +571,7 @@ void projectMenu(ToDo &toDoProjects,Project &toDoList){
                     break;
           case '6': toggleTask(toDoList,id);
                     break;
-          case '7': report(toDoList,id);
+          case '7': report(toDoProjects,id);
                     break;
           case 'b': break;
           default: error(ERR_OPTION);
@@ -581,7 +585,7 @@ void projectMenu(ToDo &toDoProjects,Project &toDoList){
   }
 }
 
-void addProject(ToDo &toDoProjects){ //error violación de segmento
+void addProject(ToDo &toDoProjects){
   Project toDoList;
   string s;
 
@@ -589,14 +593,13 @@ void addProject(ToDo &toDoProjects){ //error violación de segmento
     cout<<E_PN; getline(cin,s);
   }while(checkEmpty(s) && checkProject(s,toDoProjects,toDoList));
 
+  toDoList.name=s;
+
+  cout<<E_PD; getline(cin,toDoList.description);
+
   toDoProjects.nextId+=1;
   toDoList.id=toDoProjects.nextId;
-  cout<<toDoProjects.projects.size();
   toDoProjects.projects.push_back(toDoList);
-  cout<<toDoProjects.projects.size();
-  toDoProjects.projects[toDoProjects.nextId].name=s;
-  
-  cout<<E_PD; getline(cin,toDoProjects.projects[toDoList.id].description);
   
 }
 
