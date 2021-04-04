@@ -109,16 +109,16 @@ void showProjectMenu();
 bool checkEmpty(string s);
 bool checkList(string s,ToDo &toDoProjects,int &pos,const int id);
 bool findList(string &s,ToDo &toDoProjects,int &pos,const int id);
-bool findTask(string &s2,int &pos1,int &pos2,Project &toDoList);
-bool delDupes(string s2,int &pos1,Project &toDoList);
+bool findTask(string &s2,int &pos1,int &pos2,ToDo &toDoProjects,const int id);
+bool delDupes(string s2,int &pos1,ToDo &toDoProjects,const int id);
 bool checkDate(string sd,string sm,string sy);
-bool checkProject(string s,ToDo &toDoProjects,Project &toDoList);
+bool checkProject(string s,ToDo &toDoProjects);
 void editProject(ToDo &toDoProjects,int id);
-void addList(Project &toDoProjects,int id);
-void deleteList(Project &toDoList,int id);
-void addTask(Project &toDoList,int id);
-void deleteTask(Project &toDoList,int id);
-void toggleTask(Project &toDoList,int id);
+void addList(ToDo &toDoProjects,int id);
+void deleteList(ToDo &toDoProjects,int id);
+void addTask(ToDo &toDoProjects,int id);
+void deleteTask(ToDo &toDoProjects,int id);
+void toggleTask(ToDo &toDoProjects,int id);
 void report(const ToDo &toDoProjects,const int id);
 void projectMenu(ToDo &toDoProjects);
 void addProject(ToDo &toDoProjects);
@@ -188,12 +188,14 @@ bool checkEmpty(string s){ //Comprova si la string està buida o plena d'espais
     if(s.length()==0){
       error(ERR_EMPTY);
       val=true;
-    }
-    for(unsigned int i=0;i<s.length();i++){
-      v[i]=' ';
-    }
-    if(v==s){
-        val=true;
+    }else{
+      for(unsigned int i=0;i<s.length();i++){
+        v[i]=' ';
+      }
+      if(v==s){
+          error(ERR_EMPTY);
+          val=true;
+      }
     }
   return(val);
 }
@@ -226,28 +228,28 @@ bool findList(string &s,ToDo &toDoProjects,int &pos,const int id){
   return(val);
 }
 
-bool findTask(string &s2,int &pos1,int &pos2,Project &toDoList){
+bool findTask(string &s2,int &pos1,int &pos2,ToDo &toDoProjects,const int id){
   string s;
 
     cout<<E_TN; getline(cin,s,'\n');
 
     s2=s;
 
-    for(unsigned int i=0;i<toDoList.lists[pos1].tasks.size();i++){
-      if(s==toDoList.lists[pos1].tasks[i].name){ 
+    for(unsigned int i=0;i<toDoProjects.projects[id].lists[pos1].tasks.size();i++){
+      if(s==toDoProjects.projects[id].lists[pos1].tasks[i].name){ 
         pos2=i;
-        i=toDoList.lists[pos1].tasks.size();
+        i=toDoProjects.projects[id].lists[pos1].tasks.size();
         return(true);
       }
     }
   return(false);
 }
 
-bool delDupes(string s2,int &pos1,Project &toDoList){
+bool delDupes(string s2,int &pos1,ToDo &toDoProjects,const int id){
 
-  for(unsigned int i=0;i<toDoList.lists[pos1].tasks.size();i++){
-    if(s2==toDoList.lists[pos1].tasks[i].name){ 
-      toDoList.lists[pos1].tasks.erase(toDoList.lists[pos1].tasks.begin()+i);
+  for(unsigned int i=0;i<toDoProjects.projects[id].lists[pos1].tasks.size();i++){
+    if(s2==toDoProjects.projects[id].lists[pos1].tasks[i].name){ 
+      toDoProjects.projects[id].lists[pos1].tasks.erase(toDoProjects.projects[id].lists[pos1].tasks.begin()+i);
       i-=i; //perquè al borrar la tasca el vector es redueix en tamany i ens saltaríem una posició d'aquest si s'esborra algún duplicat on pot haver-hi un altre duplicat
     }
   }
@@ -325,19 +327,18 @@ bool checkDate(string sd,string sm,string sy){
 return(val);
 }
 
-bool checkProject(string s,ToDo &toDoProjects,Project &toDoList){
+bool checkProject(string s,ToDo &toDoProjects){
 
-  if(toDoList.id==0){
+  if(toDoProjects.nextId==0){
   }else{
-    for(int i=1;i<=toDoList.id;i++){
+    for(unsigned int i=0;i<=toDoProjects.projects.size();i++){
       if(s==toDoProjects.projects[i].name){
         error(ERR_PROJECT_NAME);
-        return(false);
+        return(true);
       }
     }
   }
-
-  return(true);
+  return(false);
 }
 
 /* OPCIONS DEL MENU VISIBLES */
@@ -382,19 +383,19 @@ void deleteList(ToDo &toDoProjects,int id){ //actualització pendent
   int pos;
   
   if(findList(s,toDoProjects,pos,id)){
-    toDoList.lists.erase(toDoProjects.projects[id].lists.begin()+pos);
+    toDoProjects.projects[id].lists.erase(toDoProjects.projects[id].lists.begin()+pos);
   }else{
     error(ERR_LIST_NAME);
   }
 }
 
-void addTask(Project &toDoList,int id){ //actualització pendent
+void addTask(ToDo &toDoProjects,int id){ //actualització pendent
   Task ttemp;
   List temp;
   int pos,i,time=0;
   string s,t,sd,sm,sy; //t=string per al nom de task, sd=string day, sm=string month i sy=string year
 
-  if(findList(s,toDoList,pos)){
+  if(findList(s,toDoProjects,pos,id)){
     cout<<E_TN; getline(cin,t,'\n');
     cout<<E_D;
       getline(cin,sd,'/');
@@ -407,14 +408,14 @@ void addTask(Project &toDoList,int id){ //actualització pendent
       if(time<1 || time>180){
         error(ERR_TIME);
       }else{
-        toDoList.lists[pos].tasks.push_back(ttemp);
-        i=toDoList.lists[pos].tasks.size()-1;
-        toDoList.lists[pos].tasks[i].name=t;
-        toDoList.lists[pos].tasks[i].time=time;
-        toDoList.lists[pos].tasks[i].isDone=false;
-        toDoList.lists[pos].tasks[i].deadline.day=stoi(sd);
-        toDoList.lists[pos].tasks[i].deadline.month=stoi(sm);
-        toDoList.lists[pos].tasks[i].deadline.year=stoi(sy);
+        toDoProjects.projects[id].lists[pos].tasks.push_back(ttemp);
+        i=toDoProjects.projects[id].lists[pos].tasks.size()-1;
+        toDoProjects.projects[id].lists[pos].tasks[i].name=t;
+        toDoProjects.projects[id].lists[pos].tasks[i].time=time;
+        toDoProjects.projects[id].lists[pos].tasks[i].isDone=false;
+        toDoProjects.projects[id].lists[pos].tasks[i].deadline.day=stoi(sd);
+        toDoProjects.projects[id].lists[pos].tasks[i].deadline.month=stoi(sm);
+        toDoProjects.projects[id].lists[pos].tasks[i].deadline.year=stoi(sy);
      }
     }
   }else{
@@ -422,16 +423,16 @@ void addTask(Project &toDoList,int id){ //actualització pendent
   }
 }
 
-void deleteTask(Project &toDoList,int id){ //actualització pendent
+void deleteTask(ToDo &toDoProjects,int id){ //actualització pendent
   Task ttemp;
   List temp;
   int pos1,pos2;
   string s,s2;
 
-  if(findList(s,toDoList,pos1)){
-    if(findTask(s2,pos1,pos2,toDoList)){
-      toDoList.lists[pos1].tasks.erase(toDoList.lists[pos1].tasks.begin()+pos2);
-      delDupes(s2,pos1,toDoList);
+  if(findList(s,toDoProjects,pos1,id)){
+    if(findTask(s2,pos1,pos2,toDoProjects,id)){
+      toDoProjects.projects[id].lists[pos1].tasks.erase(toDoProjects.projects[id].lists[pos1].tasks.begin()+pos2);
+      delDupes(s2,pos1,toDoProjects,id);
     }else{
       error(ERR_TASK_NAME);
     }
@@ -440,19 +441,19 @@ void deleteTask(Project &toDoList,int id){ //actualització pendent
   }
 }
 
-void toggleTask(Project &toDoList,int id){ //actualització pendent
+void toggleTask(ToDo &toDoProjects,int id){ //actualització pendent
 List temp;
 Task ttemp;
 int pos1,pos2;
 string s,s2;
   
-  if(findList(s,toDoList,pos1)){
-    if(findTask(s2,pos1,pos2,toDoList)){
-      for(unsigned int i=pos2;i<toDoList.lists[pos1].tasks.size();i++){
-        if(s2==toDoList.lists[pos1].tasks[i].name && toDoList.lists[pos1].tasks[i].isDone){ 
-          toDoList.lists[pos1].tasks[i].isDone=false;
-        }else if(s2==toDoList.lists[pos1].tasks[i].name && toDoList.lists[pos1].tasks[i].isDone==false){
-          toDoList.lists[pos1].tasks[i].isDone=true;
+  if(findList(s,toDoProjects,pos1,id)){
+    if(findTask(s2,pos1,pos2,toDoProjects,id)){
+      for(unsigned int i=pos2;i<toDoProjects.projects[id].lists[pos1].tasks.size();i++){
+        if(s2==toDoProjects.projects[id].lists[pos1].tasks[i].name && toDoProjects.projects[id].lists[pos1].tasks[i].isDone){ 
+          toDoProjects.projects[id].lists[pos1].tasks[i].isDone=false;
+        }else if(s2==toDoProjects.projects[id].lists[pos1].tasks[i].name && toDoProjects.projects[id].lists[pos1].tasks[i].isDone==false){
+          toDoProjects.projects[id].lists[pos1].tasks[i].isDone=true;
         }
       }
     }else{
@@ -549,37 +550,33 @@ void projectMenu(ToDo &toDoProjects,Project &toDoList){
 
   id-=1;
 
-  if(id<=toDoProjects.nextId){
-
+  if(id<=toDoProjects.nextId && id>=0){
     char option2;
-    if(option2!=0){
-      do{
-        showProjectMenu();
-        cin >> option2;
-        cin.get();
-        
-        switch(option2){
-          case '1': editProject(toDoProjects,id);
-                    break;
-          case '2': addList(toDoProjects,id);
-                    break;
-          case '3': deleteList(toDoList,id);
-                    break;
-          case '4': addTask(toDoList,id);
-                    break;
-          case '5': deleteTask(toDoList,id);
-                    break;
-          case '6': toggleTask(toDoList,id);
-                    break;
-          case '7': report(toDoProjects,id);
-                    break;
-          case 'b': break;
-          default: error(ERR_OPTION);
-        }
-      }while(option2!='b');
-    }else{
-      error(ERR_ID);
-    }
+
+    do{
+      showProjectMenu();
+      cin >> option2;
+      cin.get();
+      
+      switch(option2){
+        case '1': editProject(toDoProjects,id);
+                  break;
+        case '2': addList(toDoProjects,id);
+                  break;
+        case '3': deleteList(toDoProjects,id);
+                  break;
+        case '4': addTask(toDoProjects,id);
+                  break;
+        case '5': deleteTask(toDoProjects,id);
+                  break;
+        case '6': toggleTask(toDoProjects,id);
+                  break;
+        case '7': report(toDoProjects,id);
+                  break;
+        case 'b': break;
+        default: error(ERR_OPTION);
+      }
+    }while(option2!='b');
   }else{
     error(ERR_ID);
   }
@@ -591,16 +588,18 @@ void addProject(ToDo &toDoProjects){
 
   do{
     cout<<E_PN; getline(cin,s);
-  }while(checkEmpty(s) && checkProject(s,toDoProjects,toDoList));
+  }while(checkEmpty(s));
 
-  toDoList.name=s;
+  if(checkProject(s,toDoProjects)){
+  }else{
+    toDoList.name=s;
 
-  cout<<E_PD; getline(cin,toDoList.description);
+    cout<<E_PD; getline(cin,toDoList.description);
 
-  toDoProjects.nextId+=1;
-  toDoList.id=toDoProjects.nextId;
-  toDoProjects.projects.push_back(toDoList);
-  
+    toDoProjects.nextId+=1;
+    toDoList.id=toDoProjects.nextId;
+    toDoProjects.projects.push_back(toDoList);
+  }
 }
 
 int main(){
@@ -608,7 +607,7 @@ int main(){
   toDoProjects.nextId=0;
   char option;
   Project toDoList;
-  toDoList.id=0;
+  toDoProjects.nextId=0;
 
   do{
     showMainMenu();
