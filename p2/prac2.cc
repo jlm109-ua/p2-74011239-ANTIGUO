@@ -328,14 +328,13 @@ bool checkDate(string sd,string sm,string sy){
 return(val);
 }
 
-bool checkProject(string s,ToDo &toDoProjects,int pos){
+bool checkProject(string s,ToDo &toDoProjects){
 
   if(toDoProjects.nextId==0){
   }else{
     for(unsigned int i=0;i<=toDoProjects.projects.size();i++){
       if(s==toDoProjects.projects[i].name){
         error(ERR_PROJECT_NAME);
-        pos=i;
         return(true);
       }
     }
@@ -591,13 +590,12 @@ void projectMenu(ToDo &toDoProjects,Project &toDoList){
 void addProject(ToDo &toDoProjects){
   Project toDoList;
   string s;
-  int pos=0;
 
   do{
     cout<<E_PN; getline(cin,s);
   }while(checkEmpty(s));
 
-  if(checkProject(s,toDoProjects,pos)){
+  if(checkProject(s,toDoProjects)){
   }else{
     toDoList.name=s;
 
@@ -610,18 +608,18 @@ void addProject(ToDo &toDoProjects){
 }
 
 void deleteProject(ToDo &toDoProjects){
-string s;
-int pos=0;
+  unsigned int id;
 
-  do{
-    cout<<E_PN; getline(cin,s);
-  }while(checkEmpty(s));
+  cout<<E_ID; cin>>id;
 
-  if(checkProject(s,toDoProjects,pos)){
-    toDoProjects.projects.erase(toDoProjects.projects.begin()+pos);
-  }else{
+  id-=1;
+
+  if(id>toDoProjects.projects.size()){
     error(ERR_ID);
+  }else{
+    toDoProjects.projects.erase(toDoProjects.projects.begin()+id);
   }
+
 }
 
 int main(){
