@@ -122,6 +122,7 @@ void toggleTask(ToDo &toDoProjects,int id);
 void report(const ToDo &toDoProjects,const int id);
 void projectMenu(ToDo &toDoProjects);
 void addProject(ToDo &toDoProjects);
+void deleteProject(ToDo &toDoProjects);
 
 void error(Error e){
   switch(e){
@@ -327,13 +328,14 @@ bool checkDate(string sd,string sm,string sy){
 return(val);
 }
 
-bool checkProject(string s,ToDo &toDoProjects){
+bool checkProject(string s,ToDo &toDoProjects,int pos){
 
   if(toDoProjects.nextId==0){
   }else{
     for(unsigned int i=0;i<=toDoProjects.projects.size();i++){
       if(s==toDoProjects.projects[i].name){
         error(ERR_PROJECT_NAME);
+        pos=i;
         return(true);
       }
     }
@@ -550,47 +552,52 @@ void projectMenu(ToDo &toDoProjects,Project &toDoList){
 
   id-=1;
 
-  if(id<=toDoProjects.nextId && id>=0){
-    char option2;
-
-    do{
-      showProjectMenu();
-      cin >> option2;
-      cin.get();
-      
-      switch(option2){
-        case '1': editProject(toDoProjects,id);
-                  break;
-        case '2': addList(toDoProjects,id);
-                  break;
-        case '3': deleteList(toDoProjects,id);
-                  break;
-        case '4': addTask(toDoProjects,id);
-                  break;
-        case '5': deleteTask(toDoProjects,id);
-                  break;
-        case '6': toggleTask(toDoProjects,id);
-                  break;
-        case '7': report(toDoProjects,id);
-                  break;
-        case 'b': break;
-        default: error(ERR_OPTION);
-      }
-    }while(option2!='b');
-  }else{
+  if(toDoProjects.projects.size()==0){
     error(ERR_ID);
+  }else{
+    if(id<=toDoProjects.nextId && id>=0){
+      char option2;
+
+      do{
+        showProjectMenu();
+        cin >> option2;
+        cin.get();
+        
+        switch(option2){
+          case '1': editProject(toDoProjects,id);
+                    break;
+          case '2': addList(toDoProjects,id);
+                    break;
+          case '3': deleteList(toDoProjects,id);
+                    break;
+          case '4': addTask(toDoProjects,id);
+                    break;
+          case '5': deleteTask(toDoProjects,id);
+                    break;
+          case '6': toggleTask(toDoProjects,id);
+                    break;
+          case '7': report(toDoProjects,id);
+                    break;
+          case 'b': break;
+          default: error(ERR_OPTION);
+        }
+      }while(option2!='b');
+    }else{
+      error(ERR_ID);
+    }
   }
 }
 
 void addProject(ToDo &toDoProjects){
   Project toDoList;
   string s;
+  int pos=0;
 
   do{
     cout<<E_PN; getline(cin,s);
   }while(checkEmpty(s));
 
-  if(checkProject(s,toDoProjects)){
+  if(checkProject(s,toDoProjects,pos)){
   }else{
     toDoList.name=s;
 
@@ -599,6 +606,21 @@ void addProject(ToDo &toDoProjects){
     toDoProjects.nextId+=1;
     toDoList.id=toDoProjects.nextId;
     toDoProjects.projects.push_back(toDoList);
+  }
+}
+
+void deleteProject(ToDo &toDoProjects){
+string s;
+int pos=0;
+
+  do{
+    cout<<E_PN; getline(cin,s);
+  }while(checkEmpty(s));
+
+  if(checkProject(s,toDoProjects,pos)){
+    toDoProjects.projects.erase(toDoProjects.projects.begin()+pos);
+  }else{
+    error(ERR_ID);
   }
 }
 
@@ -619,7 +641,7 @@ int main(){
                 break;
       case '2': addProject(toDoProjects);
                 break;
-      case '3': 
+      case '3': deleteProject(toDoProjects);
                 break;
       case '4': 
                 break;
