@@ -33,6 +33,7 @@ const string TD="Total done: ";
 const string MIN="minutes";
 const string HP="Highest priority: ";
 const string E_ID="Enter project id: ";
+const string E_FN="Enter filename: ";
 
 struct Date{
   int day;
@@ -123,6 +124,7 @@ void report(const ToDo &toDoProjects,const int id);
 void projectMenu(ToDo &toDoProjects);
 void addProject(ToDo &toDoProjects);
 void deleteProject(ToDo &toDoProjects);
+void importProjects(ToDo &toDoProjects);
 
 void error(Error e){
   switch(e){
@@ -619,7 +621,61 @@ void deleteProject(ToDo &toDoProjects){
   }else{
     toDoProjects.projects.erase(toDoProjects.projects.begin()+id);
   }
+}
 
+void importProjects(ToDo &toDoProjects){
+  string s;
+  ifstream infile;
+  char c;
+  int id=-1,list=-1; //inicialitzats en -1 per a que quan llisca el primer projecte o llista comence pel número 0
+
+  cout<<E_FN<<endl; getline(cin,s);
+
+  infile.open(s,ios::in);
+
+  if(infile.is_open()){
+
+    do{
+      infile.get(c);
+
+      if(c=='>'){
+        id++;
+      }else if(c=='<'){
+      }
+
+      if(c=='#'){
+        getline(infile,s);
+
+        if(checkProject(s,toDoProjects)){
+          do{
+            infile.get(c);
+          }while(c!='>');
+        }else{
+          toDoProjects.projects[id].name=s;
+
+          infile.get(c);
+          if(c=='*'){
+            getline(infile,s);
+            toDoProjects.projects[id].description=s; //fer el mateix amb descripció (<><><>)
+          }else{
+            s=NULL; //dubtes si açò pot funcionar
+            toDoProjects.projects[id].description=s;
+
+            infile.get(c);
+            if(c=='@'){
+              list++;
+              getline(infile,s);
+              toDoProjects.projects[id].lists[list].name=s; //CONTINUAR AMB LES TASQUES I NO OBLIDAR DE REPLICAR-HO DALT (<><><>)
+            }
+          }
+        }
+      }
+    }while(!infile.eof());
+
+    infile.close();
+  }else{
+    error(ERR_FILE);
+  }
 }
 
 int main(){
@@ -641,7 +697,7 @@ int main(){
                 break;
       case '3': deleteProject(toDoProjects);
                 break;
-      case '4': 
+      case '4': importProjects(toDoProjects);
                 break;
       case '5': 
                 break;
