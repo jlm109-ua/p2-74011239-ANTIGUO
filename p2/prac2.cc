@@ -7,16 +7,13 @@
 
 using namespace std;
 
-const int n1=1;
-const int n4=4;
-const int n12=12;
-const int n29=29;
-const int n30=30;
-const int n31=31;
-const int n100=100;
-const int n400=400;
-const int n2000=2000;
-const int n2100=2100;
+const int KMINMONTH=1;
+const int KMAXMONTH=12;
+const int KMAXFEB=29;
+const int KMAXDAY2=30;
+const int KMAXDAY=31;
+const int KMINYEAR=2000;
+const int KMAXYEAR=2100;
 const int KMAXNAME=20;
 const int KMAXDESC=40;
 
@@ -268,28 +265,28 @@ bool checkDate(string sd,string sm,string sy){
   month=stoi(sm);
   year=stoi(sy);
 
-  x=year%n100;
-  y=year%n400;
-  z=year%n4;
+  x=year%100;
+  y=year%400;
+  z=year%4;
 
-  if(year<n2000 || year>n2100){
+  if(year<KMINYEAR || year>KMAXYEAR){
     val=true;
   }
 
-  if(month<n1 || month>n12){
+  if(month<KMINMONTH || month>KMAXMONTH){
     val=true;
   }
 
-  if(day<n1 || day>n31){
+  if(day<KMAXMONTH || day>KMAXDAY){
     val=true;
   }
 
   switch(month){
     case 2: 
-      if(day>n29){
+      if(day>KMAXFEB){
         val=true;
       }
-      if(day==n29){
+      if(day==KMAXFEB){
         if(z!=0){
           val=true;
           break;
@@ -305,22 +302,22 @@ bool checkDate(string sd,string sm,string sy){
       }
       break;
     case 4: 
-      if(day>n30){
+      if(day>KMAXDAY2){
         val=true;
       }
       break;
     case 6: 
-      if(day>n30){
+      if(day>KMAXDAY2){
         val=true;
       }
       break;
     case 9: 
-      if(day>n30){
+      if(day>KMAXDAY2){
         val=true;
       }
       break;
     case 11:
-      if(day>n30){
+      if(day>KMAXDAY2){
         val=true;
       }
       break;
@@ -624,14 +621,13 @@ void deleteProject(ToDo &toDoProjects){
 }
 
 void importProjects(ToDo &toDoProjects){
-  string s;
-  ifstream infile;
+  string s,spn,spd,sd,sm,sy,sln,stn,sid,st,f="f",t="t"; //spn=save project name, spd=save project description, sd,sm i sy per a la data, sln=save list name, stn=save task name, sid=save isDone, st=save time
+  int id=-1,list=-1,task=-1,time,aux,pos; //inicialitzats en -1 per a que quan llisca el primer projecte, llista o tasca comence pel número 0
   char c;
-  int id=-1,list=-1; //inicialitzats en -1 per a que quan llisca el primer projecte o llista comence pel número 0
 
   cout<<E_FN<<endl; getline(cin,s);
 
-  infile.open(s,ios::in);
+  ifstream infile(s,ios::in);
 
   if(infile.is_open()){
 
@@ -643,29 +639,113 @@ void importProjects(ToDo &toDoProjects){
       }else if(c=='<'){
       }
 
+      infile.get(c);
+
       if(c=='#'){
-        getline(infile,s);
+        getline(infile,spn);
 
-        if(checkProject(s,toDoProjects)){
-          do{
+        if(checkProject(spn,toDoProjects)){
+          while(c!='>'){
             infile.get(c);
-          }while(c!='>');
+          }
         }else{
-          toDoProjects.projects[id].name=s;
-
           infile.get(c);
+
           if(c=='*'){
-            getline(infile,s);
-            toDoProjects.projects[id].description=s; //fer el mateix amb descripció (<><><>)
+            getline(infile,spd);
+            infile.get(c);
+
+            if(c=='@'){
+              while(c!='>'){
+                list++;
+                getline(infile,sln);
+
+                if(checkList(sln,toDoProjects,pos,id)){
+                  while(c!='@'){
+                    task++;
+                    getline(infile,stn,'|');
+                    getline(infile,sd,'/');
+                    getline(infile,sm,'/');
+                    getline(infile,sy,'|');
+
+                    if(checkDate(sd,sm,sy)){
+                      getline(infile,sid,'|');
+                      getline(infile,st);
+                      time=stoi(st);
+
+                      if(aux>1 && aux<180){
+                        toDoProjects.projects[id].name=spn;
+                        toDoProjects.projects[id].description=spd;
+                        toDoProjects.projects[id].lists[list].name=sln;
+                        toDoProjects.projects[id].lists[list].tasks[task].name=stn;
+                        toDoProjects.projects[id].lists[list].tasks[task].deadline.day=stoi(sd);
+                        toDoProjects.projects[id].lists[list].tasks[task].deadline.month=stoi(sm);
+                        toDoProjects.projects[id].lists[list].tasks[task].deadline.year=stoi(sy);
+                        if(sid==f){
+                          toDoProjects.projects[id].lists[list].tasks[task].isDone=false;
+                        }else if(sid==t){
+                          toDoProjects.projects[id].lists[list].tasks[task].isDone=true;
+                        }
+                        toDoProjects.projects[id].lists[list].tasks[task].time=time;
+                      }else{
+                        error(ERR_TIME);
+                      }
+                    }else{
+                      error(ERR_DATE);
+                    }
+                  }
+                }else{
+                  error(ERR_LIST_NAME);
+                }
+              }
+            }
           }else{
-            s=NULL; //dubtes si açò pot funcionar
+            s[0]=' '; //dubtes si açò pot funcionar
             toDoProjects.projects[id].description=s;
 
-            infile.get(c);
             if(c=='@'){
-              list++;
-              getline(infile,s);
-              toDoProjects.projects[id].lists[list].name=s; //CONTINUAR AMB LES TASQUES I NO OBLIDAR DE REPLICAR-HO DALT (<><><>)
+              while(c!='>'){
+                list++;
+                getline(infile,sln);
+
+                if(checkList(sln,toDoProjects,pos,id)){
+                  while(c!='@'){
+                    task++;
+                    getline(infile,stn,'|');
+                    getline(infile,sd,'/');
+                    getline(infile,sm,'/');
+                    getline(infile,sy,'|');
+
+                    if(checkDate(sd,sm,sy)){
+                      getline(infile,sid,'|');
+                      getline(infile,st);
+                      time=stoi(st);
+
+                      if(aux>1 && aux<180){
+                        toDoProjects.projects[id].name=spn;
+                        toDoProjects.projects[id].description=spd;
+                        toDoProjects.projects[id].lists[list].name=sln;
+                        toDoProjects.projects[id].lists[list].tasks[task].name=stn;
+                        toDoProjects.projects[id].lists[list].tasks[task].deadline.day=stoi(sd);
+                        toDoProjects.projects[id].lists[list].tasks[task].deadline.month=stoi(sm);
+                        toDoProjects.projects[id].lists[list].tasks[task].deadline.year=stoi(sy);
+                        if(sid==f){
+                          toDoProjects.projects[id].lists[list].tasks[task].isDone=false;
+                        }else if(sid==t){
+                          toDoProjects.projects[id].lists[list].tasks[task].isDone=true;
+                        }
+                        toDoProjects.projects[id].lists[list].tasks[task].time=time;
+                      }else{
+                        error(ERR_TIME);
+                      }
+                    }else{
+                      error(ERR_DATE);
+                    }
+                  }
+                }else{
+                  error(ERR_LIST_NAME);
+                }
+              }
             }
           }
         }
