@@ -122,6 +122,10 @@ void projectMenu(ToDo &toDoProjects);
 void addProject(ToDo &toDoProjects);
 void deleteProject(ToDo &toDoProjects);
 void importProjects(ToDo &toDoProjects);
+void exportProjects(ToDo &toDoProjects);
+void loadData(ToDo &toDoProjects);
+void saveData(ToDo &toDoProjects);
+void summary(ToDo &toDoProjects);
 
 void error(Error e){
   switch(e){
@@ -277,7 +281,7 @@ bool checkDate(string sd,string sm,string sy){
     val=true;
   }
 
-  if(day<KMAXMONTH || day>KMAXDAY){
+  if(day<KMINMONTH || day>KMAXDAY){
     val=true;
   }
 
@@ -621,7 +625,7 @@ void deleteProject(ToDo &toDoProjects){
 }
 
 void importProjects(ToDo &toDoProjects){
-  string s,spn,spd,sd,sm,sy,sln,stn,sid,st,f="f",t="t"; //spn=save project name, spd=save project description, sd,sm i sy per a la data, sln=save list name, stn=save task name, sid=save isDone, st=save time
+  /*string s,spn,spd,sd,sm,sy,sln,stn,sid,st,f="f",t="t"; //spn=save project name, spd=save project description, sd,sm i sy per a la data, sln=save list name, stn=save task name, sid=save isDone, st=save time
   int id=-1,list=-1,task=-1,time,aux,pos; //inicialitzats en -1 per a que quan llisca el primer projecte, llista o tasca comence pel número 0
   char c;
 
@@ -755,7 +759,45 @@ void importProjects(ToDo &toDoProjects){
     infile.close();
   }else{
     error(ERR_FILE);
+  }*/
+}
+
+void exportProjects(ToDo &toDoProjects){
+
+
+
+}
+
+void loadData(ToDo &toDoProjects){
+
+
+
+}
+
+void saveData(ToDo &toDoProjects){
+
+
+  
+}
+
+void summary(ToDo &toDoProjects){
+  int ttask=0,dtask=0; //ttask=total tasks, dtask=tasks done
+
+  for(unsigned int i=0;i<toDoProjects.projects.size();i++){
+    cout<<"("<<toDoProjects.projects[i].id<<") "<<toDoProjects.projects[i].name<<" ";
+
+    for(unsigned int j=0;j<toDoProjects.projects[i].lists.size();j++){
+      for(unsigned int k=0;k<toDoProjects.projects[i].lists[j].tasks.size();k++){
+        ttask++;
+        if(toDoProjects.projects[i].lists[j].tasks[k].isDone){
+          dtask++;
+        }
+      }
+    }
+    cout<<"["<<dtask<<"/"<<ttask<<"]"<<endl;
   }
+
+  
 }
 
 int main(){
@@ -779,13 +821,13 @@ int main(){
                 break;
       case '4': importProjects(toDoProjects);
                 break;
-      case '5': 
+      case '5': exportProjects(toDoProjects);
                 break;
-      case '6': 
+      case '6': loadData(toDoProjects);
                 break;
-      case '7': 
+      case '7': saveData(toDoProjects);
                 break;
-      case '8':
+      case '8': summary(toDoProjects);
                 break;
       case 'q': break;
       default: error(ERR_OPTION);
