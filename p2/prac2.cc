@@ -33,6 +33,7 @@ const string HP="Highest priority: ";
 const string E_ID="Enter project id: ";
 const string E_FN="Enter filename: ";
 const string SAP="Save all projects [Y/N]?: ";
+const string CONF="Confirm [Y/N]?: ";
 
 struct Date{
   int day;
@@ -114,6 +115,7 @@ bool delDupes(string s2,int &pos1,ToDo &toDoProjects,const int id);
 bool checkDate(string sd,string sm,string sy);
 bool checkProject(string s,ToDo &toDoProjects);
 bool checkId(const int id,ToDo &toDoProjects);
+void deleteAll(ToDo &toDoProjects);
 void editProject(ToDo &toDoProjects,int id);
 void addList(ToDo &toDoProjects,int id);
 void deleteList(ToDo &toDoProjects,int id);
@@ -129,6 +131,7 @@ void exportProjects(ToDo &toDoProjects);
 void loadData(ToDo &toDoProjects);
 void saveData(ToDo &toDoProjects);
 void summary(ToDo &toDoProjects);
+void convertProjects(ToDo &toDoProjects);
 
 void error(Error e){
   switch(e){
@@ -359,6 +362,34 @@ bool checkId(const int id,ToDo &toDoProjects){
   }
 
   return(val);
+}
+
+void deleteAll(ToDo &toDoProjects){
+  for(unsigned int i=toDoProjects.projects.size();i>0;i--){
+    toDoProjects.projects.erase(toDoProjects.projects.begin()+i);
+  }
+}
+
+void convertProjects(ToDo &toDoProjects){
+/*BinToDo binToDoProjects;
+
+  for(unsigned int i=0;i<toDoProjects.projects.size();i++){
+    if(toDoProjects.projects[i].name.length()>19){
+      for(unsigned int i2=0;i<20;i++){
+        if(i2!=20){
+          //binToDoProjects[i].name[i2]=toDoProjects.projects[i].name[i2]; ??????????
+        }else{
+          //binToDoProjects[i].name[i2]='\0';
+        }
+      }
+    }
+
+    //continuar amb la descripció i tot lo demés
+
+    //PREGUNTAR COM ES PODEN GUARDAR DIFERENTS PROJECTS; DIFERENTS STRUCTS????
+
+  }
+*/
 }
 
 /* OPCIONS DEL MENU VISIBLES */
@@ -842,14 +873,49 @@ void exportProjects(ToDo &toDoProjects){
 }
 
 void loadData(ToDo &toDoProjects){
+  string s;
+  char opt;
 
+  cout<<E_FN; getline(cin,s);
+
+  ifstream ifbinf(s.c_str(),ios::in | ios::binary);
+
+  if(ifbinf.is_open()){
+    do{
+      cout<<CONF; cin>>opt;
+
+      if(opt=='Y' || opt=='y'){
+        deleteAll(toDoProjects);
+
+
+        //COMPLETAR BINARI
+      
+      
+      }else if(opt=='N' || opt=='n'){
+        ifbinf.close();
+      }
+    }while(opt!='Y' && opt!='y' && opt!='N' && opt!='n');
+
+  }else{
+    error(ERR_FILE);
+  }
 
 
 }
 
 void saveData(ToDo &toDoProjects){
+  string s;
 
+  cout<<E_FN; getline(cin,s);
 
+  ofstream ofbinf(s.c_str(),ios::out | ios::binary);
+
+  if(ofbinf.is_open()){
+    convertProjects(toDoProjects);
+
+  }else{
+    error(ERR_FILE);
+  }
   
 }
 
