@@ -371,12 +371,14 @@ void deleteAll(ToDo &toDoProjects){
 }
 
 void convertProjects(ToDo &toDoProjects){
-/*BinToDo binToDoProjects;
+  /*BinToDo binToDoProjects;
 
   for(unsigned int i=0;i<toDoProjects.projects.size();i++){
+
     if(toDoProjects.projects[i].name.length()>19){
-      for(unsigned int i2=0;i<20;i++){
-        if(i2!=20){
+      for(unsigned int i2=0;i2<20;i2++){
+
+        if(i2!=19){
           //binToDoProjects[i].name[i2]=toDoProjects.projects[i].name[i2]; ??????????
         }else{
           //binToDoProjects[i].name[i2]='\0';
@@ -384,12 +386,47 @@ void convertProjects(ToDo &toDoProjects){
       }
     }
 
-    //continuar amb la descripció i tot lo demés
+    if(toDoProjects.projects[i].description.length()>49){
+      for(unsigned int j=0;j<50;j++){
+
+        if(j!=49){
+          // ???
+        }else{
+          // ???
+        }
+      }
+    }
+
+    for(unsigned int k=0;k<toDoProjects.projects[i].lists.size();k++){
+
+      if(toDoProjects.projects[i].lists[k].name.size()>19){
+        for(unsigned int k2=0;k2<20;k++){
+
+          if(k2!=19){
+            // ???
+          }else{
+            // ???
+          }
+        }
+      }
+
+      for(unsigned int k3=0;k3<toDoProjects.projects[i].lists[k2].tasks.size();k3++){
+
+        if(toDoProjects.projects[i].lists[k].tasks[k3].name.size()>19){
+          for(unsigned int k4=0;k4<20;k4++){
+              
+            if(k4!=19){
+              // ???
+            }else{
+              // ???
+            }
+          }
+        }
+      }
 
     //PREGUNTAR COM ES PODEN GUARDAR DIFERENTS PROJECTS; DIFERENTS STRUCTS????
-
-  }
-*/
+    }
+  }*/
 }
 
 /* OPCIONS DEL MENU VISIBLES */
