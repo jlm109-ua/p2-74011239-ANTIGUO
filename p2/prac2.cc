@@ -34,6 +34,8 @@ const string E_ID="Enter project id: ";
 const string E_FN="Enter filename: ";
 const string SAP="Save all projects [Y/N]?: ";
 const string CONF="Confirm [Y/N]?: ";
+const char argi[]="-i";
+const char argl[]="-l";
 
 struct Date{
   int day;
@@ -116,6 +118,9 @@ bool checkDate(string sd,string sm,string sy);
 bool checkProject(string s,ToDo &toDoProjects);
 bool checkId(const int id,ToDo &toDoProjects);
 void deleteAll(ToDo &toDoProjects);
+void importArg(string s,ToDo &toDoProjects);
+void loadArg(string s,ToDo &toDoProjects);
+void argManag(int argc,char *argv[],ToDo &todoProjects);
 void editProject(ToDo &toDoProjects,int id);
 void addList(ToDo &toDoProjects,int id);
 void deleteList(ToDo &toDoProjects,int id);
@@ -427,6 +432,59 @@ void convertProjects(ToDo &toDoProjects){
     //PREGUNTAR COM ES PODEN GUARDAR DIFERENTS PROJECTS; DIFERENTS STRUCTS????
     }
   }*/
+}
+
+void importArg(string s,ToDo &toDoProjects){
+
+
+  cout<<"Argument -i introduït"<<endl; //PROVA
+  // COMPLETAR IMPORT PROJECT DES DE ARGUMENT
+
+}
+
+void loadArg(string s,ToDo &toDoProjects){
+
+
+  cout<<"Argument -l introduït"<<endl; //PROVA
+  // COMPLETAR BINARY IMPORT PROJECT DES DE ARGUMENT
+
+  // PREGUNTAR PEL CAS "prac2 -i -l hola" PER QUÈ AL NEMIVER POSA QUE SOLAMENT S'HA INTRODUIT UN ELEMENT? argc=1??????
+
+}
+
+void argManag(int argc,char *argv[],ToDo &toDoProjects){
+  int conti=0,contl=0; //Usem contadors per a comprovar que no s'haja escrit el mateix argument dues vegades
+  string s;
+
+  for(int i=1;i<argc;i++){
+    if(strcmp(argv[i],argi)==0){
+      conti++;
+    }else if(strcmp(argv[i],argl)==0){
+      contl++;
+    }else if(conti==1){
+      conti++;
+      if((strcmp(argv[i],argi)==0)){
+        error(ERR_ARGS);
+      }else if(strcmp(argv[i],argl)==0){
+        error(ERR_ARGS);
+      }else{
+        s=argv[i];
+        importArg(s,toDoProjects);
+      }
+    }else if(contl==1){
+      contl++;
+      if((strcmp(argv[i],argi)==0)){
+        error(ERR_ARGS);
+      }else if(strcmp(argv[i],argl)==0){
+        error(ERR_ARGS);
+      }else{
+        s=argv[i];
+        loadArg(s,toDoProjects);
+      }
+    }else{
+      error(ERR_ARGS);
+    }
+  }
 }
 
 /* OPCIONS DEL MENU VISIBLES */
@@ -867,6 +925,7 @@ void exportProjects(ToDo &toDoProjects){
       }
     }else if(opt=='N' || opt=='n'){
       cout<<E_ID; cin>>id;
+      cin.get();
 
       if(checkId(id,toDoProjects)){
         cout<<E_FN; getline(cin,fn);
@@ -874,6 +933,7 @@ void exportProjects(ToDo &toDoProjects){
         ofstream offile(fn.c_str(),ios::out);
 
         if(offile.is_open()){
+          offile<<"<"<<endl;
           offile<<"#"<<toDoProjects.projects[id].name<<endl;
             
             if(!checkEmpty(toDoProjects.projects[id].description)){
@@ -897,7 +957,8 @@ void exportProjects(ToDo &toDoProjects){
                   }
                 }
               }
-            }        
+            }
+          offile<<">"<<endl; //ERROR COMPROVAR
           offile.close();
         }
       }else{
@@ -971,17 +1032,17 @@ void summary(ToDo &toDoProjects){
       }
     }
     cout<<"["<<dtask<<"/"<<ttask<<"]"<<endl;
-  }
-
-  
+  } 
 }
 
-int main(){
+int main(int argc,char *argv[]){
   ToDo toDoProjects; //variable ToDo per a controlar els projectes
   toDoProjects.nextId=0;
   char option;
   Project toDoList;
   toDoProjects.nextId=0;
+
+  argManag(argc,argv,toDoProjects);
 
   do{
     showMainMenu();
