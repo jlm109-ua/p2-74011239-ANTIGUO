@@ -925,7 +925,7 @@ void importProjects(ToDo &toDoProjects){
 
 void exportProjects(ToDo &toDoProjects){
   char opt;
-  unsigned int id,val1,val2; //val1 i val2 son valors auxiliars per al for
+  int id,val1,val2; //val1 i val2 son valors auxiliars per al for
   string fn;
 
   cout<<SAP; cin>>opt;
@@ -953,8 +953,8 @@ void exportProjects(ToDo &toDoProjects){
     val1=0;
     val2=toDoProjects.projects.size();
   }else{
-    val1=id;
-    val2=id+1;
+    val1=id-1;
+    val2=id;
   }
 
   if(offile.is_open()){
