@@ -821,101 +821,68 @@ void deleteProject(ToDo &toDoProjects){
 }
 
 void importProjects(ToDo &toDoProjects){
-  string s,spn,spd,sd,sm,sy,sln,stn,sid,st,f="f",t="t"; //spn=save project name, spd=save project description, sd,sm i sy per a la data, sln=save list name, stn=save task name, sid=save isDone, st=save time
-  int id=-1,list=-1,task=-1,time,pos; //inicialitzats en -1 per a que quan llisca el primer projecte, llista o tasca comence pel número 0
-  char c;
+  string s,ss;
+  int cont=-1,contl=-1,contt=-1; //contl i contt son cont list i cont task, variables auxiliars per a controlar les llistes i les tasques
   Project toDoList;
   List toDoTask;
-  Task tTask;
+  size_t pos;
+  bool fail=false,cd; //cd=check description, per a comprovar si ha hagut description o no, cd2 és una altra condició per a comprovar açò millor
 
   cout<<E_FN<<endl; getline(cin,s);
+
+  // fer un mòdul per a accedir directament al import projects sense necessitar id (per als arguments)
 
   ifstream infile(s.c_str());
 
   if(infile.is_open()){
 
-    // LLEGIR LINIA PER LINIA I COMPROVAR CARÀCTER; SUBSTR STRING
+    while(getline(iffile,s)){
+      if(s[0]=='<'){
+        cont++; //Reiniciem totes les variables auxiliars al canviar a un nou projecte
+        contl=-1;
+        contt=-1;
+        cd=false;
+      }else if(s[0]=='>'){
+      }else if(s[0]=='#'){
+        pos=s.find('#')+1;
+        strncpy(ss,s,pos);
+        
+        if(checkEmtpy(ss)){
+          error(ERR_PROJECT_NAME);
+          fail=true;
+        }else{
+          toDoList.name=ss;
+        }
+      }else if(s[0]=='*'){
+        cd=true;
+        pos=s.find('#')+1;
+        strncpy(toDoList.description,s,pos);
+      }else if(cd){
+        toDoList.description[0]=' ';
+        cd=false;
+      }else if(s[0]=='@'){
+        contl++;
+        pos=s.find('@')+1;
+        strncpy(ss,s,pos);
+        if(checkEmpty(ss)){
+          error(ERR_PROJECT_NAME);
+          fail=true;
+        }else{
+          toDoTask.name=ss;
+        }
+      }else if(s[0]=='|'){
+        contt++;
+        // CONTINUAR GUARDAR DATA
+      }else{
+        cont++;
 
-    do{
-      infile.get(c);
-
-      if(c=='>'){
-        id++;
-      }else if(c=='<'){
       }
 
-      infile.get(c);
-
-      if(c=='#'){
-        getline(infile,spn);
-
-        if(checkProject(spn,toDoProjects)){
-          while(c!='>'){
-            infile.get(c);
-          }
-        }else{
-          infile.get(c);
-
-        if(c=='*'){
-          getline(infile,spd);
-          infile.get(c);
-        }else{
-          spd[0]=' ';
-        }
-
-          if(c=='@'){
-            while(c!='>'){
-              list++;
-              getline(infile,sln);
-
-              if(checkList(sln,toDoProjects,pos,id)){
-                while(c!='@'){
-                  task++;
-                  getline(infile,stn,'|');
-                  getline(infile,sd,'/');
-                  getline(infile,sm,'/');
-                  getline(infile,sy,'|');
-
-                  if(checkDate(sd,sm,sy)){
-                    getline(infile,sid,'|');
-                    getline(infile,st);
-                    time=stoi(st);
-
-                    if(time>1 && time<180){
-                      toDoTask.name=sln;
-                      tTask.name=stn;
-                      tTask.deadline.day=stoi(sd);
-                      tTask.deadline.month=stoi(sm);
-                      tTask.deadline.year=stoi(sy);
-                      if(sid==f){
-                        tTask.isDone=false;
-                      }else if(sid==t){
-                        tTask.isDone=true;
-                      }
-                      toDoList.name=spn;
-                      toDoList.description=spd;
-                      tTask.time=time;
-                      toDoTask.tasks.push_back(tTask);
-                      toDoList.lists.push_back(toDoTask);
-                      toDoProjects.projects.push_back(toDoList);
-                    }else{
-                      error(ERR_TIME);
-                    }
-                  }else{
-                    error(ERR_DATE);
-                  }
-                }
-              }else{
-                error(ERR_LIST_NAME);
-              }
-            }
-            toDoList.name=spn;
-            toDoList.description=spd;
-            toDoProjects.projects.push_back(toDoList);
-          }
-        }
+      if(!fail){
+        toDoList.lists.push_back(toDoTask);
+        toDoProjects.projects.push_back(toDoList);
       }
-    }while(!infile.eof());
+    }
 
     infile.close();
   }else{
