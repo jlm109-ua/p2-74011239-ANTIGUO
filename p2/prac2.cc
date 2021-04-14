@@ -118,6 +118,7 @@ bool checkDate(string sd,string sm,string sy);
 bool checkProject(string s,ToDo &toDoProjects);
 bool checkId(const int id,ToDo &toDoProjects);
 void deleteAll(ToDo &toDoProjects);
+void exportProjectFunct(ToDo &toDoProjects,int id,ofstream offile);
 void importArg(string s,ToDo &toDoProjects);
 void loadArg(string s,ToDo &toDoProjects);
 void argManag(int argc,char *argv[],ToDo &todoProjects);
@@ -376,6 +377,9 @@ void deleteAll(ToDo &toDoProjects){
 }
 
 void convertProjects(ToDo &toDoProjects){
+
+  // UTILITZAR STRNCPY!!!!!!!!!!!!!!
+
   /*BinToDo binToDoProjects;
 
   for(unsigned int i=0;i<toDoProjects.projects.size();i++){
@@ -432,6 +436,47 @@ void convertProjects(ToDo &toDoProjects){
     //PREGUNTAR COM ES PODEN GUARDAR DIFERENTS PROJECTS; DIFERENTS STRUCTS????
     }
   }*/
+}
+
+void exportProjectsFunct(ToDo &toDoProjects,int id,ofstream offile){
+  int val1,val2; //valor auxiliars per al for
+
+  if(id==-1){
+    val1=0;
+    val2=toDoProjects.projects.size();
+  }else{
+    val1=id;
+    val2=id+1;
+  }
+
+  for(int i=val1;i<val2;i++){
+    offile<<"<"<<endl;
+    offile<<"#"<<toDoProjects.projects[i].name<<endl;
+        
+    if(!checkEmpty(toDoProjects.projects[i].description)){
+      offile<<"*"<<toDoProjects.projects[i].description<<endl;
+    }
+          
+    if(toDoProjects.projects[i].lists.size()!=0){
+      for(unsigned int j=0;j<toDoProjects.projects[i].lists.size();j++){
+        offile<<"@"<<toDoProjects.projects[i].lists[j].name<<endl;
+
+        if(toDoProjects.projects[i].lists[j].tasks.size()!=0){
+        for(unsigned int k=0;k<toDoProjects.projects[i].lists[j].tasks.size();k++){
+          offile<<toDoProjects.projects[i].lists[j].tasks[k].name<<"|"<<toDoProjects.projects[i].lists[j].tasks[k].deadline.day<<"/"<<toDoProjects.projects[i].lists[j].tasks[k].deadline.month<<"/"<<toDoProjects.projects[i].lists[j].tasks[k].deadline.year<<"|";
+                  
+          if(toDoProjects.projects[i].lists[j].tasks[k].isDone){
+            offile<<"T|";
+          }else{
+            offile<<"F|";
+          }
+          offile<<toDoProjects.projects[i].lists[j].tasks[k].time<<endl;
+          }
+        }
+      }
+    }
+    offile<<">"<<endl;
+  }
 }
 
 void importArg(string s,ToDo &toDoProjects){
@@ -785,9 +830,11 @@ void importProjects(ToDo &toDoProjects){
 
   cout<<E_FN<<endl; getline(cin,s);
 
-  ifstream infile(s.c_str(),ios::in);
+  ifstream infile(s.c_str());
 
   if(infile.is_open()){
+
+    // LLEGIR LINIA PER LINIA I COMPROVAR CARÀCTER; SUBSTR STRING
 
     do{
       infile.get(c);
@@ -813,7 +860,7 @@ void importProjects(ToDo &toDoProjects){
           getline(infile,spd);
           infile.get(c);
         }else{
-          spd[0]=' '; //dubtes si açò pot funcionar
+          spd[0]=' ';
         }
 
           if(c=='@'){
@@ -878,7 +925,7 @@ void importProjects(ToDo &toDoProjects){
 
 void exportProjects(ToDo &toDoProjects){
   char opt;
-  unsigned int id;
+  unsigned int id,val1,val2; //val1 i val2 son valors auxiliars per al for
   string fn;
 
   cout<<SAP; cin>>opt;
@@ -886,88 +933,63 @@ void exportProjects(ToDo &toDoProjects){
 
   do{
     if(opt=='Y' || opt=='y'){
+      id=-1;
       cout<<E_FN; getline(cin,fn);
-
-      ofstream offile(fn.c_str(),ios::out);
-
-      if(offile.is_open()){
-        for(unsigned int i=0;i<toDoProjects.projects.size();i++){
-          offile<<"<"<<endl;
-          offile<<"#"<<toDoProjects.projects[i].name<<endl;
-          
-          if(!checkEmpty(toDoProjects.projects[i].description)){
-            offile<<"*"<<toDoProjects.projects[i].description<<endl;
-          }
-          
-          if(toDoProjects.projects[i].lists.size()!=0){
-            for(unsigned int j=0;j<toDoProjects.projects[i].lists.size();j++){
-              offile<<"@"<<toDoProjects.projects[i].lists[j].name<<endl;
-
-              if(toDoProjects.projects[i].lists[j].tasks.size()!=0){
-                for(unsigned int k=0;k<toDoProjects.projects[i].lists[j].tasks.size();k++){
-                  offile<<toDoProjects.projects[i].lists[j].tasks[k].name<<"|"<<toDoProjects.projects[i].lists[j].tasks[k].deadline.day<<"/"<<toDoProjects.projects[i].lists[j].tasks[k].deadline.month<<"/"<<toDoProjects.projects[i].lists[j].tasks[k].deadline.year<<"|";
-                  
-                  if(toDoProjects.projects[i].lists[j].tasks[k].isDone){
-                    offile<<"T|";
-                  }else{
-                    offile<<"F|";
-                  }
-                  offile<<toDoProjects.projects[i].lists[j].tasks[k].time<<endl;
-                }
-              }
-            }
-          }
-          offile<<">"<<endl;
-        }        
-        offile.close();
-      }else{
-        error(ERR_FILE);
-      }
     }else if(opt=='N' || opt=='n'){
       cout<<E_ID; cin>>id;
       cin.get();
 
       if(checkId(id,toDoProjects)){
         cout<<E_FN; getline(cin,fn);
-
-        ofstream offile(fn.c_str(),ios::out);
-
-        if(offile.is_open()){
-          offile<<"<"<<endl;
-          offile<<"#"<<toDoProjects.projects[id].name<<endl;
-            
-            if(!checkEmpty(toDoProjects.projects[id].description)){
-              offile<<"*"<<toDoProjects.projects[id].description<<endl;
-            }
-            
-            if(toDoProjects.projects[id].lists.size()!=0){
-              for(unsigned int j=0;j<toDoProjects.projects[id].lists.size();j++){
-                offile<<"@"<<toDoProjects.projects[id].lists[j].name<<endl;
-
-                if(toDoProjects.projects[id].lists[j].tasks.size()!=0){
-                  for(unsigned int k=0;k<toDoProjects.projects[id].lists[j].tasks.size();k++){
-                    offile<<toDoProjects.projects[id].lists[j].tasks[k].name<<"|"<<toDoProjects.projects[id].lists[j].tasks[k].deadline.day<<"/"<<toDoProjects.projects[id].lists[j].tasks[k].deadline.month<<"/"<<toDoProjects.projects[id].lists[j].tasks[k].deadline.year<<"|";
-                    
-                    if(toDoProjects.projects[id].lists[j].tasks[k].isDone){
-                      offile<<"T|";
-                    }else{
-                      offile<<"F|";
-                    }
-                    offile<<toDoProjects.projects[id].lists[j].tasks[k].time<<endl;
-                  }
-                }
-              }
-            }
-          offile<<">"<<endl; //ERROR COMPROVAR
-          offile.close();
-        }
       }else{
         error(ERR_ID);
       }
-    }else{
-      error(ERR_FILE);
     }
   }while(opt!='Y' && opt!='y' && opt!='N' && opt!='n');
+
+  ofstream offile(fn.c_str());
+
+  if(id==-1){
+    val1=0;
+    val2=toDoProjects.projects.size();
+  }else{
+    val1=id;
+    val2=id+1;
+  }
+
+  if(offile.is_open()){
+    for(int i=val1;i<val2;i++){
+      offile<<"<"<<endl;
+      offile<<"#"<<toDoProjects.projects[i].name<<endl;
+          
+      if(!checkEmpty(toDoProjects.projects[i].description)){
+        offile<<"*"<<toDoProjects.projects[i].description<<endl;
+      }
+            
+      if(toDoProjects.projects[i].lists.size()!=0){
+        for(unsigned int j=0;j<toDoProjects.projects[i].lists.size();j++){
+          offile<<"@"<<toDoProjects.projects[i].lists[j].name<<endl;
+
+          if(toDoProjects.projects[i].lists[j].tasks.size()!=0){
+          for(unsigned int k=0;k<toDoProjects.projects[i].lists[j].tasks.size();k++){
+            offile<<toDoProjects.projects[i].lists[j].tasks[k].name<<"|"<<toDoProjects.projects[i].lists[j].tasks[k].deadline.day<<"/"<<toDoProjects.projects[i].lists[j].tasks[k].deadline.month<<"/"<<toDoProjects.projects[i].lists[j].tasks[k].deadline.year<<"|";
+                    
+            if(toDoProjects.projects[i].lists[j].tasks[k].isDone){
+              offile<<"T|";
+            }else{
+              offile<<"F|";
+            }
+            offile<<toDoProjects.projects[i].lists[j].tasks[k].time<<endl;
+            }
+          }
+        }
+      }
+      offile<<">"<<endl;
+    }
+    offile.close();
+  }else{
+      error(ERR_FILE);
+  }
 }
 
 void loadData(ToDo &toDoProjects){
@@ -1010,6 +1032,12 @@ void saveData(ToDo &toDoProjects){
 
   if(ofbinf.is_open()){
     convertProjects(toDoProjects);
+
+    // COMPLETAR BINARI
+
+    //strncpy PER A COPIAR CADENES
+
+    //bucle per a emplenar bintask etc
 
   }else{
     error(ERR_FILE);
