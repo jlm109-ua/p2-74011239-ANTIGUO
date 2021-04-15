@@ -118,10 +118,14 @@ bool checkDate(string sd,string sm,string sy);
 bool checkProject(string s,ToDo &toDoProjects);
 bool checkId(const int id,ToDo &toDoProjects);
 void deleteAll(ToDo &toDoProjects);
+void convertProjects(ToDo &toDoProjects);
 void exportProjectFunct(ToDo &toDoProjects,int id,ofstream offile);
 void importArg(string s,ToDo &toDoProjects);
 void loadArg(string s,ToDo &toDoProjects);
 void argManag(int argc,char *argv[],ToDo &todoProjects);
+void loadProjects(BinProject &binToDoList);
+void loadLists(BinList &binToDoTask);
+void loadTasks(BinTask &binToDoSingleTask);
 void editProject(ToDo &toDoProjects,int id);
 void addList(ToDo &toDoProjects,int id);
 void deleteList(ToDo &toDoProjects,int id);
@@ -376,68 +380,6 @@ void deleteAll(ToDo &toDoProjects){
   }
 }
 
-void convertProjects(ToDo &toDoProjects){
-
-  // UTILITZAR STRNCPY!!!!!!!!!!!!!!
-
-  /*BinToDo binToDoProjects;
-
-  for(unsigned int i=0;i<toDoProjects.projects.size();i++){
-
-    if(toDoProjects.projects[i].name.length()>19){
-      for(unsigned int i2=0;i2<20;i2++){
-
-        if(i2!=19){
-          //binToDoProjects[i].name[i2]=toDoProjects.projects[i].name[i2]; ??????????
-        }else{
-          //binToDoProjects[i].name[i2]='\0';
-        }
-      }
-    }
-
-    if(toDoProjects.projects[i].description.length()>49){
-      for(unsigned int j=0;j<50;j++){
-
-        if(j!=49){
-          // ???
-        }else{
-          // ???
-        }
-      }
-    }
-
-    for(unsigned int k=0;k<toDoProjects.projects[i].lists.size();k++){
-
-      if(toDoProjects.projects[i].lists[k].name.size()>19){
-        for(unsigned int k2=0;k2<20;k++){
-
-          if(k2!=19){
-            // ???
-          }else{
-            // ???
-          }
-        }
-      }
-
-      for(unsigned int k3=0;k3<toDoProjects.projects[i].lists[k2].tasks.size();k3++){
-
-        if(toDoProjects.projects[i].lists[k].tasks[k3].name.size()>19){
-          for(unsigned int k4=0;k4<20;k4++){
-              
-            if(k4!=19){
-              // ???
-            }else{
-              // ???
-            }
-          }
-        }
-      }
-
-    //PREGUNTAR COM ES PODEN GUARDAR DIFERENTS PROJECTS; DIFERENTS STRUCTS????
-    }
-  }*/
-}
-
 void exportProjectsFunct(ToDo &toDoProjects,int id,ofstream offile){
   int val1,val2; //valor auxiliars per al for
 
@@ -493,8 +435,6 @@ void loadArg(string s,ToDo &toDoProjects){
   cout<<"Argument -l introduït"<<endl; //PROVA
   // COMPLETAR BINARY IMPORT PROJECT DES DE ARGUMENT
 
-  // PREGUNTAR PEL CAS "prac2 -i -l hola" PER QUÈ AL NEMIVER POSA QUE SOLAMENT S'HA INTRODUIT UN ELEMENT? argc=1??????
-
 }
 
 void argManag(int argc,char *argv[],ToDo &toDoProjects){
@@ -530,6 +470,24 @@ void argManag(int argc,char *argv[],ToDo &toDoProjects){
       error(ERR_ARGS);
     }
   }
+}
+
+void loadProjects(BinProject &binToDoList){
+
+
+
+}
+
+void loadLists(BinList &binToDoTask){
+
+
+
+}
+
+void loadTasks(BinTask &binToDoSingleTask){
+
+
+
 }
 
 /* OPCIONS DEL MENU VISIBLES */
@@ -962,6 +920,11 @@ void exportProjects(ToDo &toDoProjects){
 void loadData(ToDo &toDoProjects){
   string s;
   char opt;
+  int psize,lsize,tsize; //psize=project size, lsize=list size, tsize=task size
+  BinToDo binProject;
+  BinProject binToDoList;
+  BinList binToDoTask;
+  BinTask binToDoSingleTask;
 
   cout<<E_FN; getline(cin,s);
 
@@ -974,6 +937,13 @@ void loadData(ToDo &toDoProjects){
       if(opt=='Y' || opt=='y'){
         deleteAll(toDoProjects);
 
+
+
+        void loadProjects(binToDoList,pszie);
+
+        void loadLists(binToDoTask,lsize);
+        
+        void loadTasks(binToDoSingleTask,tsize);
 
         //COMPLETAR BINARI
       
@@ -992,20 +962,60 @@ void loadData(ToDo &toDoProjects){
 
 void saveData(ToDo &toDoProjects){
   string s;
+  char name[KMAXNAME],desc[KMAXDESC];
+  BinToDo binToDoProjects;
+  BinProject binToDoList;
+  BinList binToDoTask;
+  BinTask binToDoSingleTask;
 
   cout<<E_FN; getline(cin,s);
 
   ofstream ofbinf(s.c_str(),ios::out | ios::binary);
 
+//  COMPLETAR
+
   if(ofbinf.is_open()){
-    convertProjects(toDoProjects);
 
-    // COMPLETAR BINARI
+    for(unsigned int i=0;i<toDoProjects.projects.size();i++){
 
-    //strncpy PER A COPIAR CADENES
+      if(toDoProjects.projects[i].name.length()>19){
+        strncpy(name,toDoProjects.projects[i].name,19)
+        name[19]='\0';
+        binToDoList.name=name; CANVIAR PER BIN
+      }
 
-    //bucle per a emplenar bintask etc
+      if(toDoProjects.projects[i].description.length()>49){
+        strncpy(desc,toDoProjects.projects[i].description,49)
+        desc[49]='\0';
+        //toDoProjects.projects[i].desc=desc; CANVIAR PER BIN
+      }
 
+      for(unsigned int k=0;k<toDoProjects.projects[i].lists.size();k++){
+
+        if(toDoProjects.projects[i].lists[k].name.size()>19){
+          strncpy(name,toDoProjects.projects[i].lists[k].name,19)
+          name[19]='\0';
+          binToDoTask.name=name;
+        }
+
+        for(unsigned int j=0;j<toDoProjects.projects[i].lists[k].tasks.size();j++){
+
+          if(toDoProjects.projects[i].lists[k].tasks[j].name.size()>19){
+            strncpy(name,toDoProjects.projects[i].lists[k].tasks[j].name,19)
+            name[19]='\0';
+            binToDoSingleTask.name=name;
+            binToDoSingleTask.isDone=toDoProjects.projects[i].lists[k].tasks[j].isDone;
+            binToDoSingleTask.deadline.day=toDoProjects.projects[i].lists[k].tasks[j].deadline.day;
+            binToDoSingleTask.deadline.month=toDoProjects.projects[i].lists[k].tasks[j].deadline.month;
+            binToDoSingleTask.deadline.year=toDoProjects.projects[i].lists[k].tasks[j].deadline.year;
+            binToDoSingleTask.time=toDoProjects.projects[i].lists[k].tasks[j].time;
+            ofbinf.write(); // COMPLETAR
+          }
+        }
+      }
+    }
+
+    ofbinf.close();
   }else{
     error(ERR_FILE);
   }
