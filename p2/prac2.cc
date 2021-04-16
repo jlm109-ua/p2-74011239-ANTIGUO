@@ -118,9 +118,8 @@ bool checkDate(string sd,string sm,string sy);
 bool checkProject(string s,ToDo &toDoProjects);
 bool checkId(const int id,ToDo &toDoProjects);
 void deleteAll(ToDo &toDoProjects);
-void convertProjects(ToDo &toDoProjects);
 void exportProjectFunct(ToDo &toDoProjects,int id,ofstream offile);
-void importArg(string s,ToDo &toDoProjects);
+void importProjectFunct(string filename,ToDo &toDoProjects);
 void loadArg(string s,ToDo &toDoProjects);
 void argManag(int argc,char *argv[],ToDo &todoProjects);
 void loadProjects(BinProject &binToDoList);
@@ -421,12 +420,144 @@ void exportProjectsFunct(ToDo &toDoProjects,int id,ofstream offile){
   }
 }
 
-void importArg(string s,ToDo &toDoProjects){
+void importProjectFunct(string filename,ToDo &toDoProjects){
+  string s,ss,sss,dd,dm,dy; //dd=date day, dm=date month, dy=date year //ss i sss són strings auxiliars
+  Project toDoList;
+  List toDoTask;
+  Task toDoSingleTask;
+  size_t pos;
+  bool fail=false,failt,cd; //cd=check description, per a comprovar si ha hagut description o no , fail i failt per a comprovar si hi ha errors
+  int id=-1,list; //list per a comprovar quan fer el push_back de les llistes
 
+  ifstream infile(filename.c_str());
 
-  cout<<"Argument -i introduït"<<endl; //PROVA
-  // COMPLETAR IMPORT PROJECT DES DE ARGUMENT
+  if(infile.is_open()){
 
+    while(getline(infile,s)){
+      if(s[0]=='<'){
+        list=0; //Reiniciem les variables auxiliars
+        id++;
+        toDoList.id=id;
+        cd=true; 
+        fail=false;
+        failt=false;
+      }else if(s[0]=='>' && !fail && !failt){
+        toDoList.lists.push_back(toDoTask);
+        toDoProjects.projects.push_back(toDoList);
+      }else if(s[0]=='#'){
+        pos=s.find('#');
+        ss=s.substr(pos+1);
+        
+        if(checkEmpty(ss)){
+          error(ERR_PROJECT_NAME);
+          fail=true;
+        }else if(checkProject(ss,toDoProjects)){
+          error(ERR_PROJECT_NAME);
+          fail=true;
+        }else{
+          toDoList.name=ss;
+        }
+      }else if(s[0]=='*'){
+        cd=false;
+        pos=s.find('*');
+        toDoList.description=s.substr(pos+1);
+      }else if(cd){
+        toDoList.description[0]=' ';
+      }else if(s[0]=='@'){
+        if(list!=0){
+          toDoList.lists.push_back(toDoTask);
+        }
+        pos=s.find('@');
+        ss=s.substr(pos+1);
+        if(checkEmpty(ss)){
+          error(ERR_LIST_NAME);
+          fail=true;
+        }else{
+          toDoTask.name=ss;
+        }
+        list++;
+      }else if(s[0]=='|'){
+        //reciclem variables per a no tindre moltes variables
+        toDoSingleTask.name.erase(0);
+        ss=s;
+        pos=ss.find("/");
+        sss=ss.substr(1,pos-1);
+        dd=sss;
+        toDoSingleTask.deadline.day=stoi(sss);
+        sss=ss.substr(pos+1);
+        pos=sss.find("/");
+        ss=sss.substr(0,pos); //falla ací, no guarda res?
+        dm=ss;
+        toDoSingleTask.deadline.month=stoi(ss);
+        ss=sss.substr(pos+1); 
+        pos=ss.find("|");
+        sss=ss.substr(0,pos);
+        dy=sss;
+        toDoSingleTask.deadline.year=stoi(sss);
+        if(checkDate(dd,dm,dy)){
+          error(ERR_DATE);
+          failt=true;
+        }
+        sss=ss.substr(pos+1);
+        if(sss[0]=='F'){
+          toDoSingleTask.isDone=false;
+        }else{
+          toDoSingleTask.isDone=true;
+        }
+        ss=sss.substr(2);
+        toDoSingleTask.time=stoi(ss);
+        if(toDoSingleTask.time<1 || toDoSingleTask.time>180){
+          error(ERR_TIME);
+          failt=true;
+        }
+        if(!failt){
+          toDoTask.tasks.push_back(toDoSingleTask);
+        }  
+      }else{
+        ss=s.substr(0);
+        pos=ss.find("|");
+        toDoSingleTask.name=ss.substr(0,pos-1);
+        ss=s.substr(pos+1);
+        pos=ss.find("/");
+        sss=ss.substr(0,pos);
+        dd=sss;
+        toDoSingleTask.deadline.day=stoi(sss);
+        sss=ss.substr(pos+1);
+        pos=sss.find("/");
+        ss=sss.substr(0,pos); //falla ací, no guarda res?
+        dm=ss;
+        toDoSingleTask.deadline.month=stoi(ss);
+        ss=sss.substr(pos+1); 
+        pos=ss.find("|");
+        sss=ss.substr(0,pos);
+        dy=sss;
+        toDoSingleTask.deadline.year=stoi(sss);
+        if(checkDate(dd,dm,dy)){
+          error(ERR_DATE);
+          failt=true;
+        }
+        sss=ss.substr(pos+1);
+        if(sss[0]=='F'){
+          toDoSingleTask.isDone=false;
+        }else{
+          toDoSingleTask.isDone=true;
+        }
+        ss=sss.substr(2);
+        toDoSingleTask.time=stoi(ss);
+        if(toDoSingleTask.time<1 || toDoSingleTask.time>180){
+          error(ERR_TIME);
+          failt=true;
+        }
+        if(!failt){
+          toDoTask.tasks.push_back(toDoSingleTask);
+        } 
+      }
+    }
+
+    infile.close();
+  }else{
+    error(ERR_FILE);
+  }
 }
 
 void loadArg(string s,ToDo &toDoProjects){
@@ -454,7 +585,7 @@ void argManag(int argc,char *argv[],ToDo &toDoProjects){
         error(ERR_ARGS);
       }else{
         s=argv[i];
-        importArg(s,toDoProjects);
+        importProjectFunct(s,toDoProjects);
       }
     }else if(contl==1){
       contl++;
@@ -779,137 +910,12 @@ void deleteProject(ToDo &toDoProjects){
 }
 
 void importProjects(ToDo &toDoProjects){
-  string filename,s,ss,sss,dd,dm,dy; //dd=date day, dm=date month, dy=date year //ss i sss són strings auxiliars
-  Project toDoList;
-  List toDoTask;
-  Task toDoSingleTask;
-  size_t pos,pos2;
-  bool fail=false,failt,cd; //cd=check description, per a comprovar si ha hagut description o no , fail i failt per a comprovar si hi ha errors
-  int id=-1,list; //list per a comprovar quan fer el push_back de les llistes
+  string filename;
 
   cout<<E_FN; getline(cin,filename);
 
-  // fer un mòdul per a accedir directament al import projects sense necessitar id (per als arguments)
+  importProjectFunct(filename,toDoProjects);
 
-  ifstream infile(filename.c_str());
-
-  if(infile.is_open()){
-
-    while(getline(infile,s)){
-      if(s[0]=='<'){
-        list=0; //Reiniciem les variables auxiliars
-        id++;
-        toDoList.id=id;
-        cd=true; 
-        fail=false;
-        failt=false;
-      }else if(s[0]=='>' && !fail && !failt){
-        toDoList.lists.push_back(toDoTask);
-        toDoProjects.projects.push_back(toDoList);
-      }else if(s[0]=='#'){
-        pos=s.find('#');
-        ss=s.substr(pos+1);
-        
-        if(checkEmpty(ss)){
-          error(ERR_PROJECT_NAME);
-          fail=true;
-        }else if(checkProject(ss,toDoProjects)){
-          error(ERR_PROJECT_NAME);
-          fail=true;
-        }else{
-          toDoList.name=ss;
-        }
-      }else if(s[0]=='*'){
-        cd=false;
-        pos=s.find('*');
-        toDoList.description=s.substr(pos+1);
-      }else if(cd){
-        toDoList.description[0]=' ';
-      }else if(s[0]=='@'){
-        if(list!=0){
-          toDoList.lists.push_back(toDoTask);
-        }
-        pos=s.find('@');
-        ss=s.substr(pos+1);
-        if(checkEmpty(ss)){
-          error(ERR_LIST_NAME);
-          fail=true;
-        }else{
-          toDoTask.name=ss;
-        }
-        list++;
-      }else if(s[0]=='|'){
-        //reciclem variables per a no tindre moltes variables
-        toDoSingleTask.name[0]=' ';
-        pos=s.find("/");
-        ss=s.substr(1,pos-1);
-        dd=ss;
-        toDoSingleTask.deadline.day=stoi(ss);
-        ss=s.substr(pos+1);
-        pos=ss.find("/");
-        sss=ss.substr(0,pos-1);
-        dm=sss;
-        toDoSingleTask.deadline.month=stoi(sss);
-        sss=ss.substr(pos+1);
-        pos=sss.find("|");
-        ss=sss.substr(0,pos-1);
-        dy=ss;
-        toDoSingleTask.deadline.year=stoi(ss);
-        if(checkDate(dd,dm,dy)){
-          error(ERR_DATE);
-          failt=true;
-        }
-        ss=sss.substr(pos+1);
-        toDoSingleTask.isDone=ss[1];
-        sss=ss.substr(3);
-        toDoSingleTask.time=stoi(sss);
-        if(toDoSingleTask.time<1 || toDoSingleTask.time>180){
-          error(ERR_TIME);
-          failt=true;
-        }
-        if(!failt){
-          toDoTask.tasks.push_back(toDoSingleTask);
-        }     
-      }else{
-        ss=s.substr(0);
-        pos=ss.find("|");
-        toDoSingleTask.name=ss.substr(0,pos-1);
-        pos2=s.find("/");
-        ss=s.substr(pos+1,pos2-1);
-        dd=ss;
-        toDoSingleTask.deadline.day=stoi(ss);
-        ss=s.substr(pos2+1);
-        pos=ss.find("/");
-        sss=ss.substr(0,pos-1);
-        dm=sss;
-        toDoSingleTask.deadline.month=stoi(sss);
-        sss=ss.substr(pos+1);
-        pos=sss.find("|");
-        ss=sss.substr(0,pos-1);
-        dy=ss;
-        toDoSingleTask.deadline.year=stoi(ss);
-        if(checkDate(dd,dm,dy)){
-          error(ERR_DATE);
-          failt=true;
-        }
-        ss=sss.substr(pos+1);
-        toDoSingleTask.isDone=ss[1];
-        sss=ss.substr(3);
-        toDoSingleTask.time=stoi(sss);
-        if(toDoSingleTask.time<1 || toDoSingleTask.time>180){
-          error(ERR_TIME);
-          failt=true;
-        }
-        if(!failt){
-          toDoTask.tasks.push_back(toDoSingleTask);
-        } 
-      }
-    }
-
-    infile.close();
-  }else{
-    error(ERR_FILE);
-  }
 }
 
 void exportProjects(ToDo &toDoProjects){
