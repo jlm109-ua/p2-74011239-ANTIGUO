@@ -34,6 +34,7 @@ const string E_ID="Enter project id: ";
 const string E_FN="Enter filename: ";
 const string SAP="Save all projects [Y/N]?: ";
 const string CONF="Confirm [Y/N]?: ";
+const string MTL="My ToDo List";
 const char argi[]="-i";
 const char argl[]="-l";
 
@@ -121,11 +122,10 @@ void deleteAll(ToDo &toDoProjects);
 void exportProjectFunct(ToDo &toDoProjects,int id,ofstream offile);
 void importProjectFunct(string filename,ToDo &toDoProjects);
 void loadArg(string s,ToDo &toDoProjects);
-void argManag(int argc,char *argv[],ToDo &todoProjects);
-void loadProjects(BinProject &binToDoList);
-void loadLists(BinList &binToDoTask);
-void loadTasks(BinTask &binToDoSingleTask);
-void editProject(ToDo &toDoProjects,int id);
+bool argManag(int argc,char *argv[],ToDo &todoProjects);
+void loadProjects(BinProject &binToDoList,ToDo &toDoProjects,Project &toDoList,int psize);
+void loadLists(BinList &binToDoTask,ToDo &toDoProjects,List &toDoTask,int psize);
+void loadTasks(BinTask binToDoSingleTask,ToDo &toDoProjects,Task &toDoSingleTask,int psize,int lsize);
 void addList(ToDo &toDoProjects,int id);
 void deleteList(ToDo &toDoProjects,int id);
 void addTask(ToDo &toDoProjects,int id);
@@ -349,11 +349,10 @@ return(val);
 
 bool checkProject(string s,ToDo &toDoProjects){
 
-  if(toDoProjects.nextId==0){
+  if(toDoProjects.projects.size()==0 || toDoProjects.projects.size()==1){
   }else{
     for(unsigned int i=0;i<=toDoProjects.projects.size();i++){
       if(s==toDoProjects.projects[i].name){
-        error(ERR_PROJECT_NAME);
         return(true);
       }
     }
@@ -374,7 +373,13 @@ bool checkId(const int id,ToDo &toDoProjects){
 }
 
 void deleteAll(ToDo &toDoProjects){
-  for(unsigned int i=toDoProjects.projects.size();i>0;i--){
+  for(unsigned int i=0;i<toDoProjects.projects.size();i++){
+    for(unsigned int j=0;j<toDoProjects.projects[i].lists.size();j++){
+      for(unsigned int k=0;k<toDoProjects.projects[i].lists[j].tasks.size();k++){
+        toDoProjects.projects[i].lists[j].tasks.erase(toDoProjects.projects[i].lists[j].tasks.begin()+i);
+      }
+      toDoProjects.projects[i].lists.erase(toDoProjects.projects[i].lists.begin()+i);
+    }
     toDoProjects.projects.erase(toDoProjects.projects.begin()+i);
   }
 }
@@ -427,7 +432,7 @@ void importProjectFunct(string filename,ToDo &toDoProjects){
   Task toDoSingleTask;
   size_t pos;
   bool fail=false,failt,cd; //cd=check description, per a comprovar si ha hagut description o no , fail i failt per a comprovar si hi ha errors
-  int id=-1,list; //list per a comprovar quan fer el push_back de les llistes
+  int id=0,list; //list per a comprovar quan fer el push_back de les llistes
 
   ifstream infile(filename.c_str());
 
@@ -438,6 +443,7 @@ void importProjectFunct(string filename,ToDo &toDoProjects){
         list=0; //Reiniciem les variables auxiliars
         id++;
         toDoList.id=id;
+        toDoProjects.nextId++;
         cd=true; 
         fail=false;
         failt=false;
@@ -486,7 +492,7 @@ void importProjectFunct(string filename,ToDo &toDoProjects){
         toDoSingleTask.deadline.day=stoi(sss);
         sss=ss.substr(pos+1);
         pos=sss.find("/");
-        ss=sss.substr(0,pos); //falla ací, no guarda res?
+        ss=sss.substr(0,pos);
         dm=ss;
         toDoSingleTask.deadline.month=stoi(ss);
         ss=sss.substr(pos+1); 
@@ -524,7 +530,7 @@ void importProjectFunct(string filename,ToDo &toDoProjects){
         toDoSingleTask.deadline.day=stoi(sss);
         sss=ss.substr(pos+1);
         pos=sss.find("/");
-        ss=sss.substr(0,pos); //falla ací, no guarda res?
+        ss=sss.substr(0,pos);
         dm=ss;
         toDoSingleTask.deadline.month=stoi(ss);
         ss=sss.substr(pos+1); 
@@ -560,70 +566,98 @@ void importProjectFunct(string filename,ToDo &toDoProjects){
   }
 }
 
-void loadArg(string s,ToDo &toDoProjects){
+void loadArg(string filename,ToDo &toDoProjects){
+  unsigned int psize,lsize,tsize; //psize=project size, lsize=list size, tsize=task size
+  BinToDo binProject;
+  BinProject binToDoList;
+  BinList binToDoTask;
+  BinTask binToDoSingleTask;
+  Project toDoList;
+  List toDoTask;
+  Task toDoSingleTask;
 
+  ifstream ifbinf(filename.c_str(),ios::in | ios::binary);
 
-  cout<<"Argument -l introduït"<<endl; //PROVA
-  // COMPLETAR BINARY IMPORT PROJECT DES DE ARGUMENT
-
-}
-
-void argManag(int argc,char *argv[],ToDo &toDoProjects){
-  int conti=0,contl=0; //Usem contadors per a comprovar que no s'haja escrit el mateix argument dues vegades
-  string s;
-
-  for(int i=1;i<argc;i++){
-    if(strcmp(argv[i],argi)==0){
-      conti++;
-    }else if(strcmp(argv[i],argl)==0){
-      contl++;
-    }else if(conti==1){
-      conti++;
-      if((strcmp(argv[i],argi)==0)){
-        error(ERR_ARGS);
-      }else if(strcmp(argv[i],argl)==0){
-        error(ERR_ARGS);
-      }else{
-        s=argv[i];
-        importProjectFunct(s,toDoProjects);
+  if(ifbinf.is_open()){
+    ifbinf.read((char *)&binProject,sizeof(BinToDo));
+    for(psize=0;psize<binProject.numProjects;psize++){
+      ifbinf.read((char *)&binToDoList,sizeof(BinProject));
+      toDoList.name=binToDoList.name;
+      toDoList.description=binToDoList.description;
+      toDoList.id=psize+1;
+      toDoProjects.nextId=toDoList.id;
+      toDoProjects.projects.push_back(toDoList);
+      for(lsize=0;lsize<binToDoList.numLists;lsize++){
+        ifbinf.read((char *)&binToDoTask,sizeof(BinList));
+        toDoTask.name=binToDoTask.name;
+        toDoProjects.projects[psize].lists.push_back(toDoTask);
+        for(tsize=0;tsize<binToDoTask.numTasks;tsize++){
+          ifbinf.read((char *)&binToDoSingleTask,sizeof(BinTask));
+          toDoSingleTask.name=binToDoSingleTask.name;
+          toDoSingleTask.deadline=binToDoSingleTask.deadline;
+          toDoSingleTask.isDone=binToDoSingleTask.isDone;
+          toDoSingleTask.time=binToDoSingleTask.time;
+          toDoProjects.projects[psize].lists[lsize].tasks.push_back(toDoSingleTask);
+        }
       }
-    }else if(contl==1){
-      contl++;
-      if((strcmp(argv[i],argi)==0)){
-        error(ERR_ARGS);
-      }else if(strcmp(argv[i],argl)==0){
-        error(ERR_ARGS);
-      }else{
-        s=argv[i];
-        loadArg(s,toDoProjects);
-      }
-    }else{
-      error(ERR_ARGS);
     }
+    ifbinf.close();
+  }else{
+    error(ERR_FILE);
   }
 }
 
-void loadProjects(BinProject &binToDoList){
+bool argManag(int argc,char *argv[],ToDo &toDoProjects){
+  int conti=0,contl=0; //Usem contadors per a comprovar que no s'haja escrit el mateix argument dues vegades
+  string s;
+  bool val=true; //si és verdader és que els arguments són correctes
 
+  if(argc==2 || argc==4 || argc>5){
+    error(ERR_ARGS);
+    val=false;
+  }else{
+    for(int i=1;i<argc;i++){
+      if(strcmp(argv[i],argi)==0){
+        conti++;
+      }else if(strcmp(argv[i],argl)==0){
+        contl++;
+      }else if(conti==1){
+        conti++;
+        if((strcmp(argv[i],argi)==0)){
+          error(ERR_ARGS);
+          val=false;
+        }else if(strcmp(argv[i],argl)==0){
+          error(ERR_ARGS);
+          val=false;
+        }else{
+          s=argv[i];
+          importProjectFunct(s,toDoProjects);
+        }
+      }else if(contl==1){
+        contl++;
+        if((strcmp(argv[i],argi)==0)){
+          error(ERR_ARGS);
+          val=false;
+        }else if(strcmp(argv[i],argl)==0){
+          error(ERR_ARGS);
+          val=false;
+        }else{
+          s=argv[i];
+          loadArg(s,toDoProjects);
+        }
+      }else{
+        error(ERR_ARGS);
+        val=false;
+      }
+    }
+  }
 
-
-}
-
-void loadLists(BinList &binToDoTask){
-
-
-
-}
-
-void loadTasks(BinTask &binToDoSingleTask){
-
-
-
+return(val);
 }
 
 /* OPCIONS DEL MENU VISIBLES */
 
-void editProject(ToDo &toDoProjects,int id){ //actualització pendent
+void editProject(ToDo &toDoProjects,int id){ 
   string s;
 
   do{
@@ -637,7 +671,7 @@ void editProject(ToDo &toDoProjects,int id){ //actualització pendent
   cout<<E_PD; getline(cin,toDoProjects.projects[id].description);
 }
 
-void addList(ToDo &toDoProjects,int id){ //actualització pendent
+void addList(ToDo &toDoProjects,int id){ 
   List temp;
   string s;
   int pos,i;
@@ -663,7 +697,7 @@ void addList(ToDo &toDoProjects,int id){ //actualització pendent
   }
 }
 
-void deleteList(ToDo &toDoProjects,int id){ //actualització pendent
+void deleteList(ToDo &toDoProjects,int id){ 
   List temp;
   string s;
   int pos;
@@ -675,7 +709,7 @@ void deleteList(ToDo &toDoProjects,int id){ //actualització pendent
   }
 }
 
-void addTask(ToDo &toDoProjects,int id){ //actualització pendent
+void addTask(ToDo &toDoProjects,int id){ 
   Task ttemp;
   List temp;
   int pos,i,time=0;
@@ -709,7 +743,7 @@ void addTask(ToDo &toDoProjects,int id){ //actualització pendent
   }
 }
 
-void deleteTask(ToDo &toDoProjects,int id){ //actualització pendent
+void deleteTask(ToDo &toDoProjects,int id){
   Task ttemp;
   List temp;
   int pos1,pos2;
@@ -727,7 +761,7 @@ void deleteTask(ToDo &toDoProjects,int id){ //actualització pendent
   }
 }
 
-void toggleTask(ToDo &toDoProjects,int id){ //actualització pendent
+void toggleTask(ToDo &toDoProjects,int id){
 List temp;
 Task ttemp;
 int pos1,pos2;
@@ -750,7 +784,7 @@ string s,s2;
   }
 }
 
-void report(const ToDo &toDoProjects,const int id){ //actualització pendent
+void report(const ToDo &toDoProjects,const int id){
   List temp;
   Task ttemp;
   int tottimed=0,tottimel=0,countd=0,countl=0,sd=0,sm=0,sy=0; //tottimed=temps total de tasques fetes, tottimel=temps total de tasques per acabar, countd=comptador de tasques fetes, countl=comptador de tasques per fer
@@ -884,6 +918,7 @@ void addProject(ToDo &toDoProjects){
   }while(checkEmpty(s));
 
   if(checkProject(s,toDoProjects)){
+    error(ERR_PROJECT_NAME);
   }else{
     toDoList.name=s;
 
@@ -900,12 +935,14 @@ void deleteProject(ToDo &toDoProjects){
 
   cout<<E_ID; cin>>id;
 
-  id-=1;
-
-  if(id>toDoProjects.projects.size()){
+  if(toDoProjects.projects.size()==0){
     error(ERR_ID);
   }else{
-    toDoProjects.projects.erase(toDoProjects.projects.begin()+id);
+    if(id>toDoProjects.projects.size()){
+      error(ERR_ID);
+    }else{
+      toDoProjects.projects.erase(toDoProjects.projects.begin()+id);
+    }
   }
 }
 
@@ -987,14 +1024,9 @@ void exportProjects(ToDo &toDoProjects){
   }
 }
 
-void loadData(ToDo &toDoProjects){/*
+void loadData(ToDo &toDoProjects){
   string s;
   char opt;
-  int psize,lsize,tsize; //psize=project size, lsize=list size, tsize=task size
-  BinToDo binProject;
-  BinProject binToDoList;
-  BinList binToDoTask;
-  BinTask binToDoSingleTask;
 
   cout<<E_FN; getline(cin,s);
 
@@ -1005,19 +1037,9 @@ void loadData(ToDo &toDoProjects){/*
       cout<<CONF; cin>>opt;
 
       if(opt=='Y' || opt=='y'){
-        deleteAll(toDoProjects);
+        ifbinf.close();
+        loadArg(s,toDoProjects);
 
-
-
-        void loadProjects(binToDoList,pszie);
-
-        void loadLists(binToDoTask,lsize);
-        
-        void loadTasks(binToDoSingleTask,tsize);
-
-        //COMPLETAR BINARI
-      
-      
       }else if(opt=='N' || opt=='n'){
         ifbinf.close();
       }
@@ -1026,11 +1048,9 @@ void loadData(ToDo &toDoProjects){/*
   }else{
     error(ERR_FILE);
   }
-
-*/
 }
 
-void saveData(ToDo &toDoProjects){/*
+void saveData(ToDo &toDoProjects){
   string s;
   char name[KMAXNAME],desc[KMAXDESC];
   BinToDo binToDoProjects;
@@ -1042,45 +1062,56 @@ void saveData(ToDo &toDoProjects){/*
 
   ofstream ofbinf(s.c_str(),ios::out | ios::binary);
 
-//  COMPLETAR
-
   if(ofbinf.is_open()){
+    strcpy(binToDoProjects.name,MTL.c_str());
+    binToDoProjects.numProjects=toDoProjects.projects.size();
+    ofbinf.write((const char *)&binToDoProjects,sizeof(BinToDo));
 
     for(unsigned int i=0;i<toDoProjects.projects.size();i++){
 
       if(toDoProjects.projects[i].name.length()>19){
-        strncpy(name,toDoProjects.projects[i].name,19)
+        strncpy(name,toDoProjects.projects[i].name.c_str(),19);
         name[19]='\0';
-        binToDoList.name=name; CANVIAR PER BIN
+        strcpy(binToDoList.name,name);
+      }else{
+        strcpy(binToDoList.name,toDoProjects.projects[i].name.c_str());
       }
 
       if(toDoProjects.projects[i].description.length()>49){
-        strncpy(desc,toDoProjects.projects[i].description,49)
+        strncpy(desc,toDoProjects.projects[i].description.c_str(),49);
         desc[49]='\0';
-        //toDoProjects.projects[i].desc=desc; CANVIAR PER BIN
+        strcpy(binToDoList.description,desc);
+      }else{
+        strcpy(binToDoList.description,toDoProjects.projects[i].description.c_str());
       }
+      binToDoList.numLists=toDoProjects.projects[i].lists.size();
+      ofbinf.write((const char *)&binToDoList,sizeof(BinProject));
+      for(unsigned int j=0;j<toDoProjects.projects[i].lists.size();j++){
 
-      for(unsigned int k=0;k<toDoProjects.projects[i].lists.size();k++){
-
-        if(toDoProjects.projects[i].lists[k].name.size()>19){
-          strncpy(name,toDoProjects.projects[i].lists[k].name,19)
+        if(toDoProjects.projects[i].lists[j].name.size()>19){
+          strncpy(name,toDoProjects.projects[i].lists[j].name.c_str(),19);
           name[19]='\0';
-          binToDoTask.name=name;
+          strcpy(binToDoTask.name,name);
+        }else{
+          strcpy(binToDoTask.name,toDoProjects.projects[i].lists[j].name.c_str());
         }
+        binToDoTask.numTasks=toDoProjects.projects[i].lists[j].tasks.size();
+        ofbinf.write((const char *)&binToDoTask,sizeof(BinList));
+        for(unsigned int k=0;k<toDoProjects.projects[i].lists[j].tasks.size();k++){
 
-        for(unsigned int j=0;j<toDoProjects.projects[i].lists[k].tasks.size();j++){
-
-          if(toDoProjects.projects[i].lists[k].tasks[j].name.size()>19){
-            strncpy(name,toDoProjects.projects[i].lists[k].tasks[j].name,19)
+          if(toDoProjects.projects[i].lists[j].tasks[k].name.size()>19){
+            strncpy(name,toDoProjects.projects[i].lists[j].tasks[k].name.c_str(),19);
             name[19]='\0';
-            binToDoSingleTask.name=name;
-            binToDoSingleTask.isDone=toDoProjects.projects[i].lists[k].tasks[j].isDone;
-            binToDoSingleTask.deadline.day=toDoProjects.projects[i].lists[k].tasks[j].deadline.day;
-            binToDoSingleTask.deadline.month=toDoProjects.projects[i].lists[k].tasks[j].deadline.month;
-            binToDoSingleTask.deadline.year=toDoProjects.projects[i].lists[k].tasks[j].deadline.year;
-            binToDoSingleTask.time=toDoProjects.projects[i].lists[k].tasks[j].time;
-            ofbinf.write(); // COMPLETAR
+            strcpy(binToDoSingleTask.name,name);
+          }else{
+            strcpy(binToDoSingleTask.name,toDoProjects.projects[i].lists[j].tasks[k].name.c_str());
           }
+          binToDoSingleTask.isDone=toDoProjects.projects[i].lists[j].tasks[k].isDone;
+          binToDoSingleTask.deadline.day=toDoProjects.projects[i].lists[j].tasks[k].deadline.day;
+          binToDoSingleTask.deadline.month=toDoProjects.projects[i].lists[j].tasks[k].deadline.month;
+          binToDoSingleTask.deadline.year=toDoProjects.projects[i].lists[j].tasks[k].deadline.year;
+          binToDoSingleTask.time=toDoProjects.projects[i].lists[j].tasks[k].time;
+          ofbinf.write((const char *)&binToDoSingleTask,sizeof(BinTask));
         }
       }
     }
@@ -1089,7 +1120,6 @@ void saveData(ToDo &toDoProjects){/*
   }else{
     error(ERR_FILE);
   }
-*/
 }
 
 void summary(ToDo &toDoProjects){
@@ -1117,9 +1147,8 @@ int main(int argc,char *argv[]){
   Project toDoList;
   toDoProjects.nextId=0;
 
-  argManag(argc,argv,toDoProjects);
-
-  do{
+  if(argManag(argc,argv,toDoProjects)){
+    do{
     showMainMenu();
     cin >> option;
     cin.get();
@@ -1145,6 +1174,7 @@ int main(int argc,char *argv[]){
       default: error(ERR_OPTION);
     }
   }while(option!='q');
+  }
   
   return 0;    
 }
