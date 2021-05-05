@@ -1,6 +1,12 @@
 #include<iostream>
 using namespace std;
 
+struct Date{
+  int day;
+  int month;
+  int year;
+};
+
 class List{
     //afegir friend
     protected:
@@ -18,4 +24,4 @@ class List{
         bool setDeadline(deadline string);
         bool setTime(int time);
         void toggle();
-}
+};

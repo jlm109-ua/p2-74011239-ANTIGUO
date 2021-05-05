@@ -13,7 +13,7 @@ class ToDo{
         int getPosProject(int id) const;
         bool setName(string name);
         void addProject(Project *project); //?
-        void deleteProjecet(int id=0);
+        void deleteProject(int id=0);
         void setProjectDescription(string name,string description);
         void projectMenu(int id=0);
 }
