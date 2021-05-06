@@ -1,8 +1,10 @@
 #include<iostream>
 using namespace std;
 
+#include "Project.h"
+
 class ToDo{
-    //afegir friend
+    friend void operator<<(ostream &,const ToDo &); //???
     protected:
         int nextId=1;
         string name;
@@ -16,4 +18,4 @@ class ToDo{
         void deleteProject(int id=0);
         void setProjectDescription(string name,string description);
         void projectMenu(int id=0);
-}
+};

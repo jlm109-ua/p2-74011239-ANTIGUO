@@ -1,6 +1,9 @@
 #include<iostream>
 using namespace std;
 
+#include "ToDo.h"
+#include "Project.h"
+#include "List.h"
 #include "Task.h"
 
 Task::Task(string name){

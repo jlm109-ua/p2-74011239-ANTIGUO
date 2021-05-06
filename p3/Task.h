@@ -7,8 +7,8 @@ struct Date{
   int year;
 };
 
-class List{
-    //afegir friend
+class Task{
+    friend void operator<<(ostream &,Task &); //???
     protected:
         string name;
         Date deadline;
@@ -21,7 +21,7 @@ class List{
         bool getIsDone() const;
         int getTime() const;
         void setName(string name);
-        bool setDeadline(deadline string);
+        bool setDeadline(string deadline);
         bool setTime(int time);
         void toggle();
 };

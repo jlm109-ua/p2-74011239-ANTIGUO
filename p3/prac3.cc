@@ -1,9 +1,8 @@
 #include <iostream>
+#include <vector>
 #include "Util.h"
 #include "ToDo.h"
 #include "Project.h"
-#include "List.h"
-#include "Task.h"
 
 using namespace std;
 

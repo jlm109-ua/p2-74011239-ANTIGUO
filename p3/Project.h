@@ -1,8 +1,10 @@
 #include<iostream>
 using namespace std;
 
+#include "List.h"
+
 class Project{
-    //afegir friend
+    friend void operator<<(ostream &,Project &); //???
     protected:
         int id;
         string name;
@@ -24,4 +26,4 @@ class Project{
         void toggleTaskFromList(string name="");
         void menu();
         string summary() const;
-}
+};
