@@ -1,17 +1,11 @@
-#include<iostream>
-using namespace std;
-
 #include "ToDo.h"
-#include "Project.h"
-#include "List.h"
-#include "Task.h"
 
 ToDo::ToDo(string name){
-    //completar
+    
 }
 
 string ToDo::getName() const{
-    //completar
+    return(ToDo::name);
 }
 
 int ToDo::getPosProject(string name) const{
@@ -39,7 +33,7 @@ void ToDo::setProjectDescription(name,description){
 }
 
 void ToDo::projectMenu(int id=0){
-    //completar
+    
 }
 
 ostream& operator<<(ostream &os,const ToDo &toDo){

@@ -1,10 +1,4 @@
-#include<iostream>
-using namespace std;
-
-#include "ToDo.h"
 #include "Project.h"
-#include "List.h"
-#include "Task.h"
 
 Project::Project(string name,string description=""){
     //completar

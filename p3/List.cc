@@ -1,11 +1,4 @@
-#include<iostream>
-#include<vector>
-using namespace std;
-
-#include "ToDo.h"
-#include "Project.h"
 #include "List.h"
-#include "Task.h"
 
 List::List(string name){
     //completar
