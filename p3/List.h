@@ -1,3 +1,6 @@
+#ifndef __LIST_H__
+#define __LIST_H__
+
 #include<iostream>
 #include<vector>
 using namespace std;
@@ -6,8 +9,10 @@ using namespace std;
 #include "Task.h"
 
 class List{
-    friend void operator<<(ostream &,List &); //???    protected:
+    friend void operator<<(ostream &o,const List &toDoTask);
+    protected:
         string name;
+        vector<Task> toDoSingleTask;
     public:
         List(string name);
         string getName() const;
@@ -22,3 +27,5 @@ class List{
         bool deleteTask(string name);
         bool toggleTask(string name);
 };
+
+#endif

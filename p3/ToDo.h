@@ -1,14 +1,19 @@
+#ifndef __TODO_H__
+#define __TODO_H__
+
 #include<iostream>
+#include<vector>
 using namespace std;
 
 #include "Project.h"
 #include "Util.h"
 
 class ToDo{
-    friend void operator<<(ostream &,const ToDo &); //???
+    friend void operator<<(ostream &o,const ToDo &program);
     protected:
         int nextId=1;
         string name;
+        vector<Project> toDoList;
     public:
         ToDo(string name);
         string getName() const;
@@ -20,3 +25,5 @@ class ToDo{
         void setProjectDescription(string name,string description);
         void projectMenu(int id=0);
 };
+
+#endif

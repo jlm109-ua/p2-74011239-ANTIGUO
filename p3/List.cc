@@ -1,15 +1,20 @@
 #include "List.h"
 
 List::List(string name){
-    //completar
+    //s'ha de llançar una excepció
+    if(checkEmpty(name)){
+        Util::error(ERR_EMPTY);
+    }else{
+        this->name=name;
+    }
 }
 
 string List::getName() const[
-    //completar
+    return name;
 ]
 
 vector<Task> List::getTask() const{
-    //completar
+    
 }
 
 unsigned List::getNumTasks() const{
@@ -49,5 +54,21 @@ bool List::toggleTask(string name){
 }
 
 ostream& operator<<(ostream &os,const List &list){
-    //completar
+    
+}
+
+bool checkEmpty(string s){
+  bool val=false; 
+  string v=s;
+    if(s.length()==0){
+      val=true;
+    }else{
+      for(unsigned int i=0;i<s.length();i++){
+        v[i]=' ';
+      }
+      if(v==s){
+          val=true;
+      }
+    }
+  return(val);
 }

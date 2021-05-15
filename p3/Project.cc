@@ -9,11 +9,11 @@ int Project::getId() const{
 }
 
 string Project::getName() const{
-    //completar
+    return name;
 }
 
 string Project::getDescription() const{
-    //completar
+    return description;
 }
 
 int Project::getPosList(string name) const{

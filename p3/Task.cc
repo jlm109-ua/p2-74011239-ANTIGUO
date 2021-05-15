@@ -10,19 +10,19 @@ Task::Task(string name){
 }
 
 string Task::getName() const{
-    return(Task::name);
+    return name;
 }
 
 Date Task::getDeadline() const{
-    return(Task::deadline);
+    return deadline;
 } 
 
 bool Task::getIsDone() const{
-    return(Task::isDone);
+    return isDone;
 }
 
 int Task::getTime() const{
-    return(Task::time);
+    return time;
 }
 
 void Task::setName(string name){
@@ -30,39 +30,67 @@ void Task::setName(string name){
 }
 
 bool Task::setDeadline(string deadline){
-    checkDate(deadline);
+    if(checkDate(deadline)){
+        Util::error(ERR_DATE);
+        return(false);
+    }else{
+        this->deadline=deadline;
+        return(true);
+    }
 }
 
 bool Task::setTime(int time){
-    //completar
+    if(time<1 || time>180){
+        Util::error(ERR_TIME);
+        return(false);
+    }else{
+        this->time=time;
+        return(true);
+    }
 }
 
 void Task::toggle(){
-    //completar
+    if(isDone){
+        isDone=false;
+    }else{
+        isDone=true;
+    }
 }
 
 ostream& operator<<(ostream &os,const Task &task){
-    //completar
+    int countd=0,countl=0,tottimed=0,tottimel=0;;
+
+    os<<"[";
+    if(isDone){
+        os<<"X";
+    }else{
+        os<<" ";
+    }
+    os<<"] ";
+    os<<"("<<time<<") "<<deadline.year<<"-"<<deadline.month<<"-"<<deadline.day<<" : "<<name<<endl;
+    }
 }
 
 bool checkDate(string deadline){
 
     int day,month,year,x,y,z,s; //x,y,z son auxiliars per a comprovar dades
     bool val=false;
-    string auxdeadline;
+    string auxdeadline,sday,smonth,syear;
 
     s=deadline.find('/');
     if(found!=deadline::npos){
-        day=deadline.substr(0,s);
+        sday=deadline.substr(0,s);
     }
     auxdeadline=deadline.substr(s+1);
     s=deadline.find('/');
     if(found!=deadline::npos){
-        month=auxdeadline.substr(0,s);
+        smonth=auxdeadline.substr(0,s);
+        syear=auxdeadline.substr(s+1);
     }
-    auxdeadline=auxdeadline.substr()
 
-    //CONTINUAR AMB LA FECHA
+    day=stoi(sday);
+    month=stoi(smonth);
+    year=stoi(syear);
 
     x=year%100;
     y=year%400;
@@ -121,7 +149,5 @@ bool checkDate(string deadline){
         }
         break;
     }
-
-
 return(val);
 }

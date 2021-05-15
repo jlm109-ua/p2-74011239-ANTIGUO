@@ -1,15 +1,20 @@
+#ifndef __PROJECT_H__
+#define __PROJECT_H__
+
 #include<iostream>
+#include<vector>
 using namespace std;
 
 #include "List.h"
 #include "Util.h"
 
 class Project{
-    friend void operator<<(ostream &,Project &); //???
+    friend void operator<<(ostream &o,const Project &toDoList);
     protected:
         int id;
         string name;
         string description;
+        vector<List> toDoTask;
     public:
         Project(string name,string description="");
         int getId() const;
@@ -28,3 +33,5 @@ class Project{
         void menu();
         string summary() const;
 };
+
+#endif

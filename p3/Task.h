@@ -1,4 +1,8 @@
+#ifndef __TASK_H__
+#define __TASK_H__
+
 #include<iostream>
+#include<vector>
 using namespace std;
 
 #include "Util.h"
@@ -10,7 +14,7 @@ struct Date{
 };
 
 class Task{
-    friend void operator<<(ostream &,Task &); //???
+    friend void operator<<(ostream &os,const Task &task);
     protected:
         string name;
         Date deadline;
@@ -27,3 +31,5 @@ class Task{
         bool setTime(int time);
         void toggle();
 };
+
+#endif
