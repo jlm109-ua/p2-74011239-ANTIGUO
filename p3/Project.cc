@@ -1,11 +1,17 @@
 #include "Project.h"
 
 Project::Project(string name,string description=""){
-    //completar
+    if(checkEmpty(name)){
+        Util::error(ERR_EMPTY);
+    }else{
+        this->name=name;
+        this->description=description;
+        id=0;
+    }
 }
 
 int Project::getId() const{
-    //completar
+    return id;
 }
 
 string Project::getName() const{
@@ -21,11 +27,16 @@ int Project::getPosList(string name) const{
 }
 
 bool Project::setId(int id) const{
-    //completar
+    if(id<0){
+        Util::error(ERR_ID);
+        return(false);
+    }else{
+        return(true);
+    }
 }
 
 void Project::setDescription(string description){
-    //completar
+    this->description=description;
 }
 
 void Project::edit(string name="",string description=""){
@@ -33,15 +44,19 @@ void Project::edit(string name="",string description=""){
 }
 
 void Project::addList(string name=""){
-    //completar
+    try{
+        List::List(name);//???
+    }catch(Error e){
+        Util::error(e);
+    }
 }
 
 void Project::deleteList(string name=""){
-    //completar
+    //???
 }
 
 void addTaskToList(string name=""){
-    //completar
+    //???
 }
 
 void Project::deleteTaskFromList(string name=""){
@@ -62,4 +77,20 @@ string Project::summary() const{
 
 ostream& operator<<(ostream &os,const Project &project){
     //completar
+}
+
+bool checkEmpty(string s){
+  bool val=false; 
+  string v=s;
+    if(s.length()==0){
+      val=true;
+    }else{
+      for(unsigned int i=0;i<s.length();i++){
+        v[i]=' ';
+      }
+      if(v==s){
+          val=true;
+      }
+    }
+  return(val);
 }

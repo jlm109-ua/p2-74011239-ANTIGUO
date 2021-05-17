@@ -1,11 +1,10 @@
 #include "List.h"
 
 List::List(string name){
-    //s'ha de llançar una excepció
     if(checkEmpty(name)){
-        Util::error(ERR_EMPTY);
+        throw ERR_EMPTY;
     }else{
-        this->name=name;
+        this->name=name; //fer-ho així o amb setName()???
     }
 }
 
@@ -14,47 +13,54 @@ string List::getName() const[
 ]
 
 vector<Task> List::getTask() const{
-    
+    //???
 }
 
 unsigned List::getNumTasks() const{
-    //completar
+    //???
 }
 
 unsigned List::getNumDone() const{
-    //completar
+    //???
 }
 
 int List::getTimeTasks() const{
-    //completar
+    //???
 }
 
 int List::getTimeDone() const{
-    //completar
+    //???
 }
 
 int List::getPosTask(string name) const{
-    //completar
+    //???
 }
 
 bool List::setName(string name){
-    //completar
+    if(checkEmpty(name)){
+        Util::error(ERR_EMPTY);
+        return(false);
+    }else{
+        this->name=name;
+        return(true);
+    }
 }
 
 void List::addTask(const Task &task){
-    //completar
+    //???
 }
 
 bool List::deleteTask(string name){
-    //completar
+    //???
 }
 
 bool List::toggleTask(string name){
-    //completar
+    //???
 }
 
 ostream& operator<<(ostream &os,const List &list){
-    
+    os<<name<<endl;
+    //fer un bucle per a que imprimisca el nombre de tasques?
 }
 
 bool checkEmpty(string s){

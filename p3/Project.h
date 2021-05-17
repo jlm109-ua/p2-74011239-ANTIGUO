@@ -14,13 +14,13 @@ class Project{
         int id;
         string name;
         string description;
+        int getPosList(string name) const;
         vector<List> toDoTask;
     public:
         Project(string name,string description="");
         int getId() const;
         string getName() const;
         string getDescription() const;
-        int getPosList(string name) const;
         bool setId(int id);
         bool setName(string name);
         void setDescription(string description);

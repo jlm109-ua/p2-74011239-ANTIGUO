@@ -30,11 +30,16 @@ void Task::setName(string name){
 }
 
 bool Task::setDeadline(string deadline){
+    int dday,dmonth,dyear;
+
     if(checkDate(deadline)){
         Util::error(ERR_DATE);
         return(false);
     }else{
-        this->deadline=deadline;
+        saveDate(deadline,dday,dmonth,dyear);
+        Task::deadline.day=dday;
+        Task::deadline.month=dmonth;
+        Task::deadline.year=dyear;
         return(true);
     }
 }
@@ -71,12 +76,9 @@ ostream& operator<<(ostream &os,const Task &task){
     }
 }
 
-bool checkDate(string deadline){
-
-    int day,month,year,x,y,z,s; //x,y,z son auxiliars per a comprovar dades
-    bool val=false;
+void saveDate(string deadline,int &day,int &month,int &year){
     string auxdeadline,sday,smonth,syear;
-
+    
     s=deadline.find('/');
     if(found!=deadline::npos){
         sday=deadline.substr(0,s);
@@ -91,7 +93,15 @@ bool checkDate(string deadline){
     day=stoi(sday);
     month=stoi(smonth);
     year=stoi(syear);
+}
 
+bool checkDate(string deadline){
+
+    int day,month,year,x,y,z,s; //x,y,z son auxiliars per a comprovar dades
+    bool val=false;
+
+    saveDate(deadline,day,month,year);
+   
     x=year%100;
     y=year%400;
     z=year%4;

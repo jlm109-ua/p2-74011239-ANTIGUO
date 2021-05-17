@@ -13,12 +13,12 @@ class ToDo{
     protected:
         int nextId=1;
         string name;
+        int getPosProject(string name) const;
+        int getPosProject(int id) const;
         vector<Project> toDoList;
     public:
         ToDo(string name);
         string getName() const;
-        int getPosProject(string name) const;
-        int getPosProject(int id) const;
         bool setName(string name);
         void addProject(Project *project); //?
         void deleteProject(int id=0);

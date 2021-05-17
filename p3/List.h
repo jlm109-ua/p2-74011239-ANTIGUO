@@ -23,7 +23,7 @@ class List{
         int getTimeDone() const;
         int getPosTask(string name) const;
         bool setName(string name);
-        void addTask(const Task &task); //està bé???
+        void addTask(const Task &task);
         bool deleteTask(string name);
         bool toggleTask(string name);
 };

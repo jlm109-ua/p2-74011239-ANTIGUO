@@ -14,7 +14,6 @@ int ToDo::getPosProject(string name) const{
 
 int ToDo::getPosProject(int id) const{
     //completar
-    
 }
 
 bool ToDo::setName(string name){
