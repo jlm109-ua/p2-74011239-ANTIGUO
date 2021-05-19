@@ -74,6 +74,7 @@ ostream& operator<<(ostream &os,const Task &task){
     os<<"] ";
     os<<"("<<time<<") "<<deadline.year<<"-"<<deadline.month<<"-"<<deadline.day<<" : "<<name<<endl;
     }
+    return os;
 }
 
 void saveDate(string deadline,int &day,int &month,int &year){

@@ -1,7 +1,7 @@
 #include "Project.h"
 
-Project::Project(string name,string description=""){
-    if(checkEmpty(name)){
+Project::Project(string name,string description){
+    if(Util::checkEmpty(name)){
         Util::error(ERR_EMPTY);
     }else{
         this->name=name;
@@ -24,9 +24,10 @@ string Project::getDescription() const{
 
 int Project::getPosList(string name) const{
     //completar
+    return(1);
 }
 
-bool Project::setId(int id) const{
+bool Project::setId(int id){
     if(id<0){
         Util::error(ERR_ID);
         return(false);
@@ -39,31 +40,32 @@ void Project::setDescription(string description){
     this->description=description;
 }
 
-void Project::edit(string name="",string description=""){
+void Project::edit(string name,string description){
     //completar
 }
 
-void Project::addList(string name=""){
+void Project::addList(string name){
     try{
-        List::List(name);//???
+        List list(name);
+        lists.push_back(list);
     }catch(Error e){
         Util::error(e);
     }
 }
 
-void Project::deleteList(string name=""){
+void Project::deleteList(string name){
     //???
 }
 
-void addTaskToList(string name=""){
+void addTaskToList(string name){
     //???
 }
 
-void Project::deleteTaskFromList(string name=""){
+void Project::deleteTaskFromList(string name){
     //completar
 }
 
-void Project::toggleTaskFromList(string name=""){
+void Project::toggleTaskFromList(string name){
     //completar
 }
 
@@ -72,25 +74,12 @@ void Project::menu(){
 }
 
 string Project::summary() const{
+    string a;
     //completar
+    return (a);
 }
 
 ostream& operator<<(ostream &os,const Project &project){
     //completar
-}
-
-bool checkEmpty(string s){
-  bool val=false; 
-  string v=s;
-    if(s.length()==0){
-      val=true;
-    }else{
-      for(unsigned int i=0;i<s.length();i++){
-        v[i]=' ';
-      }
-      if(v==s){
-          val=true;
-      }
-    }
-  return(val);
+    return os;
 }

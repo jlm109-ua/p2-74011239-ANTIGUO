@@ -9,13 +9,13 @@ using namespace std;
 #include "Util.h"
 
 class Project{
-    friend void operator<<(ostream &o,const Project &toDoList);
+    friend ostream& operator<<(ostream &o,const Project &toDoList);
     protected:
         int id;
         string name;
         string description;
         int getPosList(string name) const;
-        vector<List> toDoTask;
+        vector<List> lists;
     public:
         Project(string name,string description="");
         int getId() const;

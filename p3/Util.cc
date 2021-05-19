@@ -27,3 +27,38 @@ void Util::error(Error e){
       cout << "ERROR: wrong project name" << endl;
   }
 }
+
+bool Util::checkEmpty(string s){
+  bool val=false; 
+  string v=s;
+    if(s.length()==0){
+      val=true;
+    }else{
+      for(unsigned int i=0;i<s.length();i++){
+        v[i]=' ';
+      }
+      if(v==s){
+          val=true;
+      }
+    }
+  return(val);
+}
+
+void Util::saveDate(string deadline,int &day,int &month,int &year){
+    string auxdeadline,sday,smonth,syear;
+    
+    s=deadline.find('/');
+    if(found!=deadline::npos){
+        sday=deadline.substr(0,s);
+    }
+    auxdeadline=deadline.substr(s+1);
+    s=deadline.find('/');
+    if(found!=deadline::npos){
+        smonth=auxdeadline.substr(0,s);
+        syear=auxdeadline.substr(s+1);
+    }
+
+    day=stoi(sday);
+    month=stoi(smonth);
+    year=stoi(syear);
+}

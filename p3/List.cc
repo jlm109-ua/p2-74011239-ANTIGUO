@@ -1,35 +1,40 @@
 #include "List.h"
 
 List::List(string name){
-    if(checkEmpty(name)){
+    if(Util::checkEmpty(name)){
         throw ERR_EMPTY;
     }else{
-        this->name=name; //fer-ho així o amb setName()???
+        this->name=name;
     }
 }
 
-string List::getName() const[
+string List::getName() const{
     return name;
-]
+}
 
 vector<Task> List::getTask() const{
     //???
 }
 
 unsigned List::getNumTasks() const{
-    //???
+    int n;
+    n=tasks.size();
+    return(n);
 }
 
 unsigned List::getNumDone() const{
     //???
+    return(1);
 }
 
 int List::getTimeTasks() const{
     //???
+    return(1);
 }
 
 int List::getTimeDone() const{
     //???
+    return(1);
 }
 
 int List::getPosTask(string name) const{
@@ -37,7 +42,7 @@ int List::getPosTask(string name) const{
 }
 
 bool List::setName(string name){
-    if(checkEmpty(name)){
+    if(Util::checkEmpty(name)){
         Util::error(ERR_EMPTY);
         return(false);
     }else{
@@ -52,29 +57,32 @@ void List::addTask(const Task &task){
 
 bool List::deleteTask(string name){
     //???
+    return(false);
 }
 
 bool List::toggleTask(string name){
     //???
+    return(false);
 }
 
 ostream& operator<<(ostream &os,const List &list){
-    os<<name<<endl;
-    //fer un bucle per a que imprimisca el nombre de tasques?
+    os<<list.getName()<<endl;
+    for(unsigned int i=0;i<list.getNumTasks();i++){        
+        os<<"[";
+        if(list.tasks[i].getIsDone()){
+            os<<"X";
+        }else{
+            os<<" ";
+        }
+        os<<"] ";
+        os<<"("<<list.tasks[i].getTime()<<") "<<printDeadline(list.tasks[i].getDeadline())<<" : "<<list.tasks[i].getName<<endl;
+    }
+    return os;
 }
 
-bool checkEmpty(string s){
-  bool val=false; 
-  string v=s;
-    if(s.length()==0){
-      val=true;
-    }else{
-      for(unsigned int i=0;i<s.length();i++){
-        v[i]=' ';
-      }
-      if(v==s){
-          val=true;
-      }
-    }
-  return(val);
+void printDeadline(Date deadline){
+    int day,month,year;
+    //passar Date a string
+    Util::saveDate(deadline,day,month,year);
+    cout<<year<<"-"<<month<<"-"<<day;
 }

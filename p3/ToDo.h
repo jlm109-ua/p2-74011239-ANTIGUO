@@ -9,18 +9,18 @@ using namespace std;
 #include "Util.h"
 
 class ToDo{
-    friend void operator<<(ostream &o,const ToDo &program);
+    friend ostream& operator<<(ostream &o,const ToDo &program);
     protected:
-        int nextId=1;
+        static const int nextId=1;
         string name;
         int getPosProject(string name) const;
         int getPosProject(int id) const;
-        vector<Project> toDoList;
+        vector<Project*> projects;
     public:
         ToDo(string name);
         string getName() const;
         bool setName(string name);
-        void addProject(Project *project); //?
+        void addProject(Project *project);
         void deleteProject(int id=0);
         void setProjectDescription(string name,string description);
         void projectMenu(int id=0);

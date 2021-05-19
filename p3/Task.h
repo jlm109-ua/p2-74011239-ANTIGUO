@@ -14,7 +14,7 @@ struct Date{
 };
 
 class Task{
-    friend void operator<<(ostream &os,const Task &task);
+    friend ostream& operator<<(ostream &os,const Task &task);
     protected:
         string name;
         Date deadline;

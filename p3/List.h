@@ -9,10 +9,10 @@ using namespace std;
 #include "Task.h"
 
 class List{
-    friend void operator<<(ostream &o,const List &toDoTask);
+    friend ostream& operator<<(ostream &o,const List &toDoTask);
     protected:
         string name;
-        vector<Task> toDoSingleTask;
+        vector<Task> tasks;
     public:
         List(string name);
         string getName() const;

@@ -19,6 +19,8 @@ enum Error{
 class Util{
   public:
     static void error(Error e);
+    static bool checkEmpty(string s);
+    static void saveDate(string deadline,int &day,int &month,int &year);
 };
 
 #endif
