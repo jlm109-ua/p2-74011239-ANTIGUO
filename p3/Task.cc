@@ -1,15 +1,5 @@
 #include "Task.h"
 
-const int KMINMONTH=1;
-const int KMAXMONTH=12;
-const int KMAXFEB=29;
-const int KMAXDAY2=30;
-const int KMAXDAY=31;
-const int KMINYEAR=2000;
-const int KMAXYEAR=2100;
-const int KMAXNAME=20;
-const int KMAXDESC=40;
-
 bool checkDate(string deadline);
 
 Task::Task(string name){
@@ -90,7 +80,7 @@ ostream& operator<<(ostream &os,const Task &task){
 
 bool checkDate(string deadline){
 
-    int day,month,year,x,y,z,s; //x,y,z son auxiliars per a comprovar dades
+    int day,month,year,x,y,z; //x,y,z son auxiliars per a comprovar dades
     bool val=false;
 
     Util::saveDate(deadline,day,month,year);
@@ -99,24 +89,24 @@ bool checkDate(string deadline){
     y=year%400;
     z=year%4;
 
-    if(year<KMINYEAR || year>KMAXYEAR){
+    if(year<Util::KMINYEAR() || year>Util::KMAXYEAR()){
         val=true;
     }
 
-    if(month<KMINMONTH || month>KMAXMONTH){
+    if(month<Util::KMINMONTH() || month>Util::KMAXMONTH()){
         val=true;
     }
 
-    if(day<KMINMONTH || day>KMAXDAY){
+    if(day<Util::KMINMONTH() || day>Util::KMAXDAY()){
         val=true;
     }
 
     switch(month){
         case 2: 
-        if(day>KMAXFEB){
+        if(day>Util::KMAXFEB()){
             val=true;
         }
-        if(day==KMAXFEB){
+        if(day==Util::KMAXFEB()){
             if(z!=0){
             val=true;
             break;
@@ -132,22 +122,22 @@ bool checkDate(string deadline){
         }
         break;
         case 4: 
-        if(day>KMAXDAY2){
+        if(day>Util::KMAXDAY2()){
             val=true;
         }
         break;
         case 6: 
-        if(day>KMAXDAY2){
+        if(day>Util::KMAXDAY2()){
             val=true;
         }
         break;
         case 9: 
-        if(day>KMAXDAY2){
+        if(day>Util::KMAXDAY2()){
             val=true;
         }
         break;
         case 11:
-        if(day>KMAXDAY2){
+        if(day>Util::KMAXDAY2()){
             val=true;
         }
         break;
