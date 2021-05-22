@@ -46,14 +46,16 @@ bool Util::checkEmpty(string s){
 
 void Util::saveDate(string deadline,int &day,int &month,int &year){
     string auxdeadline,sday,smonth,syear;
-    
+    size_t found;
+    int s;
+
     s=deadline.find('/');
-    if(found!=deadline::npos){
+    if(found!=string::npos){
         sday=deadline.substr(0,s);
     }
     auxdeadline=deadline.substr(s+1);
     s=deadline.find('/');
-    if(found!=deadline::npos){
+    if(found!=string::npos){
         smonth=auxdeadline.substr(0,s);
         syear=auxdeadline.substr(s+1);
     }

@@ -1,5 +1,17 @@
 #include "Task.h"
 
+const int KMINMONTH=1;
+const int KMAXMONTH=12;
+const int KMAXFEB=29;
+const int KMAXDAY2=30;
+const int KMAXDAY=31;
+const int KMINYEAR=2000;
+const int KMAXYEAR=2100;
+const int KMAXNAME=20;
+const int KMAXDESC=40;
+
+bool checkDate(string deadline);
+
 Task::Task(string name){
     this->name=name;
     time=1;
@@ -36,7 +48,7 @@ bool Task::setDeadline(string deadline){
         Util::error(ERR_DATE);
         return(false);
     }else{
-        saveDate(deadline,dday,dmonth,dyear);
+        Util::saveDate(deadline,dday,dmonth,dyear);
         Task::deadline.day=dday;
         Task::deadline.month=dmonth;
         Task::deadline.year=dyear;
@@ -63,37 +75,17 @@ void Task::toggle(){
 }
 
 ostream& operator<<(ostream &os,const Task &task){
-    int countd=0,countl=0,tottimed=0,tottimel=0;;
 
     os<<"[";
-    if(isDone){
+    if(task.isDone){
         os<<"X";
     }else{
         os<<" ";
     }
     os<<"] ";
-    os<<"("<<time<<") "<<deadline.year<<"-"<<deadline.month<<"-"<<deadline.day<<" : "<<name<<endl;
-    }
-    return os;
-}
-
-void saveDate(string deadline,int &day,int &month,int &year){
-    string auxdeadline,sday,smonth,syear;
+    os<<"("<<time<<") "<<task.deadline.year<<"-"<<task.deadline.month<<"-"<<task.deadline.day<<" : "<<task.name<<endl;
     
-    s=deadline.find('/');
-    if(found!=deadline::npos){
-        sday=deadline.substr(0,s);
-    }
-    auxdeadline=deadline.substr(s+1);
-    s=deadline.find('/');
-    if(found!=deadline::npos){
-        smonth=auxdeadline.substr(0,s);
-        syear=auxdeadline.substr(s+1);
-    }
-
-    day=stoi(sday);
-    month=stoi(smonth);
-    year=stoi(syear);
+    return os;
 }
 
 bool checkDate(string deadline){
@@ -101,7 +93,7 @@ bool checkDate(string deadline){
     int day,month,year,x,y,z,s; //x,y,z son auxiliars per a comprovar dades
     bool val=false;
 
-    saveDate(deadline,day,month,year);
+    Util::saveDate(deadline,day,month,year);
    
     x=year%100;
     y=year%400;

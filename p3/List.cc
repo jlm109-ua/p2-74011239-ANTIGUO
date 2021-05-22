@@ -12,18 +12,28 @@ string List::getName() const{
     return name;
 }
 
-vector<Task> List::getTask() const{
-    //???
+vector<Task> List::getTasks() const{
+    return(tasks);
 }
 
 unsigned List::getNumTasks() const{
     int n;
+    vector<Task> tasks;
+    tasks=getTasks();
     n=tasks.size();
     return(n);
 }
 
 unsigned List::getNumDone() const{
-    //???
+    int totdone=0;
+    
+    for(unsigned int i=0;i<getNumTasks();i++){
+        /*if(ací vull comprovar el isDone de la task però no sé com accedir a ella){ //??? Com accedisc a les tasques?
+        //tasks[i]???
+        //Task::getIsDone???
+
+        }*/
+    }
     return(1);
 }
 
@@ -39,6 +49,7 @@ int List::getTimeDone() const{
 
 int List::getPosTask(string name) const{
     //???
+    return(1);
 }
 
 bool List::setName(string name){
@@ -52,7 +63,7 @@ bool List::setName(string name){
 }
 
 void List::addTask(const Task &task){
-    //???
+    tasks.push_back(task);
 }
 
 bool List::deleteTask(string name){
@@ -66,8 +77,18 @@ bool List::toggleTask(string name){
 }
 
 ostream& operator<<(ostream &os,const List &list){
+    string s;
+    Date deadline;
+    
     os<<list.getName()<<endl;
-    for(unsigned int i=0;i<list.getNumTasks();i++){        
+
+    for(unsigned int i=0;i<list.getNumTasks();i++){  
+        deadline=list.tasks[i].getDeadline();
+        s.push_back(deadline.year);
+        s.push_back('-');
+        s.push_back(deadline.month);
+        s.push_back('-');
+        s.push_back(deadline.day);      
         os<<"[";
         if(list.tasks[i].getIsDone()){
             os<<"X";
@@ -75,14 +96,7 @@ ostream& operator<<(ostream &os,const List &list){
             os<<" ";
         }
         os<<"] ";
-        os<<"("<<list.tasks[i].getTime()<<") "<<printDeadline(list.tasks[i].getDeadline())<<" : "<<list.tasks[i].getName<<endl;
+        os<<"("<<list.tasks[i].getTime()<<") "<<s<<" : "<<list.tasks[i].getName()<<endl;
     }
     return os;
-}
-
-void printDeadline(Date deadline){
-    int day,month,year;
-    //passar Date a string
-    Util::saveDate(deadline,day,month,year);
-    cout<<year<<"-"<<month<<"-"<<day;
 }
