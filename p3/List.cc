@@ -18,38 +18,56 @@ vector<Task> List::getTasks() const{
 
 unsigned List::getNumTasks() const{
     int n;
-    vector<Task> tasks;
-    tasks=getTasks();
+    vector<Task> tasks=getTasks();
     n=tasks.size();
     return(n);
 }
 
 unsigned List::getNumDone() const{
     int totdone=0;
-    
-    for(unsigned int i=0;i<getNumTasks();i++){
-        /*if(ací vull comprovar el isDone de la task però no sé com accedir a ella){ //??? Com accedisc a les tasques?
-        //tasks[i]???
-        //Task::getIsDone???
+    vector<Task> tasks=getTasks();
 
-        }*/
+    for(unsigned int i=0;i<tasks.size();i++){
+        if(tasks[i].getIsDone()){
+            totdone+=1;
+        }
     }
-    return(1);
+    return(totdone);
 }
 
 int List::getTimeTasks() const{
-    //???
-    return(1);
+    int tottime=0;
+    vector<Task> tasks=getTasks();
+
+    for(unsigned int i=0;i<tasks.size();i++){
+        tottime+=tasks[i].getTime();
+    }
+    return(tottime);
 }
 
 int List::getTimeDone() const{
-    //???
-    return(1);
+    int tottimedone=0;
+    vector<Task> tasks=getTasks();
+
+    for(unsigned int i=0;i<tasks.size();i++){
+        if(tasks[i].getIsDone()){
+            tottimedone+=tasks[i].getTime();
+        }
+    }
+    return(tottimedone);
 }
 
 int List::getPosTask(string name) const{
-    //???
-    return(1);
+    int pos;
+    vector<Task> tasks=getTasks();
+
+    for(unsigned int i=0;i<tasks.size();i++){
+        if(name==tasks[i].getName()){
+            pos=i;
+            return (pos);
+        }
+    }
+    return (-1);
 }
 
 bool List::setName(string name){
@@ -67,12 +85,32 @@ void List::addTask(const Task &task){
 }
 
 bool List::deleteTask(string name){
-    //???
-    return(false);
+    bool found=false;
+    int pos;
+    vector<Task> tasks=getTasks();
+
+    for(unsigned int i=0;i<tasks.size();i++){
+        if(name==tasks[i].getName()){
+            pos=i;
+            tasks.erase(tasks.begin()+pos);
+            found=true;
+            return(true);
+        }
+    }
+    if(!found){
+        Util::error(ERR_TASK_NAME);
+        return(false);
+    }
 }
 
 bool List::toggleTask(string name){
-    //???
+    vector<Task> tasks=getTasks();
+
+    for(unsigned int i=0;i<tasks.size();i++){
+        if(name==tasks[i].getName()){
+            tasks[i].toggle();
+        }
+    }
     return(false);
 }
 
