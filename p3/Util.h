@@ -30,19 +30,19 @@ class Util{
     static int KMAXYEAR();
     static int KMAXNAME();
     static int KMAXDESC();
-    static string E_PN();
-    static string E_PD();
-    static string E_LN();
-    static string E_TN();
-    static string E_D();
-    static string E_ET();
-    static string N();
-    static string D();
-    static string TL();
-    static string TD();
-    static string MIN();
-    static string HP();
-    static string E_ID();
+    static void E_PN();
+    static void E_PD();
+    static void E_LN();
+    static void E_TN();
+    static void E_D();
+    static void E_ET();
+    static void N();
+    static void D();
+    static void TL();
+    static void TD();
+    static void MIN();
+    static void HP();
+    static void E_ID();
 };
 
 #endif

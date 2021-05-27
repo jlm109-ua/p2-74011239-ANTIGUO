@@ -46,7 +46,7 @@ bool Util::checkEmpty(string s){
 
 void Util::saveDate(string deadline,int &day,int &month,int &year){
   string auxdeadline,sday,smonth,syear;
-  size_t found;
+  size_t found=0;
   int s;
 
   s=deadline.find('/');
@@ -92,42 +92,42 @@ int Util::KMAXNAME(){
 int Util::KMAXDESC(){
   return(40);
 }
-string Util::E_PN(){
-  return("Enter project name: ");
+void Util::E_PN(){
+  cout<<"Enter project name: "<<endl;
 }
-string Util::E_PD(){
-  return("Enter project description: ");
+void Util::E_PD(){
+  cout<<"Enter project description: "<<endl;
 }
-string Util::E_LN(){
-  return("Enter list name: ");
+void Util::E_LN(){
+  cout<<"Enter list name: "<<endl;
 }
-string Util::E_TN(){
-  return("Enter task name: ");
+void Util::E_TN(){
+  cout<<"Enter task name: "<<endl;
 }
-string Util::E_D(){
-  return("Enter project description: ");
+void Util::E_D(){
+  cout<<"Enter project description: "<<endl;
 }
-string Util::E_ET(){
-  return("Enter expected time: ");
+void Util::E_ET(){
+  cout<<"Enter expected time: "<<endl;
 }
-string Util::N(){
-  return("Name: ");
+void Util::N(){
+  cout<<"Name: "<<endl;
 }
-string Util::D(){
-  return("Description: ");
+void Util::D(){
+  cout<<"Description: "<<endl;
 }
-string Util::TL(){
-  return("Total left: ");
+void Util::TL(){
+  cout<<"Total left: "<<endl;
 }
-string Util::TD(){
-  return("Total done: ");
+void Util::TD(){
+  cout<<"Total done: "<<endl;
 }
-string Util::MIN(){
-  return("minutes");
+void Util::MIN(){
+  cout<<"minutes"<<endl;
 }
-string Util::HP(){
-  return("Highest priority: ");
+void Util::HP(){
+  cout<<"Highest priority: "<<endl;
 }
-string Util::E_ID(){
-  return("Enter project id: ");
+void Util::E_ID(){
+  cout<<"Enter project id: "<<endl;
 }
