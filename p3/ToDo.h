@@ -11,7 +11,7 @@ using namespace std;
 class ToDo{
     friend ostream& operator<<(ostream &o,const ToDo &program);
     protected:
-        static const int nextId=1;
+        static int nextId;
         string name;
         int getPosProject(string name) const;
         int getPosProject(int id) const;

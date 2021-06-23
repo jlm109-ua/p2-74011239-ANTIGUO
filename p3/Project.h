@@ -25,7 +25,7 @@ class Project{
         bool setId(int id);
         bool setName(string name);
         void setDescription(string description);
-        void edit(string name="",string description=""); //?
+        void edit(string name="",string description="");
         void addList(string name="");
         void deleteList(string name="");
         void addTaskToList(string name="");

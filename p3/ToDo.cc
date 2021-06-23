@@ -1,5 +1,7 @@
 #include "ToDo.h"
 
+int ToDo::nextId=1;
+
 ToDo::ToDo(string name){
     if(Util::checkEmpty(name)){
         Util::error(ERR_EMPTY);
@@ -42,10 +44,10 @@ bool ToDo::setName(string name){
 
 void ToDo::addProject(Project *project){
     if(getPosProject(project->getName())>=0){
-        Util::error(ERR_PROJECT_NAME);
+        throw(ERR_PROJECT_NAME);
     }else{
-        project->setId(nextId);
-        ToDo::nextId++; //com incremente la constant nextId?
+        project->setId(ToDo::nextId);
+        ToDo::nextId++;
         projects.push_back(project);
     }
 }
@@ -53,7 +55,7 @@ void ToDo::addProject(Project *project){
 void ToDo::deleteProject(int id){
     if(id==0){
         Util::E_ID(); cin>>id;
-        if(getPosProject(id)){
+        if(getPosProject(id)>=0){
             projects.erase(projects.begin()+getPosProject(id));
         }else{
             Util::error(ERR_ID);
@@ -62,7 +64,7 @@ void ToDo::deleteProject(int id){
 }
 
 void ToDo::setProjectDescription(string name,string description){
-    if(getPosProject(name)){
+    if(getPosProject(name)>=0){
         projects[getPosProject(name)]->setDescription(description);
     }else{
         Util::error(ERR_ID);
@@ -70,17 +72,20 @@ void ToDo::setProjectDescription(string name,string description){
 }
 
 void ToDo::projectMenu(int id){
-    if(id==0){
+    do{
         Util::E_ID(); cin>>id;
-        if(getPosProject(id)){
-            projects[id]->menu();
-        }else{
-            Util::error(ERR_ID);
-        }
+    }while(id<=0);
+
+    if(getPosProject(id)>=0){
+        projects[id]->menu();
+    }else{
+        Util::error(ERR_ID);
     }
 }
 
 ostream& operator<<(ostream &os,const ToDo &toDo){
-    //completar
+    for(unsigned int i=0;i<toDo.projects.size();i++){    
+        os<<toDo.projects[i];
+    }
     return os;
 }

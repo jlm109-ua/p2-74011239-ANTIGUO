@@ -4,6 +4,13 @@ bool checkList(vector<List> lists,string s);
 bool checkTask(vector<Task> tasks,string name,string namel);
 void totTasks(vector<List> lists,int &totdone,int &tot);
 
+const string N="Name: ";
+const string D="Description: ";
+const string TL="Total left: ";
+const string TD="Total done: ";
+const string MIN="minutes";
+const string HP="Highest priority: ";
+
 Project::Project(string name,string description){
     if(Util::checkEmpty(name)){
         Util::error(ERR_EMPTY);
@@ -38,12 +45,12 @@ int Project::getPosList(string name) const{
 }
 
 bool Project::setId(int id){
-    if(id<0){
-        Util::error(ERR_ID);
-        return(false);
-    }else{
+    if(id>=0){
         this->id=id;
         return(true);
+    }else{
+        Util::error(ERR_ID);
+        return(false);
     }
 }
 
@@ -231,7 +238,49 @@ string Project::summary() const{ //ARREGLAR
 }
 
 ostream& operator<<(ostream &os,const Project &project){
-    
+    string s,ss;
+    Date deadline;
+    int tottime=0,tottimed=0,sy=0,sm=0,sd=0,count=0,countd=0;
+    bool aux=false;
+
+    os<<N<<project.getName()<<endl;
+    if(!Util::checkEmpty(project.getDescription())){
+        os<<D<<project.getDescription()<<endl;
+    }
+
+    for(unsigned int i=0;i<project.lists.size();i++){
+        os<<project.lists[i];
+        vector<Task> tasks=project.lists[i].getTasks();
+        for(unsigned int j=0;i<project.lists[i].getNumTasks();j++){  
+            
+            deadline=tasks[j].getDeadline();
+
+            if(sy>deadline.year){
+                sy=deadline.year;
+                sm=deadline.month;
+                sd=deadline.day;
+                ss=project.lists[i].getName();
+            }else if(sm>deadline.month){
+                sy=deadline.year;
+                sm=deadline.month;
+                sd=deadline.day;
+                ss=project.lists[i].getName();
+            }else if(sd>deadline.day && sm>deadline.month && sy>=deadline.year){
+                sy=deadline.year;
+                sm=deadline.month;
+                sd=deadline.day;
+                ss=project.lists[i].getName();
+            }
+
+        }
+    }
+  
+    os<<TL<<count<<" ("<<tottime<<" "<<MIN<<")"<<endl;
+    os<<TD<<countd<<" ("<<tottimed<<" "<<MIN<<")"<<endl;
+    if(aux){
+        os<<HP<<s<<" "<<"("<<sy<<"-"<<sm<<"-"<<sd<<")"<<endl;
+    }else{
+    }
     return os;
 }
 

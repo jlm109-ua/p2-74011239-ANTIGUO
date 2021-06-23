@@ -65,7 +65,6 @@ void Task::toggle(){
 }
 
 ostream& operator<<(ostream &os,const Task &task){
-
     os<<"[";
     if(task.isDone){
         os<<"X";
@@ -73,14 +72,14 @@ ostream& operator<<(ostream &os,const Task &task){
         os<<" ";
     }
     os<<"] ";
-    os<<"("<<time<<") "<<task.deadline.year<<"-"<<task.deadline.month<<"-"<<task.deadline.day<<" : "<<task.name<<endl;
+    os<<"("<<task.time<<") "<<task.deadline.year<<"-"<<task.deadline.month<<"-"<<task.deadline.day<<" : "<<task.name<<endl;
     
     return os;
 }
 
 bool checkDate(string deadline){
 
-    int day,month,year,x,y,z; //x,y,z son auxiliars per a comprovar dades
+    int day,month,year,x,y,z;
     bool val=false;
 
     Util::saveDate(deadline,day,month,year);

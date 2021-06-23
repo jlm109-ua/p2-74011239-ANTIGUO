@@ -116,25 +116,12 @@ bool List::toggleTask(string name){
 
 ostream& operator<<(ostream &os,const List &list){
     string s;
-    Date deadline;
     
     os<<list.getName()<<endl;
 
-    for(unsigned int i=0;i<list.getNumTasks();i++){  
-        deadline=list.tasks[i].getDeadline();
-        s.push_back(deadline.year);
-        s.push_back('-');
-        s.push_back(deadline.month);
-        s.push_back('-');
-        s.push_back(deadline.day);      
-        os<<"[";
-        if(list.tasks[i].getIsDone()){
-            os<<"X";
-        }else{
-            os<<" ";
-        }
-        os<<"] ";
-        os<<"("<<list.tasks[i].getTime()<<") "<<s<<" : "<<list.tasks[i].getName()<<endl;
+    vector<Task> tasks=list.getTasks();
+    for(unsigned int i=0;i<list.getNumTasks();i++){
+        os<<tasks[i];
     }
     return os;
 }
