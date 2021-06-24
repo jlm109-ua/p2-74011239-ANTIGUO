@@ -77,15 +77,15 @@ void Project::edit(string name,string description){
 
     Util::E_PD(); getline(cin,description);
 
-    this->name=name;
-    this->description=description;
+    setName(name); //falla (supose que al checkEmpty)
+    setDescription(description);
 }
 
 void Project::addList(string name){
     try{
         do{
-        Util::E_TN(); getline(cin,name);
-        }while(checkList(lists,name));
+        Util::E_LN(); getline(cin,name);
+        }while(checkList(lists,name));//falla
         List list(name);
         lists.push_back(list);
     }catch(Error e){
@@ -223,8 +223,7 @@ string Project::summary() const{ //ARREGLAR
     sstot<<tot;
     stot=sstot.str();
 
-    cout<<"("<<id<<") "<<name<<" ["<<totdone<<"/"<<tot<<"]";
-
+    summ+="(";
     summ+=sid;
     summ+=") ";
     summ+=name;
@@ -285,20 +284,24 @@ ostream& operator<<(ostream &os,const Project &project){
 }
 
 bool checkList(vector<List> lists,string name){
-    for(unsigned int i=0;i<lists.size();i++){
-        if(name==lists[i].getName()){  
-            Util::error(ERR_LIST_NAME);  
-            return(true);
+    if(!lists.size()==0){
+        for(unsigned int i=0;i<lists.size();i++){
+            if(name==lists[i].getName()){  
+                Util::error(ERR_LIST_NAME);  
+                return(true);
+            }
         }
     }
     return(false);
 }
 
 bool checkTask(vector<Task> tasks,string name,string namel){
-    for(unsigned int i=0;i<tasks.size();i++){
-        if(name==tasks[i].getName()){  
-            Util::error(ERR_LIST_NAME);  
-            return(true);
+    if(!tasks.size()==0){
+        for(unsigned int i=0;i<tasks.size();i++){
+            if(name==tasks[i].getName()){  
+                Util::error(ERR_LIST_NAME);  
+                return(true);
+            }
         }
     }
     return(false);

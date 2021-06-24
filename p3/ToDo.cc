@@ -15,7 +15,7 @@ string ToDo::getName() const{
 }
 
 int ToDo::getPosProject(string name) const{
-    for(unsigned int i=0;i>projects.size();i++){
+    for(unsigned int i=0;i<projects.size();i++){
         if(name==projects[i]->getName()){
             return(i);
         }
@@ -24,7 +24,7 @@ int ToDo::getPosProject(string name) const{
 }
 
 int ToDo::getPosProject(int id) const{
-    for(unsigned int i=0;i>projects.size();i++){
+    for(unsigned int i=0;i<projects.size();i++){
         if(id==projects[i]->getId()){
             return(i);
         }
@@ -85,7 +85,7 @@ void ToDo::projectMenu(int id){
 
 ostream& operator<<(ostream &os,const ToDo &toDo){
     for(unsigned int i=0;i<toDo.projects.size();i++){    
-        os<<toDo.projects[i];
+        os<<toDo.projects[i]->summary()<<endl;
     }
     return os;
 }
