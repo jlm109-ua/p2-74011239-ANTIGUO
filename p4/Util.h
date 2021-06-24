@@ -14,8 +14,8 @@ enum Error{
   ERR_DATE,
   ERR_TIME,
   ERR_ID,
-  ERR_PROJECT_NAME
-  ER_FILE
+  ERR_PROJECT_NAME,
+  ERR_FILE
 };
 
 class Util{
@@ -45,6 +45,8 @@ class Util{
     static void MIN();
     static void HP();
     static void E_ID();
+    static void E_FN();
+    static void E_CONF();
 };
 
 #endif

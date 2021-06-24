@@ -9,6 +9,11 @@ using namespace std;
 #include "Project.h"
 #include "Util.h"
 
+struct BinToDo{
+  char name[Util::KMAXNAME];
+  unsigned numProjects;
+};
+
 class ToDo{
     friend ostream& operator<<(ostream &o,const ToDo &program);
     protected:

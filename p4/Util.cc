@@ -26,6 +26,7 @@ void Util::error(Error e){
       break;
     case ERR_PROJECT_NAME:
       cout << "ERROR: wrong project name" << endl;
+      break;
     case ERR_FILE:
       cout << "ERROR: cannot open file" << endl;
   }
@@ -133,4 +134,10 @@ void Util::HP(){
 }
 void Util::E_ID(){
   cout<<"Enter project id: "<<endl;
+}
+void Util::E_FN(){
+  cout<<"Enter filename: "<<endl;
+}
+void Util::E_CONF(){
+  cout<<"Confirm [Y/N]?: "<<endl;
 }

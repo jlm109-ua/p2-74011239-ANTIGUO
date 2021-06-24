@@ -2,7 +2,7 @@
 #include "List.h"
 
 List::List(const BinList &bl){
-    // name???
+    this->name=bl.name;
 }
 
 List::List(string name){
@@ -140,7 +140,7 @@ BinList List::toBinary() const{
     string namel=getName();
     BinList bl;
 
-    if(namel.size>20){
+    if(namel.size>Util::KMAXNAME){
         // ???
     }else{
 

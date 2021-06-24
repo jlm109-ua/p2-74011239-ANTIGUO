@@ -7,7 +7,7 @@ Task::Task(const BinTask &bt){
     this->deadline=bt.deadline;
     this->isDone=bt.isDone;
     this->time=bt.time;
-    // bt.name??
+    this->name=bt.name;
 }
 
 Task::Task(string name){
@@ -79,6 +79,7 @@ bool Task::importTask(string task){
 
 string Task::exportTask() const{
     string et,valisD;
+    /*stringstream et;*/
     Date ddline2=getDeadline();
     bool isDone2=getIsDone();
 
@@ -95,7 +96,7 @@ string Task::exportTask() const{
 BinTask Task::toBinary() const{
     BinTask bt;
     string namet=getName();
-    if(namet.size>20){
+    if(namet.size>Util::KMAXNAME){
         // per què no apareix bt.name???
     }else{
 

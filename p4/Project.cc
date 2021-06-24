@@ -13,7 +13,9 @@ const string MIN="minutes";
 const string HP="Highest priority: ";
 
 Project::Project(const BinProject &bp){
-    // completar
+    this->name=bp.name;
+    this->description=bp.description;
+    this->id=0;
 }
 
 Project::Project(string name,string description){
@@ -243,19 +245,49 @@ string Project::summary() const{ //ARREGLAR
 }
 
 string Project::exportProject() const{
-    // completar
+    string ep;
+
+    if(Util::checkEmpty(description)){
+        ep='#'+getName();
+        for(unsigned int i=0;i<lists.size();i++){
+            ep=ep+'\n';
+            ep=ep+lists[i].exportList();
+        }
+    }else{
+        ep='#'+getName()+'@'+getDescription();
+        for(unsigned int i=0;i<lists.size();i++){
+            ep=ep+'\n';
+            ep=ep+lists[i].exportList();
+        }
+    }
 }
 
 void Project::addList(const List &list){
-    // completar
+    string namel=list.getName();
+    if(!checkList(lists,namel)){
+        lists.push_back(list);
+    }
 }
 
 void Project::addTaskToList(string name,const Task &task){
-    // completar
+    if(!checkList(lists,name)){
+        lists[getPosList(name)].addTask(task);
+    }
 }
 
 BinProject Project::toBinary() const{
-    // completar
+    string namep=getName(),descp=getDescription();
+    BinProject bp;
+
+    if(namep>Util::KMAXNAME){
+        //name????
+    }
+
+    if(descp>Util::KMAXNAME){
+        //desc????
+    }
+
+    bp.numLists=lists.size();
 }
 
 void saveData(ofstream &file) const{
