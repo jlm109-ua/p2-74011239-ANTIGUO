@@ -84,7 +84,7 @@ void ToDo::projectMenu(int id){
     }
 }
 
-bool loadData(vector<Project*> &lp,string filename""){
+bool ToDo::loadData(vector<Project*> &lp,string filename""){ //REPASAR DIAPOSITIVA
     char opt;
     string name,description,deadline,isDone;
     int time;
@@ -144,20 +144,28 @@ bool loadData(vector<Project*> &lp,string filename""){
     }
 }
 
-void saveData(string filename"") const{
+void ToDo::saveData(string filename"") const{
+    BinToDo btd;
+
+    strcpy(btd.name,ToDo::name);
+    btd.numProjects=ToDo::projects.size();
+
     cout<<Util::E_FN(); getline(cin,filename);
 
     ofstream ofb(filename.c_str(),ios::out | ios::binary);
 
     if(ofb.is_open()){
-        // continuar
+        ofb.write((const char*)&btd,sizeof(BinToDo));
+        for(unsigned int i=0;i<btd.numProjects;i++){
+            projects[i]->saveData(ofb); //està bé açò?
+        }
         ofb.close();
     }else{
         Util::error(ERR_FILE);
     }
 }
 
-bool importProjects(vector<Project*> &lp,string filename""){
+bool ToDo::importProjects(vector<Project*> &lp,string filename""){
     string s,ss,sss,dd,dm,dy; //dd=date day, dm=date month, dy=date year //ss i sss són strings auxiliars
     Project toDoList;
     List toDoTask;
@@ -300,7 +308,7 @@ bool importProjects(vector<Project*> &lp,string filename""){
     }
 }
 
-void exportProjects(string filename"",int id=-1) const{
+void ToDo::exportProjects(string filename"",int id=-1) const{
     // completar
 }
 
