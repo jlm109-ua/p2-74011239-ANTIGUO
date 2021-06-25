@@ -69,8 +69,6 @@ void Project::setDescription(string description){
 }
 
 void Project::edit(string name,string description){
-    string s;
-    
     do{
         Util::E_PN(); getline(cin,name);
     }while(Util::checkEmpty(name));
@@ -136,9 +134,9 @@ void Project::deleteTaskFromList(string name){
         Util::E_LN(); getline(cin,namel);
     }while(Util::checkEmpty(namel));
 
-    vector<Task> tasks=lists[getPosList(namel)].getTasks();
+    if(checkList(lists,namel)>=0){
+        vector<Task> tasks=lists[getPosList(namel)].getTasks();
 
-    if(!checkList(lists,namel)){
         Util::E_TN(); getline(cin,name);
         if(checkTask(tasks,name,namel)){
             lists[getPosList(namel)].deleteTask(name);
@@ -153,9 +151,9 @@ void Project::toggleTaskFromList(string name){
         Util::E_LN(); getline(cin,namel);
     }while(Util::checkEmpty(namel));
 
-    vector<Task> tasks=lists[getPosList(namel)].getTasks();
+    if(checkList(lists,namel)){
+        vector<Task> tasks=lists[getPosList(namel)].getTasks();
 
-    if(!checkList(lists,namel)){
         Util::E_TN(); getline(cin,name);
         if(checkTask(tasks,name,namel)){
             lists[getPosList(namel)].toggleTask(name);
@@ -284,7 +282,7 @@ ostream& operator<<(ostream &os,const Project &project){
 }
 
 bool checkList(vector<List> lists,string name){
-    if(!lists.size()==0){
+    if(lists.size()>0){
         for(unsigned int i=0;i<lists.size();i++){
             if(name==lists[i].getName()){  
                 Util::error(ERR_LIST_NAME);  
