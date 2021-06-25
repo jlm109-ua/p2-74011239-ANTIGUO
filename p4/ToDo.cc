@@ -166,10 +166,9 @@ void ToDo::saveData(string filename"") const{
 }
 
 bool ToDo::importProjects(vector<Project*> &lp,string filename""){
-    string s,ss,sss,dd,dm,dy; //dd=date day, dm=date month, dy=date year //ss i sss són strings auxiliars
-    Project toDoList;
-    List toDoTask;
-    Task toDoSingleTask;
+    string s,ss,sss,dd,dm,dy,aux=""; //dd=date day, dm=date month, dy=date year //ss i sss són strings auxiliars
+    List l;
+    Task t;
     size_t pos;
     bool fail=false,failt,cd; //cd=check description, per a comprovar si ha hagut description o no , fail i failt per a comprovar si hi ha errors
     int id=0,list; //list per a comprovar quan fer el push_back de les llistes
@@ -181,17 +180,15 @@ bool ToDo::importProjects(vector<Project*> &lp,string filename""){
 
     if(ifs.is_open()){
         while(getline(infile,s)){
-            if(s[0]=='<'){  //CORREGIR TOT
-                list=0; //Reiniciem les variables auxiliars
-                id++;
-                toDoList.id=id;
-                toDoProjects.nextId++;
+            if(s[0]=='<'){
+                list=0;
+                ToDo::nextId++;
                 cd=true; 
                 fail=false;
                 failt=false;
             }else if(s[0]=='>' && !fail && !failt){
-                toDoList.lists.push_back(toDoTask);
-                toDoProjects.projects.push_back(toDoList);
+                p.lists.push_back(l);
+                toDoProjects.projects.push_back(p);
             }else if(s[0]=='#'){
                 pos=s.find('#');
                 ss=s.substr(pos+1);
@@ -203,101 +200,100 @@ bool ToDo::importProjects(vector<Project*> &lp,string filename""){
                 error(ERR_PROJECT_NAME);
                 fail=true;
                 }else{
-                toDoList.name=ss;
+                Project *p=new Project(ss);
+                p->setId(ToDo::nextId);
                 }
             }else if(s[0]=='*'){
                 cd=false;
                 pos=s.find('*');
-                toDoList.description=s.substr(pos+1);
+                p->setDescription(s.substr(pos+1));
             }else if(cd){
-                toDoList.description[0]=' ';
+                p->setDescription(aux);
             }else if(s[0]=='@'){
-                if(list!=0){
-                toDoList.lists.push_back(toDoTask);
-                }
                 pos=s.find('@');
                 ss=s.substr(pos+1);
                 if(checkEmpty(ss)){
-                error(ERR_LIST_NAME);
-                fail=true;
+                    error(ERR_LIST_NAME);
+                    fail=true;
                 }else{
-                toDoTask.name=ss;
+                    List l(ss);
+                    /*p->addList(l);*/
                 }
                 list++;
             }else if(s[0]=='|'){
-                //reciclem variables per a no tindre moltes variables
-                toDoSingleTask.name.erase(0);
+                /*.setName(aux);
                 ss=s;
                 pos=ss.find("/");
                 sss=ss.substr(1,pos-1);
                 dd=sss;
-                toDoSingleTask.deadline.day=stoi(sss);
+                // fer-ho bé lo del deadline
+                t.deadline.day=stoi(sss);
                 sss=ss.substr(pos+1);
                 pos=sss.find("/");
                 ss=sss.substr(0,pos);
                 dm=ss;
-                toDoSingleTask.deadline.month=stoi(ss);
+                t.deadline.month=stoi(ss);
                 ss=sss.substr(pos+1); 
                 pos=ss.find("|");
                 sss=ss.substr(0,pos);
                 dy=sss;
-                toDoSingleTask.deadline.year=stoi(sss);
+                t.deadline.year=stoi(sss);
                 if(checkDate(dd,dm,dy)){
                 error(ERR_DATE);
                 failt=true;
                 }
                 sss=ss.substr(pos+1);
                 if(sss[0]=='F'){
-                toDoSingleTask.isDone=false;
+                t.isDone=false;
                 }else{
-                toDoSingleTask.isDone=true;
+                t.isDone=true;
                 }
                 ss=sss.substr(2);
-                toDoSingleTask.time=stoi(ss);
-                if(toDoSingleTask.time<1 || toDoSingleTask.time>180){
+                t.time=stoi(ss);
+                if(t.time<1 || t.time>180){
                 error(ERR_TIME);
                 failt=true;
                 }
                 if(!failt){
-                toDoTask.tasks.push_back(toDoSingleTask);
-                }  
+                l.tasks.push_back(t);
+                }*/ /* importTask() */
             }else{
                 ss=s.substr(0);
                 pos=ss.find("|");
-                toDoSingleTask.name=ss.substr(0,pos-1);
+                t.name=ss.substr(0,pos-1);
                 ss=s.substr(pos+1);
                 pos=ss.find("/");
                 sss=ss.substr(0,pos);
                 dd=sss;
-                toDoSingleTask.deadline.day=stoi(sss);
+                t.deadline.day=stoi(sss);
                 sss=ss.substr(pos+1);
                 pos=sss.find("/");
                 ss=sss.substr(0,pos);
                 dm=ss;
-                toDoSingleTask.deadline.month=stoi(ss);
+                t.deadline.month=stoi(ss);
                 ss=sss.substr(pos+1); 
                 pos=ss.find("|");
                 sss=ss.substr(0,pos);
                 dy=sss;
-                toDoSingleTask.deadline.year=stoi(sss);
+                t.deadline.year=stoi(sss);
                 if(checkDate(dd,dm,dy)){
                 error(ERR_DATE);
                 failt=true;
                 }
                 sss=ss.substr(pos+1);
                 if(sss[0]=='F'){
-                toDoSingleTask.isDone=false;
+                t.isDone=false;
                 }else{
-                toDoSingleTask.isDone=true;
+                t.isDone=true;
                 }
                 ss=sss.substr(2);
-                toDoSingleTask.time=stoi(ss);
-                if(toDoSingleTask.time<1 || toDoSingleTask.time>180){
+                t.time=stoi(ss);
+                if(t.time<1 || t.time>180){
                 error(ERR_TIME);
                 failt=true;
                 }
                 if(!failt){
-                toDoTask.tasks.push_back(toDoSingleTask);
+                l.tasks.push_back(t);
                 } 
             }
         }

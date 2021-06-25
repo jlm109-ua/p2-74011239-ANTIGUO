@@ -124,14 +124,10 @@ string List::exportList() const{
     BinList bl=toBinary();
     vector<Task> tasks=getTasks();
 
-    // funciona el "\n" en una string?
-    // he de demanar una BinList per a poder fer la cadena? (fer "BinList=toBinary()")
+    el=el+'@'+bl.name;
 
-    el=el+'@'+bl.name; //????
-
-    for(unsigned int i=0;/*és posible llevar el int quan és unsigned?*/i<bl.numTasks;i++){
-        BinTask bt=tasks[i].exportTask();
-        el=el+'\n'+bt;
+    for(unsigned int i=0;i<bl.numTasks;i++){
+        el=el+'\n'+tasks[i].exportTask();
     }
 }
 

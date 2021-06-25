@@ -42,7 +42,7 @@ class Project{
         void menu();
         string summary() const;
         string exportProject() const;
-        void addList(const List &list)
+        void addList(const List &list);
         void addTaskToList(string name,const Task &task);
         BinProject toBinary() const;
         void saveData(ofstream &file) const;
