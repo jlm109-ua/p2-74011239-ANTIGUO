@@ -90,17 +90,19 @@ string Task::exportTask() const{
     }
 
     et=et+getName()+'|'+ddline2.day+'/'+ddline2.month+'/'+ddline2.year+'|'+valisD+'|'+getTime();
-    // està bé així? (línia de dalt)
 }
 
 BinTask Task::toBinary() const{
     BinTask bt;
     string namet=getName();
-    if(namet.size>Util::KMAXNAME){
-        // per què no apareix bt.name???
-    }else{
 
+    if(namet.size()>=Util::KMAXNAME){
+        strncpy(bt.name,namet,Util::KMAXNAME);
+        bt.name[Util::KMAXNAME]='\0';
+    }else{
+        strcpy(bt.name,namet);
     }
+
     bt.deadline=getDeadline();
     bt.isDone=getIsDone();
     bt.time=getTime();
@@ -109,7 +111,9 @@ BinTask Task::toBinary() const{
 }
 
 void Task::saveData(ofstream &file) const{
-    // completar
+    BinTask bt=toBinary();
+
+    file.write((const char*)&bt,sizeof(BinTask));
 }
 
 ostream& operator<<(ostream &os,const Task &task){

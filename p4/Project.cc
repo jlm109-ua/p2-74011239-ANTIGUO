@@ -279,19 +279,32 @@ BinProject Project::toBinary() const{
     string namep=getName(),descp=getDescription();
     BinProject bp;
 
-    if(namep>Util::KMAXNAME){
-        //name????
+    if(namep.size()>=Util::KMAXNAME){
+        strncpy(bp.name,namep,Util::KMAXNAME);
+        bp.name[Util::KMAXNAME]='\0';
+    }else{
+        strcpy(bp.name,namep);
     }
 
-    if(descp>Util::KMAXNAME){
-        //desc????
+    if(descp.size()>=Util::KMAXDESC){
+        strncpy(bp.desc,descp,Util::KMAXDESC);
+        bp.desc[Util::KMAXDESC]='\0';
+    }else{
+        strcpy(bp.desc,descp);
     }
 
     bp.numLists=lists.size();
+
+    return (bp);
 }
 
-void saveData(ofstream &file) const{
-    // completar
+void Project::saveData(ofstream &file) const{
+    BinProject bp=toBinary();
+
+    file.write((const char*)&bp,sizeof(BinProject));
+    for(unsigned int i=0;i<bp.numLists;i++){
+        this->lists[i].saveData(file); //??? està bé?
+    }
 }
 
 ostream& operator<<(ostream &os,const Project &project){

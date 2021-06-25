@@ -140,18 +140,25 @@ BinList List::toBinary() const{
     string namel=getName();
     BinList bl;
 
-    if(namel.size>Util::KMAXNAME){
-        // ???
+    if(namel.size()>=Util::KMAXNAME){
+        strncpy(bl.name,namel,Util::KMAXNAME);
+        bl.name[Util::KMAXNAME]='\0';
     }else{
-
+        strcpy(bl.name,namel);
     }
 
-    // bl.name
     bl.numTasks=getNumTasks();
+
+    return (bl);
 }
 
 void List::saveData(ofstream &file) const{
-    // completar
+    BinList bl=toBinary();
+
+    file.write((const char*)&bl,sizeof(BinList));
+    for(unsigned int i=0;i<bl.numTasks;i++){
+        tasks[i].saveData(file);
+    }
 }
 
 
