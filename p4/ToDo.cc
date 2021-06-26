@@ -166,20 +166,17 @@ void ToDo::saveData(string filename"") const{
 }
 
 bool ToDo::importProjects(vector<Project*> &lp,string filename""){
-    string s,ss,sss,dd,dm,dy,aux=""; //dd=date day, dm=date month, dy=date year //ss i sss són strings auxiliars
-    List l;
-    Task t;
+    string namet,aux="";
     size_t pos;
-    bool fail=false,failt,cd; //cd=check description, per a comprovar si ha hagut description o no , fail i failt per a comprovar si hi ha errors
-    int id=0,list; //list per a comprovar quan fer el push_back de les llistes
-
+    bool fail=false,failt,cd;
+    int list;
 
     cout<<Util::E_FN(); getline(cin,filename);
 
     ifstream ifs(filename.c_str());
 
     if(ifs.is_open()){
-        while(getline(infile,s)){
+        while(getline(ifs,s)){
             if(s[0]=='<'){
                 list=0;
                 ToDo::nextId++;
@@ -187,21 +184,23 @@ bool ToDo::importProjects(vector<Project*> &lp,string filename""){
                 fail=false;
                 failt=false;
             }else if(s[0]=='>' && !fail && !failt){
-                p.lists.push_back(l);
-                toDoProjects.projects.push_back(p);
+                if(list>0){
+                    p->addList(l);
+                }
+                this->projects.push_back(p);
             }else if(s[0]=='#'){
                 pos=s.find('#');
                 ss=s.substr(pos+1);
-                
+
                 if(checkEmpty(ss)){
-                error(ERR_PROJECT_NAME);
-                fail=true;
+                    error(ERR_PROJECT_NAME);
+                    fail=true;
                 }else if(checkProject(ss,toDoProjects)){
-                error(ERR_PROJECT_NAME);
-                fail=true;
+                    error(ERR_PROJECT_NAME);
+                    fail=true;
                 }else{
-                Project *p=new Project(ss);
-                p->setId(ToDo::nextId);
+                    Project *p=new Project(ss);
+                    p->setId(ToDo::nextId);
                 }
             }else if(s[0]=='*'){
                 cd=false;
@@ -210,6 +209,9 @@ bool ToDo::importProjects(vector<Project*> &lp,string filename""){
             }else if(cd){
                 p->setDescription(aux);
             }else if(s[0]=='@'){
+                if(list>0){
+                    p->addList(l);
+                }
                 pos=s.find('@');
                 ss=s.substr(pos+1);
                 if(checkEmpty(ss)){
@@ -217,95 +219,49 @@ bool ToDo::importProjects(vector<Project*> &lp,string filename""){
                     fail=true;
                 }else{
                     List l(ss);
-                    /*p->addList(l);*/
                 }
                 list++;
             }else if(s[0]=='|'){
-                /*.setName(aux);
-                ss=s;
-                pos=ss.find("/");
-                sss=ss.substr(1,pos-1);
-                dd=sss;
-                // fer-ho bé lo del deadline
-                t.deadline.day=stoi(sss);
-                sss=ss.substr(pos+1);
-                pos=sss.find("/");
-                ss=sss.substr(0,pos);
-                dm=ss;
-                t.deadline.month=stoi(ss);
-                ss=sss.substr(pos+1); 
-                pos=ss.find("|");
-                sss=ss.substr(0,pos);
-                dy=sss;
-                t.deadline.year=stoi(sss);
-                if(checkDate(dd,dm,dy)){
-                error(ERR_DATE);
-                failt=true;
+                Task t(aux);
+                if(t.importTask(s)){
+                    p->addTasktoList(l.getName(),t);
                 }
-                sss=ss.substr(pos+1);
-                if(sss[0]=='F'){
-                t.isDone=false;
-                }else{
-                t.isDone=true;
-                }
-                ss=sss.substr(2);
-                t.time=stoi(ss);
-                if(t.time<1 || t.time>180){
-                error(ERR_TIME);
-                failt=true;
-                }
-                if(!failt){
-                l.tasks.push_back(t);
-                }*/ /* importTask() */
             }else{
                 ss=s.substr(0);
                 pos=ss.find("|");
-                t.name=ss.substr(0,pos-1);
-                ss=s.substr(pos+1);
-                pos=ss.find("/");
-                sss=ss.substr(0,pos);
-                dd=sss;
-                t.deadline.day=stoi(sss);
-                sss=ss.substr(pos+1);
-                pos=sss.find("/");
-                ss=sss.substr(0,pos);
-                dm=ss;
-                t.deadline.month=stoi(ss);
-                ss=sss.substr(pos+1); 
-                pos=ss.find("|");
-                sss=ss.substr(0,pos);
-                dy=sss;
-                t.deadline.year=stoi(sss);
-                if(checkDate(dd,dm,dy)){
-                error(ERR_DATE);
-                failt=true;
+                namet=ss.substr(0,pos-1); 
+                Task t(namet);
+                if(t.importTask(s)){
+                    p->addTasktoList(l.getName(),t);
                 }
-                sss=ss.substr(pos+1);
-                if(sss[0]=='F'){
-                t.isDone=false;
-                }else{
-                t.isDone=true;
-                }
-                ss=sss.substr(2);
-                t.time=stoi(ss);
-                if(t.time<1 || t.time>180){
-                error(ERR_TIME);
-                failt=true;
-                }
-                if(!failt){
-                l.tasks.push_back(t);
-                } 
             }
         }
 
-        infile.close();
+        ifs.close();
     }else{
         Util::error(ERR_FILE);
     }
 }
 
-void ToDo::exportProjects(string filename"",int id=-1) const{
-    // completar
+void ToDo::exportProjects(string filename,int id) const{
+    char opt;
+
+    if(id==-1){
+        do{
+            cout<<Util::SAP(); cin>>opt;
+            if(opt=='Y' || opt=='y'){
+                //continuar
+            }else if(opt=='N' || opt=='n'){
+                //continuar    
+            }
+        }while(opt!='Y' && opt!='y' && opt!='N' && opt!='n');
+    }else{
+        if(checkId(projects,id)){
+            //continuar
+        }else{
+            Util::error(ERR_ID);
+        }
+    }
 }
 
 ostream& operator<<(ostream &os,const ToDo &toDo){
@@ -325,4 +281,13 @@ void deleteAll(ToDo &td){
     }
     td.projects.erase(toDoProjects.projects.begin()+i);
   }
+}
+
+void checkId(vector<Project *> projects,int id){
+    for(unsigned int i=0;i<projects.size();i++){
+        if(id==projects[i]->getId()){
+            return(true);
+        }
+    }
+    return(false);
 }

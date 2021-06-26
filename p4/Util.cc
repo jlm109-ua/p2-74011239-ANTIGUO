@@ -138,6 +138,9 @@ void Util::E_ID(){
 void Util::E_FN(){
   cout<<"Enter filename: "<<endl;
 }
-void Util::E_CONF(){
+void Util:CONF(){
   cout<<"Confirm [Y/N]?: "<<endl;
+}
+void Util::SAP(){
+  cout<<"Save all projects [Y/N]?: "<<endl;
 }

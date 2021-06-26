@@ -73,13 +73,29 @@ void Task::toggle(){
 }
 
 bool Task::importTask(string task){
-    // completar
-    // ???
+    string s,ss,sss,dd,dm,dy;
+    size_t pos;
+    
+    pos=s.find("|");
+    ss=s.substr(pos+1);
+    pos=ss.find("|");
+    sss=ss.substr(0,pos-1);
+    if(setDeadline(sss)){
+        sss=ss.substr(pos+1);
+        if(sss[0]!='F'){
+            toggle();
+        }
+        pos=sss.find("|");
+        ss=sss.substr(pos+1);
+        if(setTime(stoi(ss))){
+            return(true);
+        }
+    }
+    return(false);
 }
 
 string Task::exportTask() const{
     string et,valisD;
-    /*stringstream et;*/
     Date ddline2=getDeadline();
     bool isDone2=getIsDone();
 

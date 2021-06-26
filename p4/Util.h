@@ -46,7 +46,8 @@ class Util{
     static void HP();
     static void E_ID();
     static void E_FN();
-    static void E_CONF();
+    static void CONF();
+    static void SAP();
 };
 
 #endif
