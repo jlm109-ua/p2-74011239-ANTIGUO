@@ -250,14 +250,32 @@ void ToDo::exportProjects(string filename,int id) const{
         do{
             cout<<Util::SAP(); cin>>opt;
             if(opt=='Y' || opt=='y'){
-                //continuar
+                ofstream ofb(filename.c_str());
+
+                if(ofb.is_open()){
+                    for(int i=0;i<projects.size();i++){
+                        ofb<<"<"<<endl;
+                        projects[i]->exportProject();
+                        ofb<<">"<<endl;
+                    }
+                    ofb.close();
+                }else{
+                    error(ERR_FILE);
+                }
             }else if(opt=='N' || opt=='n'){
-                //continuar    
+                cout<<Util::E_ID(); cin>>id;
+                if(checkId(projects,id)){
+                    exportOneProject(projects,filename,id);
+                }
             }
         }while(opt!='Y' && opt!='y' && opt!='N' && opt!='n');
     }else{
         if(checkId(projects,id)){
-            //continuar
+            exportOneProject(projects,filename,id); 
+        }else{
+        Util::error(ERR_ID);
+    }
+}
         }else{
             Util::error(ERR_ID);
         }
@@ -290,4 +308,17 @@ void checkId(vector<Project *> projects,int id){
         }
     }
     return(false);
+}
+
+void exportOneProject(vector<Project *> projects,string filename,int id){
+    ofstream ofb(filename.c_str());
+
+    if(ofb.is_open()){
+        ofb<<"<"<<endl;
+        projects[id]->exportProject();
+        ofb<<">"<<endl;
+        ofb.close();
+    }else{
+        Util::error(ERR_FILE);
+    }
 }

@@ -254,7 +254,7 @@ string Project::exportProject() const{
             ep=ep+lists[i].exportList();
         }
     }else{
-        ep='#'+getName()+'@'+getDescription();
+        ep='#'+getName()+'\n'+'*'+getDescription();
         for(unsigned int i=0;i<lists.size();i++){
             ep=ep+'\n';
             ep=ep+lists[i].exportList();
