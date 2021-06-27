@@ -135,12 +135,15 @@ bool ToDo::loadData(vector<Project*> &lp,string filename""){ //REPASAR DIAPOSITI
                     lp.push_back(p);
                 }
                 ifbinf.close();
+                return(true);
             }else if(opt=='N' || opt=='n'){
                 ifbinf.close();
+                return(false);
             }
         }while(opt!='Y' && opt!='y' && opt!='N' && opt!='n');
     }else{
         Util::error(ERR_FILE);
+        return(false);
     }
 }
 
@@ -236,10 +239,11 @@ bool ToDo::importProjects(vector<Project*> &lp,string filename""){
                 }
             }
         }
-
         ifs.close();
+        return(true);
     }else{
         Util::error(ERR_FILE);
+        return(false);
     }
 }
 
@@ -255,7 +259,7 @@ void ToDo::exportProjects(string filename,int id) const{
                 if(ofb.is_open()){
                     for(int i=0;i<projects.size();i++){
                         ofb<<"<"<<endl;
-                        projects[i]->exportProject();
+                        ofb<<projects[i]->exportProject();
                         ofb<<">"<<endl;
                     }
                     ofb.close();
@@ -315,7 +319,7 @@ void exportOneProject(vector<Project *> projects,string filename,int id){
 
     if(ofb.is_open()){
         ofb<<"<"<<endl;
-        projects[id]->exportProject();
+        ofb<<projects[id]->exportProject();
         ofb<<">"<<endl;
         ofb.close();
     }else{
