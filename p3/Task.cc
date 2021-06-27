@@ -77,7 +77,7 @@ ostream& operator<<(ostream &os,const Task &task){
     return os;
 }
 
-bool checkDate(string deadline){
+bool Task::checkDate(string deadline){
 
     int day,month,year,x,y,z;
     bool val=false;

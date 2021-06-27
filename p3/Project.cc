@@ -209,7 +209,7 @@ void Project::menu(){
     }while(opc!='b');
 }
 
-string Project::summary() const{ //ARREGLAR
+string Project::summary() const{ //ARREGLAR //???
     int totdone=0,tot=0,id=this->id;
     totTasks(lists,totdone,tot);
     string summ,sid,stotdone,stot;
@@ -281,7 +281,7 @@ ostream& operator<<(ostream &os,const Project &project){
     return os;
 }
 
-bool checkList(vector<List> lists,string name){
+bool Project::checkList(vector<List> lists,string name){
     if(lists.size()>0){
         for(unsigned int i=0;i<lists.size();i++){
             if(name==lists[i].getName()){  
@@ -293,7 +293,7 @@ bool checkList(vector<List> lists,string name){
     return(false);
 }
 
-bool checkTask(vector<Task> tasks,string name,string namel){
+bool Project::checkTask(vector<Task> tasks,string name,string namel){
     if(!tasks.size()==0){
         for(unsigned int i=0;i<tasks.size();i++){
             if(name==tasks[i].getName()){  
@@ -305,7 +305,7 @@ bool checkTask(vector<Task> tasks,string name,string namel){
     return(false);
 }
 
-void totTasks(vector<List> lists,int &totdone,int &tot){
+void Project::totTasks(vector<List> lists,int &totdone,int &tot){
     for(unsigned int i=0;i<lists.size();i++){
         totdone+=lists[i].getNumDone();
         tot+=lists[i].getNumTasks();

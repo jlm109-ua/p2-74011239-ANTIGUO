@@ -30,6 +30,7 @@ class Task{
         bool setDeadline(string deadline);
         bool setTime(int time);
         void toggle();
+        bool checkDate(string deadline);
 };
 
 #endif
