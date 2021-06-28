@@ -227,7 +227,7 @@ string Project::summary() const{ //ARREGLAR //???
     summ+=stot;
     summ+="]";
 
-    return (summ); 
+    return (summ);
 }
 
 ostream& operator<<(ostream &os,const Project &project){

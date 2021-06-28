@@ -85,7 +85,6 @@ void List::addTask(const Task &task){
 }
 
 bool List::deleteTask(string name){
-    bool found=false;
     int pos;
     vector<Task> tasks=getTasks();
 
@@ -93,14 +92,11 @@ bool List::deleteTask(string name){
         if(name==tasks[i].getName()){
             pos=i;
             tasks.erase(tasks.begin()+pos);
-            found=true;
             return(true);
         }
     }
-    if(!found){
-        Util::error(ERR_TASK_NAME);
-        return(false);
-    }
+    Util::error(ERR_TASK_NAME);
+    return(false);
 }
 
 bool List::toggleTask(string name){
