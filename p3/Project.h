@@ -17,6 +17,9 @@ class Project{
         string description;
         int getPosList(string name) const;
         vector<List> lists;
+        bool checkList(vector<List> lists,string name);
+        bool checkTask(vector<Task> tasks,string name,string namel);
+        void totTasks(vector<List> lists,int &totdone,int &tot);
     public:
         Project(string name,string description="");
         int getId() const;
@@ -32,11 +35,7 @@ class Project{
         void deleteTaskFromList(string name="");
         void toggleTaskFromList(string name="");
         void menu();
-        string summary() const;
-        bool checkList(vector<List> lists,string name);
-        bool checkTask(vector<Task> tasks,string name,string namel);
-        void totTasks(vector<List> lists,int &totdone,int &tot);
-
+        string summary() const;  
 };
 
 #endif

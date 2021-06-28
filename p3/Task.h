@@ -20,6 +20,7 @@ class Task{
         Date deadline;
         bool isDone;
         int time;
+        bool checkDate(string deadline);
     public:
         Task(string name);
         string getName() const;
@@ -30,7 +31,6 @@ class Task{
         bool setDeadline(string deadline);
         bool setTime(int time);
         void toggle();
-        bool checkDate(string deadline);
 };
 
 #endif

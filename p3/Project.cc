@@ -1,9 +1,5 @@
 #include "Project.h"
 
-bool checkList(vector<List> lists,string s);
-bool checkTask(vector<Task> tasks,string name,string namel);
-void totTasks(vector<List> lists,int &totdone,int &tot);
-
 const string N="Name: ";
 const string D="Description: ";
 const string TL="Total left: ";
@@ -210,11 +206,11 @@ void Project::menu(){
 }
 
 string Project::summary() const{ //ARREGLAR //???
-    int totdone=0,tot=0,id=this->id;
+    int totdone=0,tot=0;
     totTasks(lists,totdone,tot);
     string summ,sid,stotdone,stot;
     stringstream ssid,sstotdone,sstot;
-    ssid<<id;
+    ssid<<this->id;
     sid=ssid.str();
     sstotdone<<totdone;
     stotdone=sstotdone.str();
