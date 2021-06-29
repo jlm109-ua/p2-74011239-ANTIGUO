@@ -29,19 +29,18 @@ void Util::error(Error e){
 }
 
 bool Util::checkEmpty(string s){
-  bool val=false; 
   string v=s;
     if(s.length()==0){
-      val=true;
+      return(true);
     }else{
       for(unsigned int i=0;i<s.length();i++){
         v[i]=' ';
       }
       if(v==s){
-          val=true;
+          return(true);
       }
     }
-  return(val);
+  return(false);
 }
 
 void Util::saveDate(string deadline,int &day,int &month,int &year){

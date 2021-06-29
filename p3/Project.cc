@@ -81,10 +81,15 @@ void Project::edit(string name,string description){
 void Project::addList(string name){
     try{
         do{
-        Util::E_LN(); getline(cin,name);
-        }while(checkList(lists,name));
-        List list(name);
-        lists.push_back(list);
+            Util::E_LN(); getline(cin,name);
+            if(Util::checkEmpty(name)){
+                Util::error(ERR_EMPTY);
+            }
+        }while(Util::checkEmpty(name));
+        if(!checkList(lists,name)){
+            List list(name);
+            lists.push_back(list);
+        }
     }catch(Error e){
         Util::error(e);
     }
@@ -95,6 +100,9 @@ void Project::deleteList(string name){
 
     do{
         Util::E_LN(); getline(cin,name);
+        if(Util::checkEmpty(name)){
+                Util::error(ERR_EMPTY);
+        }
     }while(Util::checkEmpty(name));
 
     if(getPosList(name)==-1){
