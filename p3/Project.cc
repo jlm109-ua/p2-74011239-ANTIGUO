@@ -158,7 +158,7 @@ void Project::toggleTaskFromList(string name){
 }
 
 void Project::menu(){
-    int opc;
+    char opc;
     string name,description;
 
     do{
@@ -175,32 +175,31 @@ void Project::menu(){
         cin.get();
 
         switch(opc){
-            case 1:
+            case '1':
                 edit(name="",description="");
                 break;
-            case 2:
+            case '2':
                 addList(name="");
                 break;
-            case 3:
+            case '3':
                 deleteList(name="");
                 break;
-            case 4:
+            case '4':
                 addTaskToList(name="");
                 break;
-            case 5:
+            case '5':
                 deleteTaskFromList(name="");
                 break;
-            case 6:
+            case '6':
                 toggleTaskFromList(name="");
                 break;
-            case 7:
+            case '7':
                 cout<<*this<<endl;
                 break;
             case 'b':
                 break;
             default:
                 Util::error(ERR_OPTION);
-                break;
         }
     }while(opc!='b');
 }
