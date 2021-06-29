@@ -67,11 +67,14 @@ void Project::setDescription(string description){
 void Project::edit(string name,string description){
     do{
         Util::E_PN(); getline(cin,name);
+        if(Util::checkEmpty(name)){
+            Util::error(ERR_EMPTY);
+        }
     }while(Util::checkEmpty(name));
 
     Util::E_PD(); getline(cin,description);
 
-    setName(name); //falla
+    setName(name);
     setDescription(description);
 }
 

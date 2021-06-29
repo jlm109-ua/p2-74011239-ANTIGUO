@@ -93,41 +93,41 @@ int Util::KMAXDESC(){
   return(40);
 }
 void Util::E_PN(){
-  cout<<"Enter project name: "<<endl;
+  cout<<"Enter project name: ";
 }
 void Util::E_PD(){
-  cout<<"Enter project description: "<<endl;
+  cout<<"Enter project description: ";
 }
 void Util::E_LN(){
-  cout<<"Enter list name: "<<endl;
+  cout<<"Enter list name: ";
 }
 void Util::E_TN(){
-  cout<<"Enter task name: "<<endl;
+  cout<<"Enter task name: ";
 }
 void Util::E_D(){
-  cout<<"Enter project description: "<<endl;
+  cout<<"Enter project description: ";
 }
 void Util::E_ET(){
-  cout<<"Enter expected time: "<<endl;
+  cout<<"Enter expected time: ";
 }
 void Util::N(){
-  cout<<"Name: "<<endl;
+  cout<<"Name: ";
 }
 void Util::D(){
-  cout<<"Description: "<<endl;
+  cout<<"Description: ";
 }
 void Util::TL(){
-  cout<<"Total left: "<<endl;
+  cout<<"Total left: ";
 }
 void Util::TD(){
-  cout<<"Total done: "<<endl;
+  cout<<"Total done: ";
 }
 void Util::MIN(){
-  cout<<"minutes"<<endl;
+  cout<<"minutes";
 }
 void Util::HP(){
-  cout<<"Highest priority: "<<endl;
+  cout<<"Highest priority: ";
 }
 void Util::E_ID(){
-  cout<<"Enter project id: "<<endl;
+  cout<<"Enter project id: ";
 }
