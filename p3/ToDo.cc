@@ -76,8 +76,10 @@ void ToDo::projectMenu(int id){
         Util::E_ID(); cin>>id;
     }while(id<=0);
 
-    if(getPosProject(id)>=0){
-        projects[id]->menu();
+    int i=getPosProject(id);
+
+    if(i>=0){
+        projects[i]->menu();
     }else{
         Util::error(ERR_ID);
     }
