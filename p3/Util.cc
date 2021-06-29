@@ -45,19 +45,13 @@ bool Util::checkEmpty(string s){
 
 void Util::saveDate(string deadline,int &day,int &month,int &year){
   string auxdeadline,sday,smonth,syear;
-  size_t found=0;
-  int s;
-
-  s=deadline.find('/');
-  if(found!=string::npos){
-    sday=deadline.substr(0,s);
-  }
-  auxdeadline=deadline.substr(s+1);
-  s=deadline.find('/');
-  if(found!=string::npos){
-    smonth=auxdeadline.substr(0,s);
-    syear=auxdeadline.substr(s+1);
-  }
+  size_t found=deadline.find('/');
+  
+  sday=deadline.substr(0,found);
+  auxdeadline=deadline.substr(found+1);
+  found=auxdeadline.find('/');
+  smonth=auxdeadline.substr(0,found);
+  syear=auxdeadline.substr(found+1);
 
   day=stoi(sday);
   month=stoi(smonth);
@@ -105,6 +99,9 @@ void Util::E_TN(){
 }
 void Util::E_D(){
   cout<<"Enter project description: ";
+}
+void Util::E_DD(){
+  cout<<"Enter deadline: ";
 }
 void Util::E_ET(){
   cout<<"Enter expected time: ";

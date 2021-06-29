@@ -89,6 +89,8 @@ void Project::addList(string name){
         if(!checkList(lists,name)){
             List list(name);
             lists.push_back(list);
+        }else{
+            Util::error(ERR_LIST_NAME);
         }
     }catch(Error e){
         Util::error(e);
@@ -101,7 +103,7 @@ void Project::deleteList(string name){
     do{
         Util::E_LN(); getline(cin,name);
         if(Util::checkEmpty(name)){
-                Util::error(ERR_EMPTY);
+            Util::error(ERR_EMPTY);
         }
     }while(Util::checkEmpty(name));
 
@@ -121,9 +123,9 @@ void Project::addTaskToList(string name){
         Util::E_LN(); getline(cin,namel);
     }while(Util::checkEmpty(namel));
 
-    if(!checkList(lists,namel)){
+    if(checkList(lists,namel)){
         Util::E_TN(); getline(cin,name);
-        Util::E_D(); getline(cin,deadline);
+        Util::E_DD(); getline(cin,deadline);
         Task task(name);
         if(task.setDeadline(deadline)){
             Util::E_ET(); cin>>time;
@@ -131,6 +133,8 @@ void Project::addTaskToList(string name){
                 lists[getPosList(namel)].addTask(task);
             }
         }
+    }else{
+        Util::error(ERR_LIST_NAME);
     }
 }
 
@@ -148,6 +152,8 @@ void Project::deleteTaskFromList(string name){
         if(checkTask(tasks,name,namel)){
             lists[getPosList(namel)].deleteTask(name);
         }
+    }else{
+        Util::error(ERR_LIST_NAME);
     }
 }
 
@@ -165,6 +171,8 @@ void Project::toggleTaskFromList(string name){
         if(checkTask(tasks,name,namel)){
             lists[getPosList(namel)].toggleTask(name);
         }
+    }else{
+        Util::error(ERR_LIST_NAME);
     }
 }
 
@@ -291,7 +299,6 @@ bool Project::checkList(vector<List> lists,string name){
     if(lists.size()>0){
         for(unsigned int i=0;i<lists.size();i++){
             if(name==lists[i].getName()){
-                Util::error(ERR_LIST_NAME);
                 return(true);
             }
         }
@@ -305,7 +312,7 @@ bool Project::checkTask(vector<Task> tasks,string name,string namel){
     if(!tasks.size()==0){
         for(unsigned int i=0;i<tasks.size();i++){
             if(name==tasks[i].getName()){  
-                Util::error(ERR_LIST_NAME);  
+                Util::error(ERR_TASK_NAME);  
                 return(true);
             }
         }

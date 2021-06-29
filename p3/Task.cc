@@ -78,9 +78,8 @@ ostream& operator<<(ostream &os,const Task &task){
 }
 
 bool Task::checkDate(string deadline){
-
-    int day,month,year,x,y,z;
-    bool val=false;
+    int day,month,year;
+    float x,y,z;
 
     Util::saveDate(deadline,day,month,year);
    
@@ -89,57 +88,54 @@ bool Task::checkDate(string deadline){
     z=year%4;
 
     if(year<Util::KMINYEAR() || year>Util::KMAXYEAR()){
-        val=true;
+        return(true);
     }
 
     if(month<Util::KMINMONTH() || month>Util::KMAXMONTH()){
-        val=true;
+        return(true);
     }
 
     if(day<Util::KMINMONTH() || day>Util::KMAXDAY()){
-        val=true;
+        return(true);
     }
 
     switch(month){
         case 2: 
-        if(day>Util::KMAXFEB()){
-            val=true;
-        }
-        if(day==Util::KMAXFEB()){
-            if(z!=0){
-            val=true;
+            if(day>Util::KMAXFEB()){
+                return(true);
+            }
+            if(day==Util::KMAXFEB()){
+                if(z!=0){
+                    return(true);
+                    break;
+                }
+                if(x==0){
+                    if(y!=0){
+                        return(true);
+                    }
+                }
+            }
             break;
-            }
-            if(x==0){
-            if(y==0){
-            }else{
-                val=true;
-            }  
-            }else{
-            val=true;
-            }
-        }
-        break;
         case 4: 
-        if(day>Util::KMAXDAY2()){
-            val=true;
-        }
-        break;
+            if(day>Util::KMAXDAY2()){
+                return(true);
+            }
+            break;
         case 6: 
-        if(day>Util::KMAXDAY2()){
-            val=true;
-        }
-        break;
+            if(day>Util::KMAXDAY2()){
+                return(true);
+            }
+            break;
         case 9: 
-        if(day>Util::KMAXDAY2()){
-            val=true;
-        }
-        break;
+            if(day>Util::KMAXDAY2()){
+                return(true);
+            }
+            break;
         case 11:
-        if(day>Util::KMAXDAY2()){
-            val=true;
-        }
-        break;
+            if(day>Util::KMAXDAY2()){
+                return(true);
+            }
+            break;
     }
-return(val);
+    return(false);
 }

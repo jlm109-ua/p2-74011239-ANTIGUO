@@ -2,6 +2,7 @@
 #define _UTIL_H_
 
 #include <iostream>
+#include <string>
 
 using namespace std;
 
@@ -35,6 +36,7 @@ class Util{
     static void E_LN();
     static void E_TN();
     static void E_D();
+    static void E_DD();
     static void E_ET();
     static void N();
     static void D();
