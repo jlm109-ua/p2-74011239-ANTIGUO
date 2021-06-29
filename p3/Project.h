@@ -19,7 +19,7 @@ class Project{
         vector<List> lists;
         bool checkList(vector<List> lists,string name);
         bool checkTask(vector<Task> tasks,string name,string namel);
-        void totTasks(vector<List> lists,int &totdone,int &tot);
+        void totTasks(vector<List> lists,int &totdone,int &tot) const;
     public:
         Project(string name,string description="");
         int getId() const;

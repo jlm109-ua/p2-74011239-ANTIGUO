@@ -71,7 +71,7 @@ void Project::edit(string name,string description){
 
     Util::E_PD(); getline(cin,description);
 
-    setName(name); //falla (supose que al checkEmpty)
+    setName(name); //falla
     setDescription(description);
 }
 
@@ -79,7 +79,7 @@ void Project::addList(string name){
     try{
         do{
         Util::E_LN(); getline(cin,name);
-        }while(checkList(lists,name));//falla
+        }while(checkList(lists,name));
         List list(name);
         lists.push_back(list);
     }catch(Error e){
@@ -205,7 +205,7 @@ void Project::menu(){
     }while(opc!='b');
 }
 
-string Project::summary() const{ //ARREGLAR //???
+string Project::summary() const{
     int totdone=0,tot=0;
     totTasks(lists,totdone,tot);
     string summ,sid,stotdone,stot;
@@ -280,11 +280,13 @@ ostream& operator<<(ostream &os,const Project &project){
 bool Project::checkList(vector<List> lists,string name){
     if(lists.size()>0){
         for(unsigned int i=0;i<lists.size();i++){
-            if(name==lists[i].getName()){  
-                Util::error(ERR_LIST_NAME);  
+            if(name==lists[i].getName()){
+                Util::error(ERR_LIST_NAME);
                 return(true);
             }
         }
+    }else if(lists.size()==0){
+        return(false);
     }
     return(false);
 }
@@ -301,7 +303,7 @@ bool Project::checkTask(vector<Task> tasks,string name,string namel){
     return(false);
 }
 
-void Project::totTasks(vector<List> lists,int &totdone,int &tot){
+void Project::totTasks(vector<List> lists,int &totdone,int &tot) const{
     for(unsigned int i=0;i<lists.size();i++){
         totdone+=lists[i].getNumDone();
         tot+=lists[i].getNumTasks();
