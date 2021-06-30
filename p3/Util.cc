@@ -112,14 +112,14 @@ void Util::N(){
 void Util::D(){
   cout<<"Description: ";
 }
-void Util::TL(){
-  cout<<"Total left: ";
+string Util::TL(){
+  return("Total left: ");
 }
-void Util::TD(){
-  cout<<"Total done: ";
+string Util::TD(){
+  return("Total done: ");
 }
-void Util::MIN(){
-  cout<<"minutes";
+string Util::MIN(){
+  return("minutes");
 }
 void Util::HP(){
   cout<<"Highest priority: ";

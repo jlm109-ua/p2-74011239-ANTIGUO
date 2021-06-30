@@ -85,18 +85,22 @@ void List::addTask(const Task &task){
 }
 
 bool List::deleteTask(string name){
-    int pos;
+    bool val=false;
+
     vector<Task> tasks=getTasks();
 
     for(unsigned int i=0;i<tasks.size();i++){
         if(name==tasks[i].getName()){
-            pos=i;
-            tasks.erase(tasks.begin()+pos);
-            return(true);
+            tasks.erase(tasks.begin()+(i-1));
+            val=true;
         }
     }
-    Util::error(ERR_TASK_NAME);
-    return(false);
+    if(val){
+        return(true);
+    }else{
+        Util::error(ERR_TASK_NAME);
+        return(false);
+    }
 }
 
 bool List::toggleTask(string name){
@@ -111,13 +115,11 @@ bool List::toggleTask(string name){
 }
 
 ostream& operator<<(ostream &os,const List &list){
-    string s;
-    
     os<<list.getName()<<endl;
 
     vector<Task> tasks=list.getTasks();
     for(unsigned int i=0;i<list.getNumTasks();i++){
-        os<<tasks[i];
+        os<<tasks[i]<<endl;
     }
     return os;
 }

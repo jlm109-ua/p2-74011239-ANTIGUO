@@ -40,9 +40,9 @@ class Util{
     static void E_ET();
     static void N();
     static void D();
-    static void TL();
-    static void TD();
-    static void MIN();
+    static string TL();
+    static string TD();
+    static string MIN();
     static void HP();
     static void E_ID();
 };

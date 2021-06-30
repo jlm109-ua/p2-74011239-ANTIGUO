@@ -30,11 +30,9 @@ string Project::getDescription() const{
 }
 
 int Project::getPosList(string name) const{
-    int pos;
     for(unsigned int i=0;i<lists.size();i++){
          if(name==lists[i].getName()){
-             pos=i;
-             return(pos);
+             return(i);
          }
     }
     return(-1);
@@ -151,6 +149,8 @@ void Project::deleteTaskFromList(string name){
         Util::E_TN(); getline(cin,name);
         if(checkTask(tasks,name,namel)){
             lists[getPosList(namel)].deleteTask(name);
+        }else{
+            Util::error(ERR_TASK_NAME);
         }
     }else{
         Util::error(ERR_LIST_NAME);
@@ -170,6 +170,8 @@ void Project::toggleTaskFromList(string name){
         Util::E_TN(); getline(cin,name);
         if(checkTask(tasks,name,namel)){
             lists[getPosList(namel)].toggleTask(name);
+        }else{
+            Util::error(ERR_TASK_NAME);
         }
     }else{
         Util::error(ERR_LIST_NAME);
@@ -249,9 +251,9 @@ string Project::summary() const{
 }
 
 ostream& operator<<(ostream &os,const Project &project){
-    string s,ss;
+    string s;
     Date deadline;
-    int tottime=0,tottimed=0,sy=0,sm=0,sd=0,count=0,countd=0;
+    int tottime=0,tottimed=0,sy=0,sm=0,sd=0,count=0,countd=0,cont=0;
     bool aux=false;
 
     os<<N<<project.getName()<<endl;
@@ -262,32 +264,51 @@ ostream& operator<<(ostream &os,const Project &project){
     for(unsigned int i=0;i<project.lists.size();i++){
         os<<project.lists[i];
         vector<Task> tasks=project.lists[i].getTasks();
-        for(unsigned int j=0;i<project.lists[i].getNumTasks();j++){  
-            
-            deadline=tasks[j].getDeadline();
+        for(unsigned int j=0;j<project.lists[i].getNumTasks();j++){  
+            if(tasks[j].getIsDone()){
+                countd++;
+                tottimed+=tasks[j].getTime();
+            }else{
+                count++;
+                tottime+=tasks[j].getTime();
 
-            if(sy>deadline.year){
-                sy=deadline.year;
-                sm=deadline.month;
-                sd=deadline.day;
-                ss=project.lists[i].getName();
-            }else if(sm>deadline.month){
-                sy=deadline.year;
-                sm=deadline.month;
-                sd=deadline.day;
-                ss=project.lists[i].getName();
-            }else if(sd>deadline.day && sm>deadline.month && sy>=deadline.year){
-                sy=deadline.year;
-                sm=deadline.month;
-                sd=deadline.day;
-                ss=project.lists[i].getName();
+                deadline=tasks[j].getDeadline();
+
+                if(cont==0){
+                    aux=true;
+                    cont++;
+                    sy=deadline.year;
+                    sm=deadline.month;
+                    sd=deadline.day;
+                    s=tasks[j].getName();
+                }
+                if(deadline.year<sy){
+                    sy=deadline.year;
+                    sm=deadline.month;
+                    sd=deadline.day;
+                    s=tasks[j].getName();
+                }else if(deadline.month<sm){
+                    sy=deadline.year;
+                    sm=deadline.month;
+                    sd=deadline.day;
+                    s=tasks[j].getName();
+                }else if(deadline.day<sd && deadline.month<sm && deadline.year<=sy){
+                    sy=deadline.year;
+                    sm=deadline.month;
+                    sd=deadline.day;
+                    s=tasks[j].getName();
+                }else if(deadline.day==sd && deadline.month==sm && deadline.year==sy){
+                    sy=deadline.year;
+                    sm=deadline.month;
+                    sd=deadline.day;
+                    s=tasks[j].getName();
+                }
             }
-
         }
     }
   
-    os<<TL<<count<<" ("<<tottime<<" "<<MIN<<")"<<endl;
-    os<<TD<<countd<<" ("<<tottimed<<" "<<MIN<<")"<<endl;
+    os<<Util::TL()<<count<<" ("<<tottime<<" "<<Util::MIN()<<")"<<endl;
+    os<<Util::TD()<<countd<<" ("<<tottimed<<" "<<Util::MIN()<<")"<<endl;
     if(aux){
         os<<HP<<s<<" "<<"("<<sy<<"-"<<sm<<"-"<<sd<<")"<<endl;
     }else{
@@ -311,8 +332,7 @@ bool Project::checkList(vector<List> lists,string name){
 bool Project::checkTask(vector<Task> tasks,string name,string namel){
     if(!tasks.size()==0){
         for(unsigned int i=0;i<tasks.size();i++){
-            if(name==tasks[i].getName()){  
-                Util::error(ERR_TASK_NAME);  
+            if(name==tasks[i].getName()){    
                 return(true);
             }
         }

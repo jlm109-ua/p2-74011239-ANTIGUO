@@ -57,22 +57,24 @@ bool Task::setTime(int time){
 }
 
 void Task::toggle(){
-    if(isDone){
-        isDone=false;
+    if(getIsDone()){
+        this->isDone=false;
     }else{
-        isDone=true;
+        this->isDone=true;
     }
 }
 
 ostream& operator<<(ostream &os,const Task &task){
+    Date dd=task.getDeadline();
+
     os<<"[";
-    if(task.isDone){
+    if(task.getIsDone()){
         os<<"X";
     }else{
         os<<" ";
     }
     os<<"] ";
-    os<<"("<<task.time<<") "<<task.deadline.year<<"-"<<task.deadline.month<<"-"<<task.deadline.day<<" : "<<task.name<<endl;
+    os<<"("<<task.getTime()<<") "<<dd.year<<"-"<<dd.month<<"-"<<dd.day<<" : "<<task.getName();
     
     return os;
 }
