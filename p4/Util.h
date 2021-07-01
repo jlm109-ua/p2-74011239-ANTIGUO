@@ -37,17 +37,18 @@ class Util{
     static void E_LN();
     static void E_TN();
     static void E_D();
+    static void E_DD();
     static void E_ET();
     static void N();
     static void D();
-    static void TL();
-    static void TD();
-    static void MIN();
+    static string TL();
+    static string TD();
+    static string MIN();
     static void HP();
-    static void E_ID();
-    static void E_FN();
-    static void CONF();
-    static void SAP();
+    static string E_ID();
+    static string E_FN();
+    static string CONF();
+    static string SAP();
 };
 
 #endif

@@ -10,7 +10,7 @@ using namespace std;
 #include "Util.h"
 
 struct BinToDo{
-  char name[Util::KMAXNAME];
+  char name[KMAXNAME];
   unsigned numProjects;
 };
 
@@ -22,6 +22,9 @@ class ToDo{
         int getPosProject(string name) const;
         int getPosProject(int id) const;
         vector<Project*> projects;
+        void emptyProgram();
+        bool checkId(vector<Project *> projects,int id) const;
+        void exportOneProject(vector<Project *> projects,string filename,int id) const;
     public:
         ToDo(string name);
         string getName() const;
@@ -30,10 +33,10 @@ class ToDo{
         void deleteProject(int id=0);
         void setProjectDescription(string name,string description);
         void projectMenu(int id=0);
-        bool loadData(vector<Project*> &lp,string filename"");
-        void saveData(string filename"") const;
-        bool importProjects(vector<Project*> &lp,string filename"");
-        void exportProjects(string filename"",int id=-1) const;
+        bool loadData(vector<Project*> &lp,string filename="");
+        void saveData(string filename="") const;
+        bool importProjects(vector<Project*> &lp,string filename="");
+        void exportProjects(string filename="",int id=-1) const;
 };
 
 #endif

@@ -4,9 +4,15 @@
 
 #include<iostream>
 #include<vector>
+#include<fstream>
+#include<string.h>
+#include<sstream>
 using namespace std;
 
 #include "Util.h"
+
+const int KMAXNAME=20;
+const int KMAXDESC=40;
 
 struct Date{
   int day;
@@ -15,7 +21,7 @@ struct Date{
 };
 
 struct BinTask{
-  char name[Util::KMAXNAME];
+  char name[KMAXNAME];
   Date deadline;
   bool isDone;
   int time;
@@ -28,6 +34,7 @@ class Task{
         Date deadline;
         bool isDone;
         int time;
+        bool checkDate(string deadline);
     public:
         Task(const BinTask &bt);
         Task(string name);

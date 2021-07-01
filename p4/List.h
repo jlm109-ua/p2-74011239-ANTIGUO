@@ -10,7 +10,7 @@ using namespace std;
 #include "Task.h"
 
 struct BinList{
-  char name[Util::KMAXNAME];
+  char name[KMAXNAME];
   unsigned numTasks;
 };
 
@@ -36,6 +36,7 @@ class List{
         string exportList() const;
         BinList toBinary() const;
         void saveData(ofstream &file) const;
+        bool checkDate(string deadline);
 };
 
 #endif

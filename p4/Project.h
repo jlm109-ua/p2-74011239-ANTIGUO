@@ -11,8 +11,8 @@ using namespace std;
 #include "Util.h"
 
 struct BinProject{
-  char name[Util::KMAXNAME];
-  char description[Util::KMAXDESC];
+  char name[KMAXNAME];
+  char description[KMAXDESC];
   unsigned numLists;
 };
 
@@ -24,6 +24,9 @@ class Project{
         string description;
         int getPosList(string name) const;
         vector<List> lists;
+        bool checkList(vector<List> lists,string name);
+        bool checkTask(vector<Task> tasks,string name,string namel);
+        void totTasks(vector<List> lists,int &totdone,int &tot) const;
     public:
         Project(const BinProject &bp);
         Project(string name,string description="");

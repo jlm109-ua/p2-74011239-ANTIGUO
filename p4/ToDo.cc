@@ -16,7 +16,7 @@ string ToDo::getName() const{
 }
 
 int ToDo::getPosProject(string name) const{
-    for(unsigned int i=0;i>projects.size();i++){
+    for(unsigned int i=0;i<projects.size();i++){
         if(name==projects[i]->getName()){
             return(i);
         }
@@ -25,7 +25,7 @@ int ToDo::getPosProject(string name) const{
 }
 
 int ToDo::getPosProject(int id) const{
-    for(unsigned int i=0;i>projects.size();i++){
+    for(unsigned int i=0;i<projects.size();i++){
         if(id==projects[i]->getId()){
             return(i);
         }
@@ -77,16 +77,19 @@ void ToDo::projectMenu(int id){
         Util::E_ID(); cin>>id;
     }while(id<=0);
 
-    if(getPosProject(id)>=0){
-        projects[id]->menu();
+    int i=getPosProject(id);
+
+    if(i>=0){
+        projects[i]->menu();
     }else{
         Util::error(ERR_ID);
     }
 }
 
-bool ToDo::loadData(vector<Project*> &lp,string filename""){ //REPASAR DIAPOSITIVA
+bool ToDo::loadData(vector<Project*> &lp,string filename){
     char opt;
     string name,description,deadline,isDone;
+    Date ddline;
     int time;
     unsigned int psize,lsize,tsize;
     BinToDo btd;
@@ -102,42 +105,45 @@ bool ToDo::loadData(vector<Project*> &lp,string filename""){ //REPASAR DIAPOSITI
         do{
             cout<<Util::CONF(); cin>>opt;
             if(opt=='Y' || opt=='y'){
-                deleteAll(ToDo program);
+                emptyProgram();
                 ToDo::nextId=1;
-                ifbinf.read((char *)&btd,sizeof(BinToDo));
+                ifb.read((char *)&btd,sizeof(BinToDo));
                 for(psize=0;psize<btd.numProjects;psize++){
-                    ifbinf.read((char *)&bp,sizeof(BinProject));
+                    ifb.read((char *)&bp,sizeof(BinProject));
                     name=bp.name;
                     description=bp.description;
-                    Project p(name,description);
-                    p.setId(nextId);
+                    Project *p=new Project(bp);
+                    p->setId(nextId);
                     ToDo::nextId++;
                     for(lsize=0;lsize<bp.numLists;lsize++){
-                        ifbinf.read((char *)&bl,sizeof(BinList));
+                        ifb.read((char *)&bl,sizeof(BinList));
                         name=bl.name;
                         List l(name);
                         for(tsize=0;tsize<bl.numTasks;tsize++){
-                            ifbinf.read((char *)&bt,sizeof(BinTask));
+                            ifb.read((char *)&bt,sizeof(BinTask));
                             name=bt.name;
-                            deadline=bt.deadline;
+                            ddline=bt.deadline;
+                            deadline=ddline.day+'/'+ddline.month+'/'+ddline.year;
                             isDone=bt.isDone;
                             time=bt.time;
                             Task t(name);
-                            t.setDeadline(deadline);
-                            t.setTime(time);
-                            if(isDone=="True"){
-                                t.toggle();
+                            if(t.setDeadline(deadline)){
+                                if(t.setTime(time)){
+                                    if(isDone=="True"){
+                                        t.toggle();
+                                    }
+                                    l.addTask(t);
+                                }
                             }
-                            l.addTask(t);
                         }
-                        p.addList(l);
+                        p->addList(l);
                     }
                     lp.push_back(p);
                 }
-                ifbinf.close();
+                ifb.close();
                 return(true);
             }else if(opt=='N' || opt=='n'){
-                ifbinf.close();
+                ifb.close();
                 return(false);
             }
         }while(opt!='Y' && opt!='y' && opt!='N' && opt!='n');
@@ -145,13 +151,14 @@ bool ToDo::loadData(vector<Project*> &lp,string filename""){ //REPASAR DIAPOSITI
         Util::error(ERR_FILE);
         return(false);
     }
+    return(true);
 }
 
-void ToDo::saveData(string filename"") const{
+void ToDo::saveData(string filename) const{
     BinToDo btd;
 
-    strcpy(btd.name,ToDo::name);
-    btd.numProjects=ToDo::projects.size();
+    strcpy(btd.name,this->name.c_str());
+    btd.numProjects=this->projects.size();
 
     cout<<Util::E_FN(); getline(cin,filename);
 
@@ -160,7 +167,7 @@ void ToDo::saveData(string filename"") const{
     if(ofb.is_open()){
         ofb.write((const char*)&btd,sizeof(BinToDo));
         for(unsigned int i=0;i<btd.numProjects;i++){
-            projects[i]->saveData(ofb); //està bé açò?
+            projects[i]->saveData(ofb);
         }
         ofb.close();
     }else{
@@ -168,11 +175,10 @@ void ToDo::saveData(string filename"") const{
     }
 }
 
-bool ToDo::importProjects(vector<Project*> &lp,string filename""){
-    string namet,aux="";
+bool ToDo::importProjects(vector<Project*> &lp,string filename){
+    string namet,aux="",s,ss;
     size_t pos;
-    bool fail=false,failt,cd;
-    int list;
+    bool cd;
 
     cout<<Util::E_FN(); getline(cin,filename);
 
@@ -181,61 +187,50 @@ bool ToDo::importProjects(vector<Project*> &lp,string filename""){
     if(ifs.is_open()){
         while(getline(ifs,s)){
             if(s[0]=='<'){
-                list=0;
                 ToDo::nextId++;
-                cd=true; 
-                fail=false;
-                failt=false;
-            }else if(s[0]=='>' && !fail && !failt){
-                if(list>0){
-                    p->addList(l);
-                }
-                this->projects.push_back(p);
-            }else if(s[0]=='#'){
-                pos=s.find('#');
-                ss=s.substr(pos+1);
-
-                if(checkEmpty(ss)){
-                    error(ERR_PROJECT_NAME);
-                    fail=true;
-                }else if(checkProject(ss,toDoProjects)){
-                    error(ERR_PROJECT_NAME);
-                    fail=true;
-                }else{
-                    Project *p=new Project(ss);
-                    p->setId(ToDo::nextId);
-                }
-            }else if(s[0]=='*'){
-                cd=false;
-                pos=s.find('*');
-                p->setDescription(s.substr(pos+1));
-            }else if(cd){
-                p->setDescription(aux);
-            }else if(s[0]=='@'){
-                if(list>0){
-                    p->addList(l);
-                }
-                pos=s.find('@');
-                ss=s.substr(pos+1);
-                if(checkEmpty(ss)){
-                    error(ERR_LIST_NAME);
-                    fail=true;
-                }else{
-                    List l(ss);
-                }
-                list++;
-            }else if(s[0]=='|'){
-                Task t(aux);
-                if(t.importTask(s)){
-                    p->addTasktoList(l.getName(),t);
-                }
-            }else{
-                ss=s.substr(0);
-                pos=ss.find("|");
-                namet=ss.substr(0,pos-1); 
-                Task t(namet);
-                if(t.importTask(s)){
-                    p->addTasktoList(l.getName(),t);
+                cd=true;
+                getline(ifs,s);
+                if(s[0]=='#'){
+                    pos=s.find('#');
+                    Project *p=new Project(s.substr(pos+1));
+                    getline(ifs,s);
+                    if(s[0]=='*'){
+                        cd=false;
+                        pos=s.find('*');
+                        p->setDescription(s.substr(pos+1));
+                    }
+                    getline(ifs,s);
+                    if(s[0]=='@'){
+                        if(cd){
+                            p->setDescription(aux);
+                        }
+                        while(s[0]=='@'){
+                            pos=s.find('@');
+                            List l(s.substr(pos+1));
+                            getline(ifs,s);
+                            while(s[0]!='@' && s[0]!='>'){
+                                if(s[0]=='|'){
+                                    Task t(aux);
+                                    if(t.importTask(s)){
+                                        p->addTaskToList(l.getName(),t);
+                                    }
+                                }
+                                else{
+                                    ss=s.substr(0);
+                                    pos=ss.find("|");
+                                    namet=ss.substr(0,pos-1); 
+                                    Task t(namet);
+                                    if(t.importTask(s)){
+                                        p->addTaskToList(l.getName(),t);
+                                    }
+                                }
+                            }
+                            p->addList(l);
+                        }
+                        try{
+                            addProject(p);
+                        }catch(Error e){}
+                    }
                 }
             }
         }
@@ -257,14 +252,14 @@ void ToDo::exportProjects(string filename,int id) const{
                 ofstream ofb(filename.c_str());
 
                 if(ofb.is_open()){
-                    for(int i=0;i<projects.size();i++){
+                    for(unsigned int i=0;i<projects.size();i++){
                         ofb<<"<"<<endl;
                         ofb<<projects[i]->exportProject();
                         ofb<<">"<<endl;
                     }
                     ofb.close();
                 }else{
-                    error(ERR_FILE);
+                    Util::error(ERR_FILE);
                 }
             }else if(opt=='N' || opt=='n'){
                 cout<<Util::E_ID(); cin>>id;
@@ -278,34 +273,24 @@ void ToDo::exportProjects(string filename,int id) const{
             exportOneProject(projects,filename,id); 
         }else{
         Util::error(ERR_ID);
-    }
-}
-        }else{
-            Util::error(ERR_ID);
         }
     }
 }
 
 ostream& operator<<(ostream &os,const ToDo &toDo){
     for(unsigned int i=0;i<toDo.projects.size();i++){    
-        os<<toDo.projects[i];
+        os<<toDo.projects[i]->summary()<<endl;
     }
     return os;
 }
 
-void deleteAll(ToDo &td){
-  for(unsigned int i=0;i<td.projects.size();i++){
-    for(unsigned int j=0;j<td.projects[i].lists.size();j++){
-      for(unsigned int k=0;k<td.projects[i].lists[j].tasks.size();k++){
-        td.projects[i].lists[j].tasks.erase(td.projects[i].lists[j].tasks.begin()+i);
-      }
-      td.projects[i].lists.erase(td.projects[i].lists.begin()+i);
+void ToDo::emptyProgram(){
+    for(unsigned int i=0;i<projects.size();i++){
+        projects.erase(projects.begin()+i);
     }
-    td.projects.erase(toDoProjects.projects.begin()+i);
-  }
 }
 
-void checkId(vector<Project *> projects,int id){
+bool ToDo::checkId(vector<Project *> projects,int id) const{
     for(unsigned int i=0;i<projects.size();i++){
         if(id==projects[i]->getId()){
             return(true);
@@ -314,7 +299,7 @@ void checkId(vector<Project *> projects,int id){
     return(false);
 }
 
-void exportOneProject(vector<Project *> projects,string filename,int id){
+void ToDo::exportOneProject(vector<Project *> projects,string filename,int id) const{
     ofstream ofb(filename.c_str());
 
     if(ofb.is_open()){

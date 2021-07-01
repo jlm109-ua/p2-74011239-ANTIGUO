@@ -1,10 +1,6 @@
 // DNI 74011239E LLINARES MAURI, JUAN
 #include "Project.h"
 
-bool checkList(vector<List> lists,string s);
-bool checkTask(vector<Task> tasks,string name,string namel);
-void totTasks(vector<List> lists,int &totdone,int &tot);
-
 const string N="Name: ";
 const string D="Description: ";
 const string TL="Total left: ";
@@ -41,11 +37,9 @@ string Project::getDescription() const{
 }
 
 int Project::getPosList(string name) const{
-    int pos;
     for(unsigned int i=0;i<lists.size();i++){
          if(name==lists[i].getName()){
-             pos=i;
-             return(pos);
+             return(i);
          }
     }
     return(-1);
@@ -76,25 +70,33 @@ void Project::setDescription(string description){
 }
 
 void Project::edit(string name,string description){
-    string s;
-    
     do{
         Util::E_PN(); getline(cin,name);
+        if(Util::checkEmpty(name)){
+            Util::error(ERR_EMPTY);
+        }
     }while(Util::checkEmpty(name));
 
     Util::E_PD(); getline(cin,description);
 
-    this->name=name;
-    this->description=description;
+    setName(name);
+    setDescription(description);
 }
 
 void Project::addList(string name){
     try{
         do{
-        Util::E_TN(); getline(cin,name);
-        }while(checkList(lists,name));
-        List list(name);
-        lists.push_back(list);
+            Util::E_LN(); getline(cin,name);
+            if(Util::checkEmpty(name)){
+                Util::error(ERR_EMPTY);
+            }
+        }while(Util::checkEmpty(name));
+        if(!checkList(lists,name)){
+            List list(name);
+            lists.push_back(list);
+        }else{
+            Util::error(ERR_LIST_NAME);
+        }
     }catch(Error e){
         Util::error(e);
     }
@@ -105,6 +107,9 @@ void Project::deleteList(string name){
 
     do{
         Util::E_LN(); getline(cin,name);
+        if(Util::checkEmpty(name)){
+            Util::error(ERR_EMPTY);
+        }
     }while(Util::checkEmpty(name));
 
     if(getPosList(name)==-1){
@@ -123,9 +128,9 @@ void Project::addTaskToList(string name){
         Util::E_LN(); getline(cin,namel);
     }while(Util::checkEmpty(namel));
 
-    if(!checkList(lists,namel)){
+    if(checkList(lists,namel)){
         Util::E_TN(); getline(cin,name);
-        Util::E_D(); getline(cin,deadline);
+        Util::E_DD(); getline(cin,deadline);
         Task task(name);
         if(task.setDeadline(deadline)){
             Util::E_ET(); cin>>time;
@@ -133,6 +138,8 @@ void Project::addTaskToList(string name){
                 lists[getPosList(namel)].addTask(task);
             }
         }
+    }else{
+        Util::error(ERR_LIST_NAME);
     }
 }
 
@@ -143,13 +150,17 @@ void Project::deleteTaskFromList(string name){
         Util::E_LN(); getline(cin,namel);
     }while(Util::checkEmpty(namel));
 
-    vector<Task> tasks=lists[getPosList(namel)].getTasks();
+    if(checkList(lists,namel)>=0){
+        vector<Task> tasks=lists[getPosList(namel)].getTasks();
 
-    if(!checkList(lists,namel)){
         Util::E_TN(); getline(cin,name);
         if(checkTask(tasks,name,namel)){
             lists[getPosList(namel)].deleteTask(name);
+        }else{
+            Util::error(ERR_TASK_NAME);
         }
+    }else{
+        Util::error(ERR_LIST_NAME);
     }
 }
 
@@ -160,18 +171,22 @@ void Project::toggleTaskFromList(string name){
         Util::E_LN(); getline(cin,namel);
     }while(Util::checkEmpty(namel));
 
-    vector<Task> tasks=lists[getPosList(namel)].getTasks();
+    if(checkList(lists,namel)){
+        vector<Task> tasks=lists[getPosList(namel)].getTasks();
 
-    if(!checkList(lists,namel)){
         Util::E_TN(); getline(cin,name);
         if(checkTask(tasks,name,namel)){
             lists[getPosList(namel)].toggleTask(name);
+        }else{
+            Util::error(ERR_TASK_NAME);
         }
+    }else{
+        Util::error(ERR_LIST_NAME);
     }
 }
 
 void Project::menu(){
-    int opc;
+    char opc;
     string name,description;
 
     do{
@@ -188,50 +203,48 @@ void Project::menu(){
         cin.get();
 
         switch(opc){
-            case 1:
+            case '1':
                 edit(name="",description="");
                 break;
-            case 2:
+            case '2':
                 addList(name="");
                 break;
-            case 3:
+            case '3':
                 deleteList(name="");
                 break;
-            case 4:
+            case '4':
                 addTaskToList(name="");
                 break;
-            case 5:
+            case '5':
                 deleteTaskFromList(name="");
                 break;
-            case 6:
+            case '6':
                 toggleTaskFromList(name="");
                 break;
-            case 7:
+            case '7':
                 cout<<*this<<endl;
                 break;
             case 'b':
                 break;
             default:
                 Util::error(ERR_OPTION);
-                break;
         }
     }while(opc!='b');
 }
 
-string Project::summary() const{ //ARREGLAR
-    int totdone=0,tot=0,id=this->id;
+string Project::summary() const{
+    int totdone=0,tot=0;
     totTasks(lists,totdone,tot);
     string summ,sid,stotdone,stot;
     stringstream ssid,sstotdone,sstot;
-    ssid<<id;
+    ssid<<this->id;
     sid=ssid.str();
     sstotdone<<totdone;
     stotdone=sstotdone.str();
     sstot<<tot;
     stot=sstot.str();
 
-    cout<<"("<<id<<") "<<name<<" ["<<totdone<<"/"<<tot<<"]";
-
+    summ+="(";
     summ+=sid;
     summ+=") ";
     summ+=name;
@@ -241,7 +254,7 @@ string Project::summary() const{ //ARREGLAR
     summ+=stot;
     summ+="]";
 
-    return (summ); 
+    return (summ);
 }
 
 string Project::exportProject() const{
@@ -279,18 +292,18 @@ BinProject Project::toBinary() const{
     string namep=getName(),descp=getDescription();
     BinProject bp;
 
-    if(namep.size()>=Util::KMAXNAME){
-        strncpy(bp.name,namep,Util::KMAXNAME);
-        bp.name[Util::KMAXNAME]='\0';
+    if(namep.size()>=KMAXNAME){
+        strncpy(bp.name,namep.c_str(),KMAXNAME);
+        bp.name[KMAXNAME]='\0';
     }else{
-        strcpy(bp.name,namep);
+        strcpy(bp.name,namep.c_str());
     }
 
-    if(descp.size()>=Util::KMAXDESC){
-        strncpy(bp.desc,descp,Util::KMAXDESC);
-        bp.desc[Util::KMAXDESC]='\0';
+    if(descp.size()>=KMAXDESC){
+        strncpy(bp.description,descp.c_str(),KMAXDESC);
+        bp.description[KMAXDESC]='\0';
     }else{
-        strcpy(bp.desc,descp);
+        strcpy(bp.description,descp.c_str());
     }
 
     bp.numLists=lists.size();
@@ -308,9 +321,9 @@ void Project::saveData(ofstream &file) const{
 }
 
 ostream& operator<<(ostream &os,const Project &project){
-    string s,ss;
+    string s;
     Date deadline;
-    int tottime=0,tottimed=0,sy=0,sm=0,sd=0,count=0,countd=0;
+    int tottime=0,tottimed=0,sy=0,sm=0,sd=0,count=0,countd=0,cont=0;
     bool aux=false;
 
     os<<N<<project.getName()<<endl;
@@ -321,32 +334,51 @@ ostream& operator<<(ostream &os,const Project &project){
     for(unsigned int i=0;i<project.lists.size();i++){
         os<<project.lists[i];
         vector<Task> tasks=project.lists[i].getTasks();
-        for(unsigned int j=0;i<project.lists[i].getNumTasks();j++){  
-            
-            deadline=tasks[j].getDeadline();
+        for(unsigned int j=0;j<project.lists[i].getNumTasks();j++){  
+            if(tasks[j].getIsDone()){
+                countd++;
+                tottimed+=tasks[j].getTime();
+            }else{
+                count++;
+                tottime+=tasks[j].getTime();
 
-            if(sy>deadline.year){
-                sy=deadline.year;
-                sm=deadline.month;
-                sd=deadline.day;
-                ss=project.lists[i].getName();
-            }else if(sm>deadline.month){
-                sy=deadline.year;
-                sm=deadline.month;
-                sd=deadline.day;
-                ss=project.lists[i].getName();
-            }else if(sd>deadline.day && sm>deadline.month && sy>=deadline.year){
-                sy=deadline.year;
-                sm=deadline.month;
-                sd=deadline.day;
-                ss=project.lists[i].getName();
+                deadline=tasks[j].getDeadline();
+
+                if(cont==0){
+                    aux=true;
+                    cont++;
+                    sy=deadline.year;
+                    sm=deadline.month;
+                    sd=deadline.day;
+                    s=tasks[j].getName();
+                }
+                if(deadline.year<sy){
+                    sy=deadline.year;
+                    sm=deadline.month;
+                    sd=deadline.day;
+                    s=tasks[j].getName();
+                }else if(deadline.month<sm){
+                    sy=deadline.year;
+                    sm=deadline.month;
+                    sd=deadline.day;
+                    s=tasks[j].getName();
+                }else if(deadline.day<sd && deadline.month<sm && deadline.year<=sy){
+                    sy=deadline.year;
+                    sm=deadline.month;
+                    sd=deadline.day;
+                    s=tasks[j].getName();
+                }else if(deadline.day==sd && deadline.month==sm && deadline.year==sy){
+                    sy=deadline.year;
+                    sm=deadline.month;
+                    sd=deadline.day;
+                    s=tasks[j].getName();
+                }
             }
-
         }
     }
   
-    os<<TL<<count<<" ("<<tottime<<" "<<MIN<<")"<<endl;
-    os<<TD<<countd<<" ("<<tottimed<<" "<<MIN<<")"<<endl;
+    os<<Util::TL()<<count<<" ("<<tottime<<" "<<Util::MIN()<<")"<<endl;
+    os<<Util::TD()<<countd<<" ("<<tottimed<<" "<<Util::MIN()<<")"<<endl;
     if(aux){
         os<<HP<<s<<" "<<"("<<sy<<"-"<<sm<<"-"<<sd<<")"<<endl;
     }else{
@@ -354,27 +386,31 @@ ostream& operator<<(ostream &os,const Project &project){
     return os;
 }
 
-bool checkList(vector<List> lists,string name){
-    for(unsigned int i=0;i<lists.size();i++){
-        if(name==lists[i].getName()){  
-            Util::error(ERR_LIST_NAME);  
-            return(true);
+bool Project::checkList(vector<List> lists,string name){
+    if(lists.size()>0){
+        for(unsigned int i=0;i<lists.size();i++){
+            if(name==lists[i].getName()){
+                return(true);
+            }
+        }
+    }else if(lists.size()==0){
+        return(false);
+    }
+    return(false);
+}
+
+bool Project::checkTask(vector<Task> tasks,string name,string namel){
+    if(!tasks.size()==0){
+        for(unsigned int i=0;i<tasks.size();i++){
+            if(name==tasks[i].getName()){    
+                return(true);
+            }
         }
     }
     return(false);
 }
 
-bool checkTask(vector<Task> tasks,string name,string namel){
-    for(unsigned int i=0;i<tasks.size();i++){
-        if(name==tasks[i].getName()){  
-            Util::error(ERR_LIST_NAME);  
-            return(true);
-        }
-    }
-    return(false);
-}
-
-void totTasks(vector<List> lists,int &totdone,int &tot){
+void Project::totTasks(vector<List> lists,int &totdone,int &tot) const{
     for(unsigned int i=0;i<lists.size();i++){
         totdone+=lists[i].getNumDone();
         tot+=lists[i].getNumTasks();

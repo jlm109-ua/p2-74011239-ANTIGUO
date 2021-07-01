@@ -50,19 +50,13 @@ bool Util::checkEmpty(string s){
 
 void Util::saveDate(string deadline,int &day,int &month,int &year){
   string auxdeadline,sday,smonth,syear;
-  size_t found=0;
-  int s;
-
-  s=deadline.find('/');
-  if(found!=string::npos){
-    sday=deadline.substr(0,s);
-  }
-  auxdeadline=deadline.substr(s+1);
-  s=deadline.find('/');
-  if(found!=string::npos){
-    smonth=auxdeadline.substr(0,s);
-    syear=auxdeadline.substr(s+1);
-  }
+  size_t found=deadline.find('/');
+  
+  sday=deadline.substr(0,found);
+  auxdeadline=deadline.substr(found+1);
+  found=auxdeadline.find('/');
+  smonth=auxdeadline.substr(0,found);
+  syear=auxdeadline.substr(found+1);
 
   day=stoi(sday);
   month=stoi(smonth);
@@ -111,6 +105,9 @@ void Util::E_TN(){
 void Util::E_D(){
   cout<<"Enter project description: "<<endl;
 }
+void Util::E_DD(){
+  cout<<"Enter deadline: ";
+}
 void Util::E_ET(){
   cout<<"Enter expected time: "<<endl;
 }
@@ -120,27 +117,27 @@ void Util::N(){
 void Util::D(){
   cout<<"Description: "<<endl;
 }
-void Util::TL(){
-  cout<<"Total left: "<<endl;
+string Util::TL(){
+  return("Total left: ");
 }
-void Util::TD(){
-  cout<<"Total done: "<<endl;
+string Util::TD(){
+  return("Total done: ");
 }
-void Util::MIN(){
-  cout<<"minutes"<<endl;
+string Util::MIN(){
+  return("minutes");
 }
 void Util::HP(){
   cout<<"Highest priority: "<<endl;
 }
-void Util::E_ID(){
-  cout<<"Enter project id: "<<endl;
+string Util::E_ID(){
+  return("Enter project id: ");
 }
-void Util::E_FN(){
-  cout<<"Enter filename: "<<endl;
+string Util::E_FN(){
+  return("Enter filename: ");
 }
-void Util:CONF(){
-  cout<<"Confirm [Y/N]?: "<<endl;
+string Util::CONF(){
+  return("Confirm [Y/N]?: ");
 }
-void Util::SAP(){
-  cout<<"Save all projects [Y/N]?: "<<endl;
+string Util::SAP(){
+  return("Save all projects [Y/N]?: ");
 }

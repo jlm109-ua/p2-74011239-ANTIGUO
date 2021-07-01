@@ -90,19 +90,19 @@ void List::addTask(const Task &task){
 }
 
 bool List::deleteTask(string name){
-    bool found=false;
-    int pos;
+    bool val=false;
+
     vector<Task> tasks=getTasks();
 
     for(unsigned int i=0;i<tasks.size();i++){
         if(name==tasks[i].getName()){
-            pos=i;
-            tasks.erase(tasks.begin()+pos);
-            found=true;
-            return(true);
+            tasks.erase(tasks.begin()+(i-1));
+            val=true;
         }
     }
-    if(!found){
+    if(val){
+        return(true);
+    }else{
         Util::error(ERR_TASK_NAME);
         return(false);
     }
@@ -136,11 +136,11 @@ BinList List::toBinary() const{
     string namel=getName();
     BinList bl;
 
-    if(namel.size()>=Util::KMAXNAME){
-        strncpy(bl.name,namel,Util::KMAXNAME);
-        bl.name[Util::KMAXNAME]='\0';
+    if(namel.size()>=KMAXNAME){
+        strncpy(bl.name,namel.c_str(),KMAXNAME);
+        bl.name[KMAXNAME]='\0';
     }else{
-        strcpy(bl.name,namel);
+        strcpy(bl.name,namel.c_str());
     }
 
     bl.numTasks=getNumTasks();
@@ -160,13 +160,11 @@ void List::saveData(ofstream &file) const{
 
 
 ostream& operator<<(ostream &os,const List &list){
-    string s;
-    
     os<<list.getName()<<endl;
 
     vector<Task> tasks=list.getTasks();
     for(unsigned int i=0;i<list.getNumTasks();i++){
-        os<<tasks[i];
+        os<<tasks[i]<<endl;
     }
     return os;
 }
