@@ -87,8 +87,9 @@ bool List::deleteTask(string name){
 
     for(unsigned int i=0;i<tasks.size();i++){
         if(name==tasks[i].getName()){
-            tasks.erase(tasks.begin()+(i));
+            tasks.erase(tasks.begin()+i);
             val=true;
+            i-=1;
         }
     }
     if(val){

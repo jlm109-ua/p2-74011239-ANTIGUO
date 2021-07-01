@@ -149,7 +149,7 @@ void Project::deleteTaskFromList(string name){
         }
     }while(Util::checkEmpty(namel));
 
-    if(checkList(lists,namel)>=0){
+    if(checkList(lists,namel)){
         vector<Task> tasks=lists[getPosList(namel)].getTasks();
 
         Util::E_TN(); getline(cin,name);
@@ -236,9 +236,19 @@ void Project::menu(){
 
 string Project::summary() const{
     int totdone=0,tot=0;
-    totTasks(lists,totdone,tot);
     string summ,sid,stotdone,stot;
     stringstream ssid,sstotdone,sstot;
+
+    for(unsigned int i=0;i<lists.size();i++){
+        for(unsigned int j=0;j<lists[i].getTasks().size();j++){
+            tot++;
+            vector<Task> tasks=lists[i].getTasks();
+            if(tasks[j].getIsDone()){
+                totdone++;
+            }
+        }
+    }
+
     ssid<<this->id;
     sid=ssid.str();
     sstotdone<<totdone;
@@ -246,17 +256,9 @@ string Project::summary() const{
     sstot<<tot;
     stot=sstot.str();
 
-    summ+="(";
-    summ+=sid;
-    summ+=") ";
-    summ+=name;
-    summ+=" [";
-    summ+=stotdone;
-    summ+="/";
-    summ+=stot;
-    summ+="]";
+    summ="("+sid+") "+name+" ["+stotdone+"/"+stot+"]";
 
-    return (summ);
+    return(summ);
 }
 
 ostream& operator<<(ostream &os,const Project &project){
@@ -343,11 +345,4 @@ bool Project::checkTask(vector<Task> tasks,string name,string namel){
         }
     }
     return(false);
-}
-
-void Project::totTasks(vector<List> lists,int &totdone,int &tot) const{
-    for(unsigned int i=0;i<lists.size();i++){
-        totdone+=lists[i].getNumDone();
-        tot+=lists[i].getNumTasks();
-    }
 }
