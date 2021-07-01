@@ -113,8 +113,16 @@ ostream& operator<<(ostream &os,const List &list){
     os<<list.getName()<<endl;
 
     vector<Task> tasks=list.getTasks();
+
     for(unsigned int i=0;i<list.getNumTasks();i++){
-        os<<tasks[i]<<endl;
+        if(!tasks[i].getIsDone()){
+            os<<tasks[i]<<endl;
+        }
+    }
+    for(unsigned int i=0;i<list.getNumTasks();i++){
+        if(tasks[i].getIsDone()){
+            os<<tasks[i]<<endl;
+        }
     }
     return os;
 }

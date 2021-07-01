@@ -119,6 +119,9 @@ void Project::addTaskToList(string name){
 
     do{
         Util::E_LN(); getline(cin,namel);
+        if(Util::checkEmpty(namel)){
+            Util::error(ERR_EMPTY);
+        }
     }while(Util::checkEmpty(namel));
 
     if(checkList(lists,namel)){
@@ -141,6 +144,9 @@ void Project::deleteTaskFromList(string name){
 
     do{
         Util::E_LN(); getline(cin,namel);
+        if(Util::checkEmpty(namel)){
+            Util::error(ERR_EMPTY);
+        }
     }while(Util::checkEmpty(namel));
 
     if(checkList(lists,namel)>=0){
@@ -162,6 +168,9 @@ void Project::toggleTaskFromList(string name){
 
     do{
         Util::E_LN(); getline(cin,namel);
+        if(Util::checkEmpty(namel)){
+            Util::error(ERR_EMPTY);
+        }
     }while(Util::checkEmpty(namel));
 
     if(checkList(lists,namel)){
@@ -298,10 +307,6 @@ ostream& operator<<(ostream &os,const Project &project){
                     sd=deadline.day;
                     s=tasks[j].getName();
                 }else if(deadline.day==sd && deadline.month==sm && deadline.year==sy){
-                    sy=deadline.year;
-                    sm=deadline.month;
-                    sd=deadline.day;
-                    s=tasks[j].getName();
                 }
             }
         }
