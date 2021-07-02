@@ -63,13 +63,11 @@ int List::getTimeDone() const{
 }
 
 int List::getPosTask(string name) const{
-    int pos;
     vector<Task> tasks=getTasks();
 
     for(unsigned int i=0;i<tasks.size();i++){
         if(name==tasks[i].getName()){
-            pos=i;
-            return (pos);
+            return (i);
         }
     }
     return (-1);
@@ -92,12 +90,11 @@ void List::addTask(const Task &task){
 bool List::deleteTask(string name){
     bool val=false;
 
-    vector<Task> tasks=getTasks();
-
     for(unsigned int i=0;i<tasks.size();i++){
         if(name==tasks[i].getName()){
-            tasks.erase(tasks.begin()+(i-1));
+            tasks.erase(tasks.begin()+i);
             val=true;
+            i-=1;
         }
     }
     if(val){
@@ -109,7 +106,6 @@ bool List::deleteTask(string name){
 }
 
 bool List::toggleTask(string name){
-    vector<Task> tasks=getTasks();
 
     for(unsigned int i=0;i<tasks.size();i++){
         if(name==tasks[i].getName()){
@@ -129,6 +125,7 @@ string List::exportList() const{
     for(unsigned int i=0;i<bl.numTasks;i++){
         el=el+'\n'+tasks[i].exportTask();
     }
+    return(el);
 }
 
 BinList List::toBinary() const{
@@ -157,14 +154,20 @@ void List::saveData(ofstream &file) const{
     }
 }
 
-
-
 ostream& operator<<(ostream &os,const List &list){
     os<<list.getName()<<endl;
 
     vector<Task> tasks=list.getTasks();
+
     for(unsigned int i=0;i<list.getNumTasks();i++){
-        os<<tasks[i]<<endl;
+        if(!tasks[i].getIsDone()){
+            os<<tasks[i]<<endl;
+        }
+    }
+    for(unsigned int i=0;i<list.getNumTasks();i++){
+        if(tasks[i].getIsDone()){
+            os<<tasks[i]<<endl;
+        }
     }
     return os;
 }

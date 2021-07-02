@@ -1,13 +1,6 @@
 // DNI 74011239E LLINARES MAURI, JUAN
 #include "Project.h"
 
-const string N="Name: ";
-const string D="Description: ";
-const string TL="Total left: ";
-const string TD="Total done: ";
-const string MIN="minutes";
-const string HP="Highest priority: ";
-
 Project::Project(const BinProject &bp){
     this->name=bp.name;
     this->description=bp.description;
@@ -126,6 +119,9 @@ void Project::addTaskToList(string name){
 
     do{
         Util::E_LN(); getline(cin,namel);
+        if(Util::checkEmpty(namel)){
+            Util::error(ERR_EMPTY);
+        }
     }while(Util::checkEmpty(namel));
 
     if(checkList(lists,namel)){
@@ -148,9 +144,12 @@ void Project::deleteTaskFromList(string name){
 
     do{
         Util::E_LN(); getline(cin,namel);
+        if(Util::checkEmpty(namel)){
+            Util::error(ERR_EMPTY);
+        }
     }while(Util::checkEmpty(namel));
 
-    if(checkList(lists,namel)>=0){
+    if(checkList(lists,namel)){
         vector<Task> tasks=lists[getPosList(namel)].getTasks();
 
         Util::E_TN(); getline(cin,name);
@@ -169,6 +168,9 @@ void Project::toggleTaskFromList(string name){
 
     do{
         Util::E_LN(); getline(cin,namel);
+        if(Util::checkEmpty(namel)){
+            Util::error(ERR_EMPTY);
+        }
     }while(Util::checkEmpty(namel));
 
     if(checkList(lists,namel)){
@@ -234,9 +236,19 @@ void Project::menu(){
 
 string Project::summary() const{
     int totdone=0,tot=0;
-    totTasks(lists,totdone,tot);
     string summ,sid,stotdone,stot;
     stringstream ssid,sstotdone,sstot;
+
+    for(unsigned int i=0;i<lists.size();i++){
+        for(unsigned int j=0;j<lists[i].getTasks().size();j++){
+            tot++;
+            vector<Task> tasks=lists[i].getTasks();
+            if(tasks[j].getIsDone()){
+                totdone++;
+            }
+        }
+    }
+
     ssid<<this->id;
     sid=ssid.str();
     sstotdone<<totdone;
@@ -244,17 +256,9 @@ string Project::summary() const{
     sstot<<tot;
     stot=sstot.str();
 
-    summ+="(";
-    summ+=sid;
-    summ+=") ";
-    summ+=name;
-    summ+=" [";
-    summ+=stotdone;
-    summ+="/";
-    summ+=stot;
-    summ+="]";
+    summ="("+sid+") "+name+" ["+stotdone+"/"+stot+"]";
 
-    return (summ);
+    return(summ);
 }
 
 string Project::exportProject() const{
@@ -273,6 +277,7 @@ string Project::exportProject() const{
             ep=ep+lists[i].exportList();
         }
     }
+    return(ep);
 }
 
 void Project::addList(const List &list){
@@ -326,9 +331,9 @@ ostream& operator<<(ostream &os,const Project &project){
     int tottime=0,tottimed=0,sy=0,sm=0,sd=0,count=0,countd=0,cont=0;
     bool aux=false;
 
-    os<<N<<project.getName()<<endl;
+    os<<Util::N()<<project.getName()<<endl;
     if(!Util::checkEmpty(project.getDescription())){
-        os<<D<<project.getDescription()<<endl;
+        os<<Util::D()<<project.getDescription()<<endl;
     }
 
     for(unsigned int i=0;i<project.lists.size();i++){
@@ -368,10 +373,6 @@ ostream& operator<<(ostream &os,const Project &project){
                     sd=deadline.day;
                     s=tasks[j].getName();
                 }else if(deadline.day==sd && deadline.month==sm && deadline.year==sy){
-                    sy=deadline.year;
-                    sm=deadline.month;
-                    sd=deadline.day;
-                    s=tasks[j].getName();
                 }
             }
         }
@@ -379,9 +380,9 @@ ostream& operator<<(ostream &os,const Project &project){
   
     os<<Util::TL()<<count<<" ("<<tottime<<" "<<Util::MIN()<<")"<<endl;
     os<<Util::TD()<<countd<<" ("<<tottimed<<" "<<Util::MIN()<<")"<<endl;
-    if(aux){
-        os<<HP<<s<<" "<<"("<<sy<<"-"<<sm<<"-"<<sd<<")"<<endl;
-    }else{
+    
+    if(aux && project.showHP()){
+        os<<Util::HP()<<s<<" "<<"("<<sy<<"-"<<sm<<"-"<<sd<<")"<<endl;
     }
     return os;
 }
@@ -410,9 +411,19 @@ bool Project::checkTask(vector<Task> tasks,string name,string namel){
     return(false);
 }
 
-void Project::totTasks(vector<List> lists,int &totdone,int &tot) const{
+bool Project::showHP() const{
+    int tot=0,totdone=0;
     for(unsigned int i=0;i<lists.size();i++){
-        totdone+=lists[i].getNumDone();
-        tot+=lists[i].getNumTasks();
+        for(unsigned int j=0;j<lists[i].getTasks().size();j++){
+            tot++;
+            vector<Task> tasks=lists[i].getTasks();
+            if(tasks[j].getIsDone()){
+                totdone++;
+            }
+        }
     }
+    if(tot==totdone){
+        return(false);
+    }
+    return(true);
 }

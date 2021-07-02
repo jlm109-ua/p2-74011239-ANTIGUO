@@ -26,7 +26,7 @@ class Project{
         vector<List> lists;
         bool checkList(vector<List> lists,string name);
         bool checkTask(vector<Task> tasks,string name,string namel);
-        void totTasks(vector<List> lists,int &totdone,int &tot) const;
+        bool showHP() const;
     public:
         Project(const BinProject &bp);
         Project(string name,string description="");

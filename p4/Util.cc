@@ -111,11 +111,11 @@ void Util::E_DD(){
 void Util::E_ET(){
   cout<<"Enter expected time: "<<endl;
 }
-void Util::N(){
-  cout<<"Name: "<<endl;
+string Util::N(){
+  return("Name: ");
 }
-void Util::D(){
-  cout<<"Description: "<<endl;
+string Util::D(){
+  return("Description: ");
 }
 string Util::TL(){
   return("Total left: ");
@@ -126,8 +126,8 @@ string Util::TD(){
 string Util::MIN(){
   return("minutes");
 }
-void Util::HP(){
-  cout<<"Highest priority: "<<endl;
+string Util::HP(){
+  return("Highest priority: ");
 }
 string Util::E_ID(){
   return("Enter project id: ");

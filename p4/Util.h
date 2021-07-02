@@ -3,6 +3,7 @@
 #define _UTIL_H_
 
 #include <iostream>
+#include <string>
 
 using namespace std;
 
@@ -39,12 +40,12 @@ class Util{
     static void E_D();
     static void E_DD();
     static void E_ET();
-    static void N();
-    static void D();
+    static string N();
+    static string D();
     static string TL();
     static string TD();
     static string MIN();
-    static void HP();
+    static string HP();
     static string E_ID();
     static string E_FN();
     static string CONF();

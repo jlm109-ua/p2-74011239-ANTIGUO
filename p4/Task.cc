@@ -1,8 +1,6 @@
 // DNI 74011239E LLINARES MAURI, JUAN
 #include "Task.h"
 
-bool checkDate(string deadline);
-
 Task::Task(const BinTask &bt){
     this->deadline=bt.deadline;
     this->isDone=bt.isDone;
